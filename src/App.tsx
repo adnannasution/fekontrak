@@ -1,0 +1,99 @@
+import "@/styles/responsive.css";
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider } from "@/components/auth/AuthProvider";
+import { ThemeProvider } from "@/contexts/ThemeContext";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import Layout from "@/components/Layout";
+import ApprovalDashboard from './pages/ApprovalDashboard';
+
+// Import existing pages
+import Login from "@/pages/Login";
+import Auth from "@/pages/Auth";
+import Users from "@/pages/Users";
+import NotFound from "@/pages/NotFound";
+
+// Import dashboard pages
+import Dashboard from "@/pages/Dashboard";
+import NewContracts from "@/pages/NewContracts";
+import InvoiceManagement from "@/pages/InvoiceManagement";
+import ContractPerformanceMonitoring from "@/pages/ContractPerformanceMonitoring";
+import AdminSettings from "@/pages/AdminSettings";
+import ContractDetail from "@/pages/ContractDetail";
+import InvoiceDetail from "@/pages/InvoiceDetail";
+
+// Import kontrak pages
+import KontrakLumpsum from "@/pages/KontrakLumpsum";
+import KontrakUnitPrice from "@/pages/KontrakUnitPrice";
+import KontrakTsaLtsa from "@/pages/KontrakTsaLtsa";
+import Amandemen from "@/pages/Amandemen";
+
+// Import vendor pages
+import Vendors from "@/pages/Vendors";
+import NewVendors from "@/pages/NewVendors";
+
+// Import user purchase page
+import UserPurchase from "@/pages/UserPurchase";
+import UserPurchaseDetail from "@/pages/UserPurchaseDetail";
+
+// Import data management page
+import DataManagement from "@/pages/DataManagement";
+
+const queryClient = new QueryClient();
+
+const App = () => (
+  <QueryClientProvider client={queryClient}>
+    <ThemeProvider>
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route path="/auth" element={<Auth />} />
+              
+              <Route
+                path="/*"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <Routes>
+                        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                        <Route path="/dashboard" element={<Dashboard />} />
+                        <Route path="/kontrak-lumpsum" element={<KontrakLumpsum />} />
+                        <Route path="/kontrak-unit-price" element={<KontrakUnitPrice />} />
+                        <Route path="/kontrak-tsa-ltsa" element={<KontrakTsaLtsa />} />
+                        <Route path="/amandemen" element={<Amandemen />} />
+                        <Route path="/approval" element={<ProtectedRoute><ApprovalDashboard /></ProtectedRoute>} />
+                        <Route path="/contracts" element={<NewContracts />} />
+                        <Route path="/contracts/:id" element={<ContractDetail />} />
+                        <Route path="/invoices" element={<InvoiceManagement />} />
+                        <Route path="/invoices/:id" element={<InvoiceDetail />} />
+                        <Route path="/invoice-detail/:id" element={<InvoiceDetail />} />
+                        <Route path="/sla-monitoring" element={<Navigate to="/contract-performance" replace />} />
+                        <Route path="/contract-performance" element={<ContractPerformanceMonitoring />} />
+                        <Route path="/admin-settings" element={<AdminSettings />} />
+                        <Route path="/users" element={<Users />} />
+                        <Route path="/vendors" element={<NewVendors />} />
+                        <Route path="/user-purchase" element={<UserPurchase />} />
+                        <Route path="/user-purchase/:id" element={<UserPurchaseDetail />} />
+                        <Route path="/data-management" element={<DataManagement />} />
+                        <Route path="*" element={<NotFound />} />
+                      </Routes>
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </AuthProvider>
+    </ThemeProvider>
+  </QueryClientProvider>
+);
+
+export default App;
