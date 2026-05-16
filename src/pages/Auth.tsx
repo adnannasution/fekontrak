@@ -1,15 +1,15 @@
-
 import { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import EmailConfirmation from '@/components/EmailConfirmation';
 import AuthHeader from '@/components/auth/AuthHeader';
 import SignInForm from '@/components/auth/SignInForm';
 import SignUpForm from '@/components/auth/SignUpForm';
+
+const getRedirectPath = (role?: string) =>
+  role === 'vendor' ? '/kontrak-lumpsum' : '/dashboard';
 
 const Auth = () => {
   const [email, setEmail] = useState('');
@@ -17,9 +17,8 @@ const Auth = () => {
   const [fullName, setFullName] = useState('');
   const [loading, setLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [showConfirmation, setShowConfirmation] = useState(false);
-  const [registeredEmail, setRegisteredEmail] = useState('');
-  const [searchParams] = useSearchParams();
+  const [registerSuccess, setRegisterSuccess] = useState(false);
+
   const navigate = useNavigate();
   const { signIn, signUp, user, loading: authLoading } = useAuth();
   const { toast } = useToast();
@@ -29,107 +28,39 @@ const Auth = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  // Handle email confirmation from URL parameters
-  useEffect(() => {
-    const handleEmailConfirmation = async () => {
-      const token_hash = searchParams.get('token_hash');
-      const type = searchParams.get('type');
-      const next = searchParams.get('next') ?? '/dashboard';
-
-      if (token_hash && type) {
-        console.log('[DEBUG] Processing email confirmation with token_hash:', token_hash);
-        
-        try {
-          const { data, error } = await supabase.auth.verifyOtp({
-            token_hash,
-            type: type as any,
-          });
-
-          if (error) {
-            console.error('[DEBUG] Email confirmation error:', error);
-            toast({
-              title: "Error Konfirmasi",
-              description: "Link konfirmasi tidak valid atau sudah kedaluwarsa. Silakan coba daftar ulang.",
-              variant: "destructive",
-            });
-            // Clear URL parameters
-            navigate('/auth', { replace: true });
-            return;
-          }
-
-          if (data?.session) {
-            console.log('[DEBUG] Email confirmed successfully, user:', data.user?.email);
-            toast({
-              title: "Email Terkonfirmasi",
-              description: "Email Anda berhasil dikonfirmasi. Silakan tunggu admin mengaktifkan akun Anda.",
-            });
-            
-            // Clear URL parameters and redirect
-            navigate(next, { replace: true });
-          }
-        } catch (error) {
-          console.error('[DEBUG] Email confirmation exception:', error);
-          toast({
-            title: "Error",
-            description: "Terjadi kesalahan saat konfirmasi email.",
-            variant: "destructive",
-          });
-          navigate('/auth', { replace: true });
-        }
-      }
-    };
-
-    handleEmailConfirmation();
-  }, [searchParams, navigate, toast]);
-
   useEffect(() => {
     if (!authLoading && user) {
-      console.log('User authenticated, redirecting to dashboard');
-      navigate('/dashboard');
+      const role = (user as any)?.role;
+      navigate(getRedirectPath(role));
     }
   }, [authLoading, user, navigate]);
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    
-    const { error } = await signIn(email, password);
-    
+    const { error, data } = await signIn(email, password);
     if (!error) {
-      navigate('/dashboard');
+      const role = data?.user?.role;
+      navigate(getRedirectPath(role));
     }
-    
     setLoading(false);
   };
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-
-    const { error, needsConfirmation } = await signUp(email, password, fullName);
-
-    if (!error && needsConfirmation) {
-      setRegisteredEmail(email);
-      setShowConfirmation(true);
+    const { error } = await signUp(email, password, fullName);
+    if (!error) {
+      setRegisterSuccess(true);
+      setEmail('');
+      setPassword('');
+      setFullName('');
     }
     setLoading(false);
   };
 
-  const handleBackToAuth = () => {
-    setShowConfirmation(false);
-    setRegisteredEmail('');
-    setEmail('');
-    setPassword('');
-    setFullName('');
-  };
-
-  if (showConfirmation) {
-    return <EmailConfirmation email={registeredEmail} onBack={handleBackToAuth} />;
-  }
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 p-4 relative overflow-hidden">
-      {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400/20 to-purple-600/20 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-tr from-purple-400/20 to-blue-600/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
@@ -148,59 +79,73 @@ const Auth = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Tabs defaultValue="signin" className="space-y-4">
-              <TabsList className="grid w-full grid-cols-2 bg-muted/50">
-                <TabsTrigger value="signin" className="transition-all duration-200 hover:bg-background/80">
-                  Masuk
-                </TabsTrigger>
-                <TabsTrigger value="signup" className="transition-all duration-200 hover:bg-background/80">
-                  Daftar
-                </TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="signin" className="animate-fade-in">
-                <SignInForm 
-                  email={email}
-                  password={password}
-                  loading={loading}
-                  onEmailChange={setEmail}
-                  onPasswordChange={setPassword}
-                  onSubmit={handleSignIn}
-                />
-              </TabsContent>
-
-              <TabsContent value="signup" className="animate-fade-in">
-                <SignUpForm 
-                  email={email}
-                  password={password}
-                  fullName={fullName}
-                  loading={loading}
-                  onEmailChange={setEmail}
-                  onPasswordChange={setPassword}
-                  onFullNameChange={setFullName}
-                  onSubmit={handleSignUp}
-                />
-              </TabsContent>
-            </Tabs>
-
-            <div className={`mt-6 p-4 bg-gradient-to-r from-muted/50 to-muted/30 rounded-lg transition-all duration-500 ${mounted ? 'animate-slide-in-up' : 'opacity-0 translate-y-5'}`} style={{ animationDelay: '1000ms' }}>
-              <p className="text-sm font-medium mb-2 flex items-center gap-2">
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                Info Pendaftaran:
-              </p>
-              <div className="text-xs space-y-1 text-muted-foreground">
-                <p className="animate-fade-in stagger-1">• Akun baru akan dibuat dengan role 'user'</p>
-                <p className="animate-fade-in stagger-2">• Status awal akun adalah 'tidak aktif'</p>
-                <p className="animate-fade-in stagger-3">• Admin akan mengaktifkan akun Anda</p>
-                <p className="animate-fade-in stagger-4">• Klik link konfirmasi di email untuk memverifikasi akun</p>
+            {registerSuccess ? (
+              <div className="text-center py-6 space-y-4">
+                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto">
+                  <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-semibold text-gray-800">Registrasi Berhasil!</h3>
+                <p className="text-sm text-gray-600">
+                  Akun Anda telah dibuat. Silakan tunggu admin mengaktifkan akun Anda sebelum dapat login.
+                </p>
+                <button onClick={() => setRegisterSuccess(false)} className="text-blue-600 text-sm underline">
+                  Kembali ke halaman login
+                </button>
               </div>
-            </div>
+            ) : (
+              <>
+                <Tabs defaultValue="signin" className="space-y-4">
+                  <TabsList className="grid w-full grid-cols-2 bg-muted/50">
+                    <TabsTrigger value="signin" className="transition-all duration-200 hover:bg-background/80">Masuk</TabsTrigger>
+                    <TabsTrigger value="signup" className="transition-all duration-200 hover:bg-background/80">Daftar</TabsTrigger>
+                  </TabsList>
+
+                  <TabsContent value="signin" className="animate-fade-in">
+                    <SignInForm
+                      email={email}
+                      password={password}
+                      loading={loading}
+                      onEmailChange={setEmail}
+                      onPasswordChange={setPassword}
+                      onSubmit={handleSignIn}
+                    />
+                  </TabsContent>
+
+                  <TabsContent value="signup" className="animate-fade-in">
+                    <SignUpForm
+                      email={email}
+                      password={password}
+                      fullName={fullName}
+                      loading={loading}
+                      onEmailChange={setEmail}
+                      onPasswordChange={setPassword}
+                      onFullNameChange={setFullName}
+                      onSubmit={handleSignUp}
+                    />
+                  </TabsContent>
+                </Tabs>
+
+                <div className={`mt-6 p-4 bg-gradient-to-r from-muted/50 to-muted/30 rounded-lg`} style={{ animationDelay: '1000ms' }}>
+                  <p className="text-sm font-medium mb-2 flex items-center gap-2">
+                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                    Info Pendaftaran:
+                  </p>
+                  <div className="text-xs space-y-1 text-muted-foreground">
+                    <p>• Akun baru akan dibuat dengan role 'user'</p>
+                    <p>• Status awal akun adalah 'tidak aktif'</p>
+                    <p>• Admin akan mengaktifkan akun Anda</p>
+                  </div>
+                </div>
+              </>
+            )}
           </CardContent>
         </Card>
 
-        <div className={`text-center mt-8 text-sm text-muted-foreground transition-all duration-500 ${mounted ? 'animate-fade-in' : 'opacity-0'}`} style={{ animationDelay: '1200ms' }}>
-          <p className="animate-slide-in-up stagger-1">© 2024 Pertamina. All rights reserved.</p>
-          <p className="animate-slide-in-up stagger-2">Sistem Monitoring Kontrak ME 2</p>
+        <div className={`text-center mt-8 text-sm text-muted-foreground`} style={{ animationDelay: '1200ms' }}>
+          <p>© 2024 Pertamina. All rights reserved.</p>
+          <p>Sistem Monitoring Kontrak ME 2</p>
         </div>
       </div>
     </div>

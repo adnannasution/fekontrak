@@ -1,4 +1,3 @@
-
 import { TableCell, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -16,31 +15,33 @@ interface UserTableRowProps {
   onDelete: (user: UserProfile) => void;
 }
 
-export const UserTableRow = ({ 
-  user, 
-  index, 
-  isAdmin, 
-  currentUserId, 
-  onToggleStatus, 
-  onEdit, 
-  onDelete 
+export const UserTableRow = ({
+  user,
+  index,
+  isAdmin,
+  currentUserId,
+  onToggleStatus,
+  onEdit,
+  onDelete
 }: UserTableRowProps) => {
   const getRoleBadge = (role: string) => {
-    const colors = {
-      'admin': 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
-      'pic': 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
-      'viewer': 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200'
-    } as const;
+    const colors: Record<string, string> = {
+      'admin':  'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
+      'pic':    'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
+      'viewer': 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200',
+      'vendor': 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200',
+    };
 
-    const labels = {
-      'admin': 'Admin',
-      'pic': 'PIC',
-      'viewer': 'Viewer'
+    const labels: Record<string, string> = {
+      'admin':  'Admin',
+      'pic':    'PIC',
+      'viewer': 'Viewer',
+      'vendor': 'Vendor',
     };
 
     return (
-      <Badge className={colors[role as keyof typeof colors]}>
-        {labels[role as keyof typeof labels]}
+      <Badge className={colors[role] || 'bg-gray-100 text-gray-800'}>
+        {labels[role] || role}
       </Badge>
     );
   };
@@ -49,18 +50,15 @@ export const UserTableRow = ({
     if (isActive) {
       return (
         <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
-          <UserCheck className="w-3 h-3 mr-1" />
-          Aktif
-        </Badge>
-      );
-    } else {
-      return (
-        <Badge className="bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200">
-          <UserX className="w-3 h-3 mr-1" />
-          Tidak Aktif
+          <UserCheck className="w-3 h-3 mr-1" /> Aktif
         </Badge>
       );
     }
+    return (
+      <Badge className="bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200">
+        <UserX className="w-3 h-3 mr-1" /> Tidak Aktif
+      </Badge>
+    );
   };
 
   return (
@@ -69,7 +67,7 @@ export const UserTableRow = ({
       <TableCell>{user.email}</TableCell>
       <TableCell>{getRoleBadge(user.role)}</TableCell>
       <TableCell>{getStatusBadge(user.is_active)}</TableCell>
-      <TableCell>{user.company_name || '-'}</TableCell>
+      <TableCell>{user.id_vendor || '-'}</TableCell>
       {isAdmin && (
         <TableCell>
           <Switch

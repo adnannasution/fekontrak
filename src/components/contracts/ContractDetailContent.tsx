@@ -13,7 +13,6 @@ import { SCurveManager } from "./SCurveManager";
 import { DokumenUploadForm } from "./DokumenUploadForm";
 import { usePermissions } from '@/hooks/usePermissions';
 
-
 interface ContractDetailContentProps {
   contract: Kontrak;
   getVendorName: () => string;
@@ -31,26 +30,17 @@ export const ContractDetailContent = ({
   billingPercentage,
   onAddTagihan,
 }: ContractDetailContentProps) => {
-  const { canCreate, canUploadDokumen } = usePermissions();
+  const { canCreate, isVendor } = usePermissions();
 
-  // Fetch tagihan data for this contract
   const { data: tagihans = [], isLoading: isLoadingTagihans } = useQuery({
     queryKey: ['contractTagihans', contract.id_kontrak],
     enabled: !!contract?.id_kontrak,
     queryFn: async () => {
       const res = await fetch(`https://bekontrak-production.up.railway.app/api/tagihan/kontrak/${contract?.id_kontrak}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`
-        }
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
       });
-
-      if (!res.ok) {
-        console.error('❌ Error fetching tagihans');
-        return [];
-      }
-
-      const data = await res.json();
-      return data || [];
+      if (!res.ok) return [];
+      return await res.json() || [];
     },
   });
 
@@ -65,37 +55,43 @@ export const ContractDetailContent = ({
       'Verification': 'bg-pink-100 text-pink-800 border-pink-200',
       'Payment/Selesai': 'bg-green-100 text-green-800 border-green-200'
     };
-    const colorClass = statusColors[status as keyof typeof statusColors] || 'bg-gray-100 text-gray-800 border-gray-200';
-    return <Badge className={colorClass}>{status}</Badge>;
+    return <Badge className={statusColors[status as keyof typeof statusColors] || 'bg-gray-100 text-gray-800 border-gray-200'}>{status}</Badge>;
   };
 
   const getProgressPercentage = (status: string) => {
-    const progressMap = {
-      'Punchlist': 12.5,
-      'BAST/BAPP': 25,
-      'Pengajuan': 37.5,
-      'BAST I Vendor': 50,
-      'SA': 62.5,
-      'PA': 75,
-      'Verification': 87.5,
-      'Payment/Selesai': 100
+    const progressMap: Record<string, number> = {
+      'Punchlist': 12.5, 'BAST/BAPP': 25, 'Pengajuan': 37.5,
+      'BAST I Vendor': 50, 'SA': 62.5, 'PA': 75,
+      'Verification': 87.5, 'Payment/Selesai': 100
     };
-    return progressMap[status as keyof typeof progressMap] || 0;
+    return progressMap[status] || 0;
   };
+
+  // Jumlah tab: vendor 4 tab, lainnya 6 tab
+  const tabCols = isVendor ? 'grid-cols-4' : 'grid-cols-6';
 
   return (
     <CardContent className="p-0">
       <Tabs defaultValue="details" className="w-full">
-        <TabsList className="grid w-full grid-cols-6 bg-gray-100">
+        <TabsList className={`grid w-full ${tabCols} bg-gray-100`}>
           <TabsTrigger value="details" className="text-gray-700 data-[state=active]:bg-white data-[state=active]:text-blue-600 transition-all duration-200">
             Detail Kontrak
           </TabsTrigger>
-          <TabsTrigger value="amandemen" className="text-gray-700 data-[state=active]:bg-white data-[state=active]:text-blue-600 transition-all duration-200">
-            <FileEdit className="h-4 w-4 mr-1" />Amandemen
-          </TabsTrigger>
-          <TabsTrigger value="scurve" className="text-gray-700 data-[state=active]:bg-white data-[state=active]:text-blue-600 transition-all duration-200">
-            S-Curve
-          </TabsTrigger>
+
+          {/* Amandemen: sembunyikan untuk vendor */}
+          {!isVendor && (
+            <TabsTrigger value="amandemen" className="text-gray-700 data-[state=active]:bg-white data-[state=active]:text-blue-600 transition-all duration-200">
+              <FileEdit className="h-4 w-4 mr-1" />Amandemen
+            </TabsTrigger>
+          )}
+
+          {/* S-Curve: sembunyikan untuk vendor */}
+          {!isVendor && (
+            <TabsTrigger value="scurve" className="text-gray-700 data-[state=active]:bg-white data-[state=active]:text-blue-600 transition-all duration-200">
+              S-Curve
+            </TabsTrigger>
+          )}
+
           <TabsTrigger value="documents" className="text-gray-700 data-[state=active]:bg-white data-[state=active]:text-blue-600 transition-all duration-200">
             Dokumen
           </TabsTrigger>
@@ -107,23 +103,6 @@ export const ContractDetailContent = ({
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="approval-dokumen">
-          <div className="p-8">
-            <DokumenUploadForm
-              idKontrak={(contract as any).idKontrak || contract.id_kontrak}
-            />
-          </div>
-        </TabsContent>
-
-        <TabsContent value="scurve">
-          <div className="p-8">
-            <SCurveManager
-              idKontrak={(contract as any).idKontrak || contract.id_kontrak}
-              judulKontrak={(contract as any).judulKontrak || contract.judul_kontrak}
-            />
-          </div>
-        </TabsContent>
-
         <TabsContent value="details" className="animate-fade-in">
           <ContractDetailInfo
             contract={contract}
@@ -134,22 +113,43 @@ export const ContractDetailContent = ({
           />
         </TabsContent>
 
-        <TabsContent value="amandemen" className="animate-fade-in">
-          <div className="p-8">
-            <ContractAmendments
-              idKontrak={(contract as any).idKontrak || contract.id_kontrak}
-              tanggalMulai={(contract as any).tanggalMulai || contract.tanggal_mulai}
-              tanggalSelesai={(contract as any).tanggalSelesai || contract.tanggal_selesai}
-              nilaiAwal={((contract as any).nilaiAwal || contract.nilai_awal)?.toString()}
-            />
-          </div>
-        </TabsContent>
+        {!isVendor && (
+          <TabsContent value="amandemen" className="animate-fade-in">
+            <div className="p-8">
+              <ContractAmendments
+                idKontrak={(contract as any).idKontrak || contract.id_kontrak}
+                tanggalMulai={(contract as any).tanggalMulai || contract.tanggal_mulai}
+                tanggalSelesai={(contract as any).tanggalSelesai || contract.tanggal_selesai}
+                nilaiAwal={((contract as any).nilaiAwal || contract.nilai_awal)?.toString()}
+              />
+            </div>
+          </TabsContent>
+        )}
+
+        {!isVendor && (
+          <TabsContent value="scurve">
+            <div className="p-8">
+              <SCurveManager
+                idKontrak={(contract as any).idKontrak || contract.id_kontrak}
+                judulKontrak={(contract as any).judulKontrak || contract.judul_kontrak}
+              />
+            </div>
+          </TabsContent>
+        )}
 
         <TabsContent value="documents" className="animate-fade-in">
           <ContractDocumentsCard
             contractDocuments={contract.contract_documents || []}
             amendmentDocuments={contract.amendment_documents || []}
           />
+        </TabsContent>
+
+        <TabsContent value="approval-dokumen">
+          <div className="p-8">
+            <DokumenUploadForm
+              idKontrak={(contract as any).idKontrak || contract.id_kontrak}
+            />
+          </div>
         </TabsContent>
 
         <TabsContent value="billing" className="animate-fade-in">
@@ -162,15 +162,9 @@ export const ContractDetailContent = ({
                 Daftar Tagihan Termin
               </h3>
               <div className="flex items-center gap-4">
-                <div className="text-sm text-gray-500">
-                  Total: {tagihans.length} tagihan
-                </div>
-                {/* Tambah Tagihan: hanya Admin dan PIC */}
+                <div className="text-sm text-gray-500">Total: {tagihans.length} tagihan</div>
                 {onAddTagihan && canCreate && (
-                  <Button
-                    onClick={onAddTagihan}
-                    className="bg-primary text-primary-foreground hover:bg-primary/90 transition-colors flex items-center gap-2"
-                  >
+                  <Button onClick={onAddTagihan} className="bg-primary text-primary-foreground hover:bg-primary/90 transition-colors flex items-center gap-2">
                     <Plus className="h-4 w-4" />
                     Tambah Tagihan
                   </Button>
@@ -180,10 +174,7 @@ export const ContractDetailContent = ({
 
             {isLoadingTagihans ? (
               <div className="flex items-center justify-center py-12">
-                <div className="text-center">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
-                  <p className="text-gray-600">Memuat data tagihan...</p>
-                </div>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
               </div>
             ) : tagihans.length > 0 ? (
               <div className="space-y-4">
@@ -201,24 +192,18 @@ export const ContractDetailContent = ({
                       </div>
                       {getStatusBadge(tagihan.status_tagihan)}
                     </div>
-
                     <div className="grid md:grid-cols-3 gap-6">
                       <div className="space-y-3">
                         <div className="flex items-center gap-2 text-green-600">
                           <DollarSign className="h-4 w-4" />
                           <span className="text-sm font-medium">Nilai Tagihan</span>
                         </div>
-                        <p className="text-xl font-bold text-green-600">
-                          {formatCurrency(tagihan.nilai_tagihan)}
-                        </p>
+                        <p className="text-xl font-bold text-green-600">{formatCurrency(tagihan.nilai_tagihan)}</p>
                         <div className="flex items-center gap-2 text-gray-500">
                           <Calendar className="h-4 w-4" />
-                          <span className="text-sm">
-                            {tagihan.tanggal_tagihan ? new Date(tagihan.tanggal_tagihan).toLocaleDateString('id-ID') : '-'}
-                          </span>
+                          <span className="text-sm">{tagihan.tanggal_tagihan ? new Date(tagihan.tanggal_tagihan).toLocaleDateString('id-ID') : '-'}</span>
                         </div>
                       </div>
-
                       <div className="space-y-3">
                         <div className="flex items-center gap-2 text-blue-600">
                           <CheckCircle className="h-4 w-4" />
@@ -232,7 +217,6 @@ export const ContractDetailContent = ({
                           <Progress value={getProgressPercentage(tagihan.status_tagihan)} className="h-2" />
                         </div>
                       </div>
-
                       <div className="space-y-3">
                         <div className="flex items-center gap-2 text-gray-600">
                           <FileText className="h-4 w-4" />
@@ -243,7 +227,6 @@ export const ContractDetailContent = ({
                         </p>
                       </div>
                     </div>
-
                     {tagihan.memo_required && (
                       <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
                         <div className="flex items-center gap-2 text-yellow-700 mb-2">
@@ -253,8 +236,7 @@ export const ContractDetailContent = ({
                         <p className="text-sm text-yellow-600">
                           {tagihan.tanggal_pengiriman_memo
                             ? `Memo dikirim: ${new Date(tagihan.tanggal_pengiriman_memo).toLocaleDateString('id-ID')}`
-                            : 'Menunggu pengiriman memo'
-                          }
+                            : 'Menunggu pengiriman memo'}
                         </p>
                       </div>
                     )}
@@ -267,12 +249,8 @@ export const ContractDetailContent = ({
                   <FileText className="h-10 w-10 text-gray-400" />
                 </div>
                 <h3 className="text-xl font-semibold text-gray-800 mb-2">Belum Ada Tagihan</h3>
-                <p className="text-gray-500 mb-6 max-w-md mx-auto">
-                  Belum ada tagihan termin yang dibuat untuk kontrak ini.
-                </p>
-                <div className="text-sm text-gray-400">
-                  Kontrak: {contract.judul_kontrak}
-                </div>
+                <p className="text-gray-500 mb-6 max-w-md mx-auto">Belum ada tagihan termin yang dibuat untuk kontrak ini.</p>
+                <div className="text-sm text-gray-400">Kontrak: {contract.judul_kontrak}</div>
               </div>
             )}
           </div>

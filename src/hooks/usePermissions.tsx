@@ -11,14 +11,11 @@ export const usePermissions = () => {
   const { userProfile } = useAuth();
   const role = userProfile?.role ?? 'viewer';
 
-  console.log('🔐 userProfile:', userProfile);
-  console.log('🔐 role:', role);
-
   const isAdmin  = role === 'admin';
   const isPic    = role === 'pic';
   const isViewer = role === 'viewer' || role === 'user';
   const isVendor = role === 'vendor';
- 
+
   return {
     role,
     isAdmin,
