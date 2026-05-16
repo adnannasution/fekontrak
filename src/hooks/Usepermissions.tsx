@@ -18,7 +18,7 @@ export const usePermissions = () => {
   const isPic    = role === 'pic';
   const isViewer = role === 'viewer' || role === 'user';
   const isVendor = role === 'vendor';
-
+ 
   return {
     role,
     isAdmin,
