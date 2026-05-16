@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-const API_URL = "http://localhost:5152/api";
+const API_URL = "https://bekontrak-production.up.railway.app/api";
 
 export const useUserProfile = (user: any) => {
   const [userProfile, setUserProfile] = useState<any>(null);

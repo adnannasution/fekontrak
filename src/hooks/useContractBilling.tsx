@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
-const API_URL = "http://localhost:5152/api";
+const API_URL = "https://bekontrak-production.up.railway.app/api";
 
 export interface BillingTerm {
   termin: string;

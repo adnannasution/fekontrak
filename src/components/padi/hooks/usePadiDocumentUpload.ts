@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { PadiDocument } from '@/lib/utils/typeUtils';
 
-const API_URL = "http://localhost:5152/api";
-const FILE_BASE = "http://localhost:5152";
+const API_URL = "https://bekontrak-production.up.railway.app/api";
+const FILE_BASE = "https://bekontrak-production.up.railway.app";
 
 interface UsePadiDocumentUploadProps {
   formData: {

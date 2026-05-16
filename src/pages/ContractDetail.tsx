@@ -94,7 +94,7 @@ const ContractDetail = () => {
     queryKey: ['contract', id],
     queryFn: async () => {
       if (!id) return null;
-      const res = await fetch(`http://localhost:5152/api/Contracts/${id}`, {
+      const res = await fetch(`https://bekontrak-production.up.railway.app/api/Contracts/${id}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
       });
       if (!res.ok) throw new Error("Gagal ambil detail kontrak");
@@ -109,7 +109,7 @@ const ContractDetail = () => {
     queryKey: ['totalTagihan', id],
     queryFn: async () => {
       if (!id) return 0;
-      const res = await fetch(`http://localhost:5152/api/tagihan/kontrak/${id}`, {
+      const res = await fetch(`https://bekontrak-production.up.railway.app/api/tagihan/kontrak/${id}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
       });
       if (!res.ok) return 0;

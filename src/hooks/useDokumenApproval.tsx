@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/hooks/use-toast';
 
-const API_URL = "http://localhost:5152/api";
+const API_URL = "https://bekontrak-production.up.railway.app/api";
 
 export interface DokumenApproval {
   id_dokumen: string;
@@ -22,7 +22,7 @@ export interface DokumenApproval {
   judul_kontrak?: string;
 }
 
-const API_BASE = "http://localhost:5152";
+const API_BASE = "https://bekontrak-production.up.railway.app";
 
 export const useDokumenApproval = (idKontrak?: string, status?: string) => {
   const { toast } = useToast();

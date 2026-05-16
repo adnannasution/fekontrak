@@ -44,7 +44,7 @@ const Amandemen = () => {
 
 
 
-  const API_URL = "http://localhost:5152/api";
+  const API_URL = "https://bekontrak-production.up.railway.app/api";
 
 const { data: allAmendments = [], isLoading: isLoadingAmendments } = useQuery({
   queryKey: ['all_amandemen_kontrak'],

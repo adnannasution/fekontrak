@@ -7,5 +7,5 @@ export const fetchWithAuth = async (endpoint: string, options: RequestInit = {})
     ...options.headers,
   };
 
-  return fetch(`http://localhost:5152/api${endpoint}`, { ...options, headers });
+  return fetch(`https://bekontrak-production.up.railway.app/api${endpoint}`, { ...options, headers });
 };

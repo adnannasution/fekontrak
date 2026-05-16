@@ -3,7 +3,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 import { UserProfile, UserFormData } from '../types';
 
-const API_URL = "http://localhost:5152/api";
+const API_URL = "https://bekontrak-production.up.railway.app/api";
 
 const getToken = () => localStorage.getItem("token");
 

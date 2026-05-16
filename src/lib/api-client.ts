@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:5152/api'; // Sesuaikan dengan route ASP.NET Anda
+const BASE_URL = 'https://bekontrak-production.up.railway.app/api'; // Sesuaikan dengan route ASP.NET Anda
 
 export const apiFetch = async (endpoint: string, options: RequestInit = {}) => {
   const response = await fetch(`${BASE_URL}${endpoint}`, {

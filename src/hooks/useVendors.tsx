@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 
-const API_URL = "http://localhost:5152/api";
+const API_URL = "https://bekontrak-production.up.railway.app/api";
 
 export const useVendors = () => {
   const { toast } = useToast();

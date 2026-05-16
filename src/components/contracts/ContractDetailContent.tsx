@@ -38,7 +38,7 @@ export const ContractDetailContent = ({
     queryKey: ['contractTagihans', contract.id_kontrak],
     enabled: !!contract?.id_kontrak,
     queryFn: async () => {
-      const res = await fetch(`http://localhost:5152/api/tagihan/kontrak/${contract?.id_kontrak}`, {
+      const res = await fetch(`https://bekontrak-production.up.railway.app/api/tagihan/kontrak/${contract?.id_kontrak}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`
         }

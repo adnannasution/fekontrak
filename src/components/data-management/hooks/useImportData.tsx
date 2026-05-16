@@ -5,7 +5,7 @@ import { useVendors } from "@/hooks/useVendors";
 import { sanitizeInput } from "@/utils/security";
 import * as XLSX from 'xlsx';
 
-const API_URL = "http://localhost:5152/api";
+const API_URL = "https://bekontrak-production.up.railway.app/api";
 
 interface ImportError {
   row: number;
