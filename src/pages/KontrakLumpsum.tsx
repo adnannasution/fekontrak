@@ -7,7 +7,7 @@ import { KontrakLumpsumLoadingState } from '@/components/contracts/pages/Kontrak
 import { KontrakLumpsumErrorState } from '@/components/contracts/pages/KontrakLumpsumErrorState';
 import { getStatusBadge, formatCurrency } from '@/components/contracts/utils/contractDisplayUtils';
 import { useNavigate } from 'react-router-dom';
-import { usePermissions } from '@/hooks/Usepermissions';
+import { usePermissions } from '@/hooks/usepermissions';
 
 export default function KontrakLumpsum() {
   const navigate = useNavigate();

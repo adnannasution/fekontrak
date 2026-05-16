@@ -33,7 +33,7 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { RealTimeNotifications } from '@/components/ui/real-time-notifications';
-import { usePermissions } from '@/hooks/Usepermissions';
+import { usePermissions } from '@/hooks/usepermissions';
 
 interface LayoutProps {
   children: React.ReactNode;

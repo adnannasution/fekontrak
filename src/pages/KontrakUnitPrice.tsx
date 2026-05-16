@@ -7,7 +7,7 @@ import { ContractDeleteDialog } from "@/components/contracts/ContractDeleteDialo
 import { ContractsPagination } from "@/components/dashboard/components/ContractsPagination";
 import { useNavigate } from 'react-router-dom';
 import { getStatusBadge, formatCurrency } from '@/components/contracts/utils/contractDisplayUtils';
-import { usePermissions } from '@/hooks/Usepermissions';
+import { usePermissions } from '@/hooks/usepermissions';
 
 const KontrakUnitPrice = () => {
   const navigate = useNavigate();
