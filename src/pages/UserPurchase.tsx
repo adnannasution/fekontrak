@@ -14,7 +14,7 @@ import { usePadi } from "@/hooks/usePadi";
 import { usePagination } from "@/hooks/usePagination";
 import { Padi, PadiFormData } from "@/types/padi";
 import { useToast } from "@/hooks/use-toast";
-import { usePermissions } from "@/hooks/usepermissions";
+import { usePermissions } from "@/hooks/usePermissions";
 
 const UserPurchase = () => {
   const { toast } = useToast();
