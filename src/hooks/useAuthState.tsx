@@ -9,13 +9,19 @@ export const useAuthState = () => {
     const token = localStorage.getItem("token");
 
     if (token) {
-      // OPTIONAL: decode JWT atau hit API /me
-      console.log("Token ditemukan");
-
+      try {
+        // Decode JWT payload untuk ambil data user
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        setUser({
+          id: payload.nameid,
+          email: payload.email,
+          role: payload.role
+        });
+      } catch {
+        // Kalau decode gagal, hapus token invalid
+        localStorage.removeItem("token");
+      }
       setSession({ token });
-
-      // sementara dummy dulu (biar gak null)
-      setUser({ email: "logged@user.com" });
     }
 
     setLoading(false);
