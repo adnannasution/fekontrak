@@ -10,7 +10,7 @@ import { InvoiceTable } from '@/components/invoices/InvoiceTable';
 import { ContractsPagination } from '@/components/dashboard/components/ContractsPagination';
 import { useInvoiceManagement } from '@/hooks/useInvoiceManagement';
 import { usePagination } from '@/hooks/usePagination';
-import { usePermissions } from '@/hooks/usepermissions';
+import { usePermissions } from '@/hooks/usePermissions';
 import {
   AlertDialog,
   AlertDialogAction,

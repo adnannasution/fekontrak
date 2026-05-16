@@ -8,7 +8,7 @@ import { useVendors } from '@/hooks/useVendors';
 import { useToast } from '@/hooks/use-toast';
 import { useContracts } from '@/hooks/useContracts';
 import { useCreateTagihan } from '@/hooks/useTagihans';
-import { usePermissions } from '@/hooks/usepermissions';
+import { usePermissions } from '@/hooks/usePermissions';
 import { ContractDetailHeader } from "@/components/contracts/ContractDetailHeader";
 import { ContractDetailContent } from "@/components/contracts/ContractDetailContent";
 import { ContractDetailDialogs } from "@/components/contracts/ContractDetailDialogs";

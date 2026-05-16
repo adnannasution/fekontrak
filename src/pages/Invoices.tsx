@@ -11,7 +11,7 @@ import { InvoiceFormDialog } from '@/components/invoices/InvoiceFormDialog';
 import { InvoiceCard } from '@/components/invoices/InvoiceCard';
 import { Tagihan } from '@/types/database';
 import { useNavigate } from 'react-router-dom';
-import { usePermissions } from '@/hooks/usepermissions';
+import { usePermissions } from '@/hooks/usePermissions';
 import {
   AlertDialog,
   AlertDialogAction,

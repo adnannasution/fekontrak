@@ -11,7 +11,7 @@ import { Kontrak } from "@/types/database";
 import { useQuery } from '@tanstack/react-query';
 import { SCurveManager } from "./SCurveManager";
 import { DokumenUploadForm } from "./DokumenUploadForm";
-import { usePermissions } from '@/hooks/usepermissions';
+import { usePermissions } from '@/hooks/usePermissions';
 
 
 interface ContractDetailContentProps {
