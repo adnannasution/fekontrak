@@ -8,7 +8,6 @@ export const useAuthActions = (setUser: any, setSession: any, setUserProfile: an
   // ==================== SIGN IN ====================
   const signIn = async (email: string, password: string) => {
     try {
-      console.log('[DEBUG] Login ke API:', email);
       setUserProfile(null);
 
       const res = await fetch(`${API_URL}/auth/login`, {
@@ -18,7 +17,6 @@ export const useAuthActions = (setUser: any, setSession: any, setUserProfile: an
       });
 
       const result = await res.json();
-      console.log('[DEBUG] API RESPONSE:', result);
 
       if (!res.ok) {
         toast({
@@ -30,11 +28,14 @@ export const useAuthActions = (setUser: any, setSession: any, setUserProfile: an
       }
 
       localStorage.setItem("token", result.token);
-      setUser(result.user);
+
+      // Set user dengan data dari response backend
+      const userData = { id: result.id, email: result.email, role: result.role };
+      setUser(userData);
       setSession({ token: result.token });
 
       toast({ title: "Berhasil", description: "Login berhasil!" });
-      return { data: { user: result.user }, error: null };
+      return { data: { user: userData }, error: null };
 
     } catch (error: any) {
       console.error('[DEBUG] Login error:', error);
@@ -45,8 +46,6 @@ export const useAuthActions = (setUser: any, setSession: any, setUserProfile: an
   // ==================== SIGN UP ====================
   const signUp = async (email: string, password: string, fullName?: string) => {
     try {
-      console.log('[DEBUG] Register ke API:', email);
-
       const res = await fetch(`${API_URL}/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -59,7 +58,6 @@ export const useAuthActions = (setUser: any, setSession: any, setUserProfile: an
       });
 
       const result = await res.json();
-      console.log('[DEBUG] Register RESPONSE:', result);
 
       if (!res.ok) {
         toast({
@@ -75,11 +73,9 @@ export const useAuthActions = (setUser: any, setSession: any, setUserProfile: an
         description: "Akun berhasil dibuat. Tunggu admin mengaktifkan akun Anda.",
       });
 
-      // Tidak langsung login — akun perlu diaktifkan admin dulu
       return { data: result, error: null, needsConfirmation: false };
 
     } catch (error: any) {
-      console.error('[DEBUG] Register error:', error);
       toast({
         title: "Error",
         description: "Terjadi kesalahan saat registrasi",
@@ -92,7 +88,6 @@ export const useAuthActions = (setUser: any, setSession: any, setUserProfile: an
   // ==================== SIGN OUT ====================
   const signOut = async () => {
     try {
-      console.log('[DEBUG] Logout');
       localStorage.removeItem("token");
       setUser(null);
       setSession(null);
