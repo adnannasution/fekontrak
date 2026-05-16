@@ -35,16 +35,18 @@ const Auth = () => {
     }
   }, [authLoading, user, navigate]);
 
-  const handleSignIn = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    const { error, data } = await signIn(email, password);
-    if (!error) {
-      const role = data?.user?.role;
-      navigate(getRedirectPath(role));
-    }
-    setLoading(false);
-  };
+const handleSignIn = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setLoading(true);
+  const { error } = await signIn(email, password);
+  if (!error) {
+    // role ada di localStorage token, baca dari sana
+    const token = localStorage.getItem('token');
+    const payload = token ? JSON.parse(atob(token.split('.')[1])) : {};
+    navigate(getRedirectPath(payload?.role));
+  }
+  setLoading(false);
+};
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();

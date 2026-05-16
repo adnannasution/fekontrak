@@ -33,7 +33,7 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { RealTimeNotifications } from '@/components/ui/real-time-notifications';
-import { usePermissions } from '@/hooks/usePermissions';
+import { usePermissions } from '@/hooks/Usepermissions';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -78,12 +78,12 @@ const Layout = ({ children }: LayoutProps) => {
     {
       title: 'Contract Management',
       show: true, // semua role bisa lihat kontrak
-      items: [
-        { name: 'Kontrak Lumpsum', href: '/kontrak-lumpsum', icon: FileText },
-        { name: 'Kontrak Unit Price', href: '/kontrak-unit-price', icon: ClipboardList },
-        { name: 'Kontrak TSA/LTSA', href: '/kontrak-tsa-ltsa', icon: TrendingUp },
-        { name: 'Amandemen', href: '/amandemen', icon: GitBranch },
-      ]
+items: [
+  { name: 'Kontrak Lumpsum', href: '/kontrak-lumpsum', icon: FileText },
+  { name: 'Kontrak Unit Price', href: '/kontrak-unit-price', icon: ClipboardList },
+  { name: 'Kontrak TSA/LTSA', href: '/kontrak-tsa-ltsa', icon: TrendingUp },
+  ...(!isVendor ? [{ name: 'Amandemen', href: '/amandemen', icon: GitBranch }] : []),
+]
     },
     {
       title: 'Operations',
