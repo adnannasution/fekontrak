@@ -36,6 +36,7 @@ const canCRUD = true;
       // 🔥 mapping dari backend ke format FE lama
       return data.map((v: any) => ({
         id: v.idVendor,
+        id_vendor: v.idVendor,
         nama_vendor: v.namaVendor,
         npwp: v.npwp,
         alamat: v.alamat,
