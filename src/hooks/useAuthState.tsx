@@ -28,4 +28,4 @@ export const useAuthState = () => {
   }, []);
 
   return { user, session, loading, setUser, setSession };
-};
+}; 
