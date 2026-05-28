@@ -41,6 +41,7 @@ import UserPurchaseDetail from "@/pages/UserPurchaseDetail";
 
 // Import data management page
 import DataManagement from "@/pages/DataManagement";
+import LaporanHarian from "@/pages/LaporanHarian";
 
 const queryClient = new QueryClient();
 
@@ -82,6 +83,7 @@ const App = () => (
                         <Route path="/user-purchase" element={<UserPurchase />} />
                         <Route path="/user-purchase/:id" element={<UserPurchaseDetail />} />
                         <Route path="/data-management" element={<DataManagement />} />
+                        <Route path="/laporan-harian" element={<LaporanHarian />} />
                         <Route path="*" element={<NotFound />} />
                       </Routes>
                     </Layout>

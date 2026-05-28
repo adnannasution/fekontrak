@@ -94,6 +94,7 @@ items: [
         { name: 'Tagihan', href: '/invoices', icon: DollarSign },
         { name: 'User Purchase (PADI)', href: '/user-purchase', icon: ShoppingCart },
         { name: 'Approval Dokumen', href: '/approval', icon: ClipboardList },
+        { name: 'Laporan Harian', href: '/laporan-harian', icon: ClipboardList },
       ]
     },
     {
