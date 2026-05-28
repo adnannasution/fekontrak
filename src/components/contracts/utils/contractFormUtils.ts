@@ -95,7 +95,7 @@ export const normalizeTipeKontrak = (tipeKontrak: string): string => {
 
 export const createFormDataFromContract = (contract: Kontrak): ContractFormData => {
   const normalizedTipeKontrak = normalizeTipeKontrak(contract.tipe_kontrak || '');
-
+ 
   return {
     judul_kontrak: contract.judul_kontrak || '',
     no_dokumen_kontrak: contract.no_dokumen_kontrak || '',
