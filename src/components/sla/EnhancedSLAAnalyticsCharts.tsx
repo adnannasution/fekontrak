@@ -117,7 +117,7 @@ export const EnhancedSLAAnalyticsCharts: React.FC<Props> = ({ slaAnalysis }) => 
 
           <Card><CardContent className="p-4">
             <p>Compliance</p>
-            <p className="text-xl font-bold">{stats.complianceRate || 0}%</p>
+            <p className="text-xl font-bold">{Number(stats.complianceRate || 0).toFixed(2)}%</p>
           </CardContent></Card>
 
           <Card><CardContent className="p-4">
