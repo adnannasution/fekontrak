@@ -43,7 +43,7 @@ const Layout = ({ children }: LayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
     const saved = localStorage.getItem('sidebar-collapsed');
-    return saved ? JSON.parse(saved) : false;
+    return saved ? JSON.parse(saved) : true; // default to collapsed on desktop
   });
 
   const location = useLocation();
