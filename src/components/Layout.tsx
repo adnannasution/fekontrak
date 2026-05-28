@@ -41,10 +41,12 @@ interface LayoutProps {
 
 const Layout = ({ children }: LayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
-    const saved = localStorage.getItem('sidebar-collapsed');
-    return saved ? JSON.parse(saved) : true; // default to collapsed on desktop
-  });
+  // const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+  //   const saved = localStorage.getItem('sidebar-collapsed');
+  //   return saved ? JSON.parse(saved) : true; // default to collapsed on desktop
+  // });
+
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -52,9 +54,9 @@ const Layout = ({ children }: LayoutProps) => {
   const { theme, toggleTheme } = useTheme();
   const { isAdmin, isPic, isViewer, isVendor, canManageUsers, canManageVendors } = usePermissions();
 
-  useEffect(() => {
-    localStorage.setItem('sidebar-collapsed', JSON.stringify(sidebarCollapsed));
-  }, [sidebarCollapsed]);
+  // useEffect(() => {
+  //   localStorage.setItem('sidebar-collapsed', JSON.stringify(sidebarCollapsed));
+  // }, [sidebarCollapsed]);
 
   // Menu visibility rules:
   // Admin   → semua menu
