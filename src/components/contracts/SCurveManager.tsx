@@ -36,7 +36,7 @@ export const SCurveManager = ({ idKontrak }: SCurveManagerProps) => {
     }
   }, [sCurveData]);
 
-  const totalBobot = activities.reduce((sum, a) => sum + (a.bobot || 0), 0);
+  const totalBobot = parseFloat(activities.reduce((sum, a) => sum + (a.bobot || 0), 0).toFixed(2));
 
   // Build chart data (cumulative)
   const chartData = useMemo(() => {
@@ -400,9 +400,9 @@ export const SCurveManager = ({ idKontrak }: SCurveManagerProps) => {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle className="text-base">Daftar Aktivitas & Bobot</CardTitle>
-                <Badge variant={totalBobot === 100 ? "default" : "destructive"}>
-                  Total: {totalBobot}% {totalBobot === 100 ? '✓' : '(harus 100%)'}
-                </Badge>
+               <Badge variant={Math.abs(totalBobot - 100) <= 0.01 ? "default" : "destructive"}>
+              Total: {totalBobot}% {Math.abs(totalBobot - 100) <= 0.01 ? '✓' : '(harus 100%)'}
+            </Badge>
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -453,18 +453,12 @@ export const SCurveManager = ({ idKontrak }: SCurveManagerProps) => {
                       </Button>
                     </div>
                   ))}
-                  {totalBobot !== 100 && (
-                    <div className="flex items-center gap-2 text-red-500 text-xs p-2 bg-red-50 rounded">
-                      <AlertCircle className="h-4 w-4" />
-                      Total bobot harus 100%. Saat ini {totalBobot}%, sisa {100 - totalBobot}%
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <div className="text-center py-8 text-gray-400">
-                  Belum ada aktivitas. Tambahkan di atas.
-                </div>
-              )}
+                {Math.abs(totalBobot - 100) > 0.01 && (
+                  <div className="flex items-center gap-2 text-red-500 text-xs p-2 bg-red-50 rounded">
+                    <AlertCircle className="h-4 w-4" />
+                    Total bobot harus 100%. Saat ini {totalBobot}%, sisa {(100 - totalBobot).toFixed(2)}%
+                  </div>
+                )}
             </CardContent>
           </Card>
         </TabsContent>
