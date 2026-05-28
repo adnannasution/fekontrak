@@ -405,7 +405,7 @@ export const SCurveManager = ({ idKontrak }: SCurveManagerProps) => {
             </Badge>
               </div>
             </CardHeader>
-            <CardContent className="space-y-4">
+<CardContent className="space-y-4">
               <div className="grid grid-cols-3 gap-3 p-4 bg-gray-50 rounded-lg">
                 <div className="col-span-2">
                   <Label className="text-xs">Nama Aktivitas</Label>
@@ -453,12 +453,18 @@ export const SCurveManager = ({ idKontrak }: SCurveManagerProps) => {
                       </Button>
                     </div>
                   ))}
-                {Math.abs(totalBobot - 100) > 0.01 && (
-                  <div className="flex items-center gap-2 text-red-500 text-xs p-2 bg-red-50 rounded">
-                    <AlertCircle className="h-4 w-4" />
-                    Total bobot harus 100%. Saat ini {totalBobot}%, sisa {(100 - totalBobot).toFixed(2)}%
-                  </div>
-                )}
+                  {Math.abs(totalBobot - 100) > 0.01 && (
+                    <div className="flex items-center gap-2 text-red-500 text-xs p-2 bg-red-50 rounded">
+                      <AlertCircle className="h-4 w-4" />
+                      Total bobot harus 100%. Saat ini {totalBobot}%, sisa {(100 - totalBobot).toFixed(2)}%
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="text-center py-8 text-gray-400">
+                  Belum ada aktivitas. Tambahkan di atas.
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
