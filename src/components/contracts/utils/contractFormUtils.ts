@@ -1,7 +1,6 @@
 import { Kontrak } from '@/types/database';
 
 export interface ContractFormData {
-  // Basic Info
   judul_kontrak: string;
   no_dokumen_kontrak?: string;
   no_po_pr?: string;
@@ -11,29 +10,21 @@ export interface ContractFormData {
   tanggal_terima_dokumen: string;
   tanggal_maksimal_kom: string;
   tanggal_kom: string;
-
-  // Technical Details
   tanggal_mulai?: string;
   tanggal_selesai?: string;
   durasi_kontrak_hari?: number;
   direksi_pekerjaan?: string;
   disiplin?: string;
   tkdn_percentage?: number;
-
-  // Vendor Info
   id_vendor?: string;
   pic_name?: string;
   pic_contact?: string;
   vendor_score?: number;
-
-  // Progress
   progress_plan?: number;
   progress_actual?: number;
   aktivitas_saat_ini?: string;
   kendala?: string;
   tanggal_lkp?: string;
-
-  // Amendment
   has_amendment: boolean;
   no_amandemen?: string;
   tanggal_amandemen?: string;
@@ -43,10 +34,12 @@ export interface ContractFormData {
   tanggal_mulai_baru?: string;
   tanggal_selesai_baru?: string;
   alasan_perubahan?: string;
-
-  // Documents
   contract_documents?: any[];
   amendment_documents?: any[];
+  // MPL, MPA, Masa Pemeliharaan
+  tanggal_mpl?: string;
+  tanggal_mpa?: string;
+  masa_pemeliharaan_hari?: number;
 }
 
 export const initialFormData: ContractFormData = {
@@ -84,27 +77,26 @@ export const initialFormData: ContractFormData = {
   tanggal_selesai_baru: '',
   alasan_perubahan: '',
   contract_documents: [],
-  amendment_documents: []
+  amendment_documents: [],
+  tanggal_mpl: '',
+  tanggal_mpa: '',
+  masa_pemeliharaan_hari: undefined,
 };
 
-// ✅ Helper: konversi ISO datetime → YYYY-MM-DD untuk input[type=date]
 const toDateStr = (val: string | null | undefined): string => {
   if (!val) return '';
   return val.split('T')[0];
 };
 
 export const normalizeTipeKontrak = (tipeKontrak: string): string => {
-  if (tipeKontrak === 'TSA' || tipeKontrak === 'LTSA' || tipeKontrak === 'TSA/LTSA' || tipeKontrak === 'LTSA/TSA') {
-    return 'TSA';
-  }
+  if (['TSA', 'LTSA', 'TSA/LTSA', 'LTSA/TSA'].includes(tipeKontrak)) return 'TSA';
   return tipeKontrak;
 };
 
 export const createFormDataFromContract = (contract: Kontrak): ContractFormData => {
   const normalizedTipeKontrak = normalizeTipeKontrak(contract.tipe_kontrak || '');
 
-  const formData: ContractFormData = {
-    // Basic Info
+  return {
     judul_kontrak: contract.judul_kontrak || '',
     no_dokumen_kontrak: contract.no_dokumen_kontrak || '',
     no_po_pr: contract.no_po_pr || '',
@@ -114,29 +106,21 @@ export const createFormDataFromContract = (contract: Kontrak): ContractFormData 
     tanggal_terima_dokumen: toDateStr(contract.tanggal_terima_dokumen),
     tanggal_maksimal_kom: toDateStr(contract.tanggal_maksimal_kom),
     tanggal_kom: toDateStr(contract.tanggal_kom),
-
-    // Technical Details
     tanggal_mulai: toDateStr(contract.tanggal_mulai),
     tanggal_selesai: toDateStr(contract.tanggal_selesai),
     durasi_kontrak_hari: contract.durasi_kontrak_hari || 0,
     direksi_pekerjaan: contract.direksi_pekerjaan || '',
     disiplin: contract.disiplin || '',
     tkdn_percentage: contract.tkdn_percentage || 0,
-
-    // Vendor Info
     id_vendor: contract.id_vendor || '',
     pic_name: '',
     pic_contact: '',
     vendor_score: 0,
-
-    // Progress
     progress_plan: contract.progress_plan || 0,
     progress_actual: contract.progress_actual || 0,
     aktivitas_saat_ini: contract.aktivitas_saat_ini || '',
     kendala: contract.kendala || '',
     tanggal_lkp: toDateStr(contract.tanggal_lkp),
-
-    // Amendment
     has_amendment: contract.has_amendment || false,
     no_amandemen: contract.no_amandemen || '',
     tanggal_amandemen: toDateStr(contract.tanggal_amandemen),
@@ -146,13 +130,12 @@ export const createFormDataFromContract = (contract: Kontrak): ContractFormData 
     tanggal_mulai_baru: toDateStr(contract.tanggal_mulai_baru),
     tanggal_selesai_baru: toDateStr(contract.tanggal_selesai_baru),
     alasan_perubahan: contract.alasan_perubahan || '',
-
-    // Documents
     contract_documents: Array.isArray(contract.contract_documents) ? contract.contract_documents : [],
-    amendment_documents: Array.isArray(contract.amendment_documents) ? contract.amendment_documents : []
+    amendment_documents: Array.isArray(contract.amendment_documents) ? contract.amendment_documents : [],
+    tanggal_mpl: toDateStr((contract as any).tanggal_mpl),
+    tanggal_mpa: toDateStr((contract as any).tanggal_mpa),
+    masa_pemeliharaan_hari: (contract as any).masa_pemeliharaan_hari || undefined,
   };
-
-  return formData;
 };
 
 export const createContractFromFormData = (formData: ContractFormData) => {
@@ -194,6 +177,9 @@ export const createContractFromFormData = (formData: ContractFormData) => {
     tanggal_spb_diterima: formData.tanggal_terima_dokumen,
     sla_kom_hari: 14,
     estimasi_tanggal_kom: formData.tanggal_maksimal_kom || null,
-    kom_terlambat: null
+    kom_terlambat: null,
+    tanggal_mpl: formData.tanggal_mpl || null,
+    tanggal_mpa: formData.tanggal_mpa || null,
+    masa_pemeliharaan_hari: formData.masa_pemeliharaan_hari || null,
   };
 };

@@ -1,4 +1,3 @@
-
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -13,6 +12,9 @@ interface TechnicalDetailsFormProps {
     tkdn_percentage: string;
     aktivitas_saat_ini: string;
     kendala: string;
+    tanggal_mpl?: string;
+    tanggal_mpa?: string;
+    masa_pemeliharaan_hari?: number;
   };
   setFormData: (data: any) => void;
 }
@@ -20,10 +22,18 @@ interface TechnicalDetailsFormProps {
 export const TechnicalDetailsForm = ({ formData, setFormData }: TechnicalDetailsFormProps) => {
   const isContractActive = formData.status_kontrak !== 'Pre-KOM';
 
+  // Hitung otomatis tanggal selesai pemeliharaan
+  const tanggalSelesaiPemeliharaan = (() => {
+    if (!formData.tanggal_selesai || !formData.masa_pemeliharaan_hari) return null;
+    const selesai = new Date(formData.tanggal_selesai);
+    selesai.setDate(selesai.getDate() + Number(formData.masa_pemeliharaan_hari));
+    return selesai.toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  })();
+
   return (
     <div className="space-y-6">
       <h3 className="text-lg font-semibold">Detail Teknis</h3>
-      
+
       {isContractActive && (
         <div className="space-y-4">
           <h4 className="text-md font-semibold">Periode Kontrak</h4>
@@ -45,6 +55,47 @@ export const TechnicalDetailsForm = ({ formData, setFormData }: TechnicalDetails
                 value={formData.tanggal_selesai || ''}
                 onChange={(e) => setFormData({ ...formData, tanggal_selesai: e.target.value })}
               />
+            </div>
+          </div>
+
+          {/* MPL, MPA, Masa Pemeliharaan */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="tanggal_mpl">MPL (Masa Penyelesaian Lingkup)</Label>
+              <Input
+                id="tanggal_mpl"
+                type="date"
+                value={formData.tanggal_mpl || ''}
+                onChange={(e) => setFormData({ ...formData, tanggal_mpl: e.target.value })}
+              />
+            </div>
+            <div>
+              <Label htmlFor="tanggal_mpa">MPA (Masa Penyelesaian Administrasi)</Label>
+              <Input
+                id="tanggal_mpa"
+                type="date"
+                value={formData.tanggal_mpa || ''}
+                onChange={(e) => setFormData({ ...formData, tanggal_mpa: e.target.value })}
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="masa_pemeliharaan_hari">Masa Pemeliharaan (hari)</Label>
+              <Input
+                id="masa_pemeliharaan_hari"
+                type="number"
+                min="0"
+                value={formData.masa_pemeliharaan_hari ?? ''}
+                onChange={(e) => setFormData({ ...formData, masa_pemeliharaan_hari: e.target.value ? parseInt(e.target.value) : undefined })}
+                placeholder="Contoh: 365"
+              />
+              {tanggalSelesaiPemeliharaan && (
+                <p className="text-xs text-blue-600 mt-1">
+                  Selesai pemeliharaan: <span className="font-medium">{tanggalSelesaiPemeliharaan}</span>
+                </p>
+              )}
             </div>
           </div>
         </div>
