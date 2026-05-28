@@ -8,6 +8,7 @@ export interface DailyReport {
   tanggalLaporan: string;
   disiplin: string;
   kategori: string;
+  tagNumber: string;
   deskripsi: string;
   statusPekerjaan: string;
   catatan: string;
@@ -18,6 +19,7 @@ export interface DailyReport {
 interface FilterParams {
   disiplin?: string;
   kategori?: string;
+  tagNumber?: string;
   status?: string;
   tanggal_dari?: string;
   tanggal_sampai?: string;
@@ -30,6 +32,7 @@ export const useDailyReport = (filters: FilterParams = {}) => {
     const params = new URLSearchParams();
     if (filters.disiplin)      params.append('disiplin', filters.disiplin);
     if (filters.kategori)      params.append('kategori', filters.kategori);
+    if (filters.tagNumber) params.append('tagNumber', filters.tagNumber);
     if (filters.status)        params.append('status', filters.status);
     if (filters.tanggal_dari)  params.append('tanggal_dari', filters.tanggal_dari);
     if (filters.tanggal_sampai) params.append('tanggal_sampai', filters.tanggal_sampai);

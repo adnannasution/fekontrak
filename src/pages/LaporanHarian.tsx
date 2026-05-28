@@ -52,9 +52,11 @@ const LaporanHarian = () => {
 
   const { reports, isLoading, refetch } = useDailyReport(activeFilters);
 
-  const filtered = reports.filter(r =>
-    !search || r.deskripsi?.toLowerCase().includes(search.toLowerCase())
-  );
+const filtered = reports.filter(r =>
+  !search || 
+  r.deskripsi?.toLowerCase().includes(search.toLowerCase()) ||
+  r.tagNumber?.toLowerCase().includes(search.toLowerCase())
+);
 
   const resetFilters = () => {
     setFilters({ disiplin: '', kategori: '', status: '', tanggal_dari: '', tanggal_sampai: '' });
@@ -119,7 +121,7 @@ const LaporanHarian = () => {
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
               <Input
-                placeholder="Cari deskripsi..."
+                placeholder="Cari deskripsi atau tag number..."
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 className="pl-9"
@@ -141,6 +143,7 @@ const LaporanHarian = () => {
                 {KATEGORI_OPTIONS.map(k => <SelectItem key={k} value={k}>{k}</SelectItem>)}
               </SelectContent>
             </Select>
+            
 
             <Select value={filters.status} onValueChange={v => setFilters(f => ({ ...f, status: v === 'all' ? '' : v }))}>
               <SelectTrigger><SelectValue placeholder="Semua Status" /></SelectTrigger>
@@ -188,6 +191,7 @@ const LaporanHarian = () => {
                     <th className="text-left p-4 font-medium text-gray-600">Tanggal</th>
                     <th className="text-left p-4 font-medium text-gray-600">Disiplin</th>
                     <th className="text-left p-4 font-medium text-gray-600">Kategori</th>
+                    <th className="text-left p-4 font-medium text-gray-600">Tag Number</th>
                     <th className="text-left p-4 font-medium text-gray-600">Deskripsi</th>
                     <th className="text-left p-4 font-medium text-gray-600">Status</th>
                     <th className="text-left p-4 font-medium text-gray-600">Catatan</th>
@@ -205,6 +209,11 @@ const LaporanHarian = () => {
                           {r.kategori}
                         </span>
                       </td>
+                      <td className="p-4">
+                      <span className="text-xs font-mono bg-gray-100 px-2 py-1 rounded">
+                        {r.tagNumber || '-'}
+                      </span>
+                    </td>
                       <td className="p-4 text-gray-800 max-w-xs">{r.deskripsi}</td>
                       <td className="p-4">
                         <Badge className={`text-xs ${getStatusColor(r.statusPekerjaan)}`}>
