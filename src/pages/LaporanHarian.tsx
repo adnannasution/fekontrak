@@ -37,17 +37,19 @@ const LaporanHarian = () => {
   const [filters, setFilters] = useState({
     disiplin: '',
     kategori: '',
+    direksi: '',
     status: '',
     tanggal_dari: '',
     tanggal_sampai: '',
   });
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(25);
+  const [pageSize, setPageSize] = useState(10);
 
   const activeFilters = {
     disiplin:       filters.disiplin       || undefined,
     kategori:       filters.kategori       || undefined,
+    direksi:        filters.direksi        || undefined,
     status:         filters.status         || undefined,
     tanggal_dari:   filters.tanggal_dari   || undefined,
     tanggal_sampai: filters.tanggal_sampai || undefined,
@@ -65,7 +67,7 @@ const LaporanHarian = () => {
   const paginated = filtered.slice((page - 1) * pageSize, page * pageSize);
 
   const resetFilters = () => {
-    setFilters({ disiplin: '', kategori: '', status: '', tanggal_dari: '', tanggal_sampai: '' });
+    setFilters({ disiplin: '', kategori: '', status: '', tanggal_dari: '', tanggal_sampai: '', direksi: '' });
     setSearch('');
     setPage(1);
   };
@@ -155,6 +157,17 @@ const LaporanHarian = () => {
               </SelectContent>
             </Select>
 
+            <Select value={filters.direksi} onValueChange={v => handleFilterChange('direksi', v)}>
+            <SelectTrigger><SelectValue placeholder="Semua Direksi" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Semua Direksi</SelectItem>
+              <SelectItem value="MA5">MA5</SelectItem>
+              <SelectItem value="MA6">MA6</SelectItem>
+              <SelectItem value="MA7">MA7</SelectItem>
+              <SelectItem value="Workshop">Workshop</SelectItem>
+            </SelectContent>
+          </Select>
+
             <Select value={filters.status} onValueChange={v => handleFilterChange('status', v)}>
               <SelectTrigger><SelectValue placeholder="Semua Status" /></SelectTrigger>
               <SelectContent>
@@ -200,6 +213,7 @@ const LaporanHarian = () => {
                       <th className="text-left p-4 font-medium text-gray-600">Tanggal</th>
                       <th className="text-left p-4 font-medium text-gray-600">Disiplin</th>
                       <th className="text-left p-4 font-medium text-gray-600">Kategori</th>
+                      <th className="text-left p-4 font-medium text-gray-600">Direksi</th>
                       <th className="text-left p-4 font-medium text-gray-600">Tag Number</th>
                       <th className="text-left p-4 font-medium text-gray-600">Deskripsi</th>
                       <th className="text-left p-4 font-medium text-gray-600">Status</th>
@@ -216,6 +230,11 @@ const LaporanHarian = () => {
                         <td className="p-4">
                           <span className={`text-xs px-2 py-1 rounded-full font-medium ${getKategoriColor(r.kategori)}`}>
                             {r.kategori}
+                          </span>
+                        </td>
+                        <td className="p-4">
+                          <span className="text-xs font-mono bg-gray-100 px-2 py-1 rounded">
+                            {r.direksi || '-'}
                           </span>
                         </td>
                         <td className="p-4">
