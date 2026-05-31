@@ -25,6 +25,11 @@ import { useKonfigurasiSistem, useUpdateKonfigurasi } from '@/hooks/useNewDataba
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 
+import SLASettings from '@/components/sla/SLASettings';
+
+// di dalam TabsContent
+
+
 const AdminSettings = () => {
   const { userProfile } = useAuth();
   const { konfigurasi = [], isLoading } = useKonfigurasiSistem();
@@ -273,6 +278,8 @@ const AdminSettings = () => {
             <Settings className="h-4 w-4" />
             System
           </TabsTrigger>
+
+          
         </TabsList>
 
         <TabsContent value="sla" className="space-y-4">
@@ -366,6 +373,11 @@ const AdminSettings = () => {
             </CardContent>
           </Card>
         </TabsContent>
+
+        <TabsContent value="sla">
+  <SLASettings />
+</TabsContent>
+
       </Tabs>
 
       {/* Quick Reference Summary */}
