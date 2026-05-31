@@ -3,10 +3,24 @@ import { useToast } from '@/hooks/use-toast';
 
 const API_URL = "https://bekontrak-production.up.railway.app/api";
 
+// urutan flow statis
+const urutanTahap: any = {
+  LKP: 1,
+  PUNCHLIST: 2,
+  BAST: 3,
+  BAKP: 4,
+  IVENDOR: 5,
+  SA: 6,
+  PA: 7,
+  VERIFIKASI: 8,
+  PAYMENT: 9
+};
+
 // ===================== GET =====================
 export const useSLASetting = () => {
   const { data: slaSetting = [], isLoading, error } = useQuery({
     queryKey: ['sla-setting'],
+
     queryFn: async () => {
       const token = localStorage.getItem("token");
 
@@ -23,15 +37,25 @@ export const useSLASetting = () => {
         throw new Error("Gagal ambil SLA setting");
       }
 
-      // mapping backend → FE (sesuaikan dengan response backend kamu)
-     return data.map((s: any, index: number) => ({
-    kode_tahap:     s.kodeTahap,
-    nama_tahap:     s.namaTahap || s.kodeTahap,  // fallback ke kode kalau null
-    urutan:         index + 1,
-    batas_hari:     s.batasHari,
-    warning_persen: s.warningPersen,
-    is_aktif:       s.isAktif ?? true,  // default true kalau null
-    }));
+      // sorting sesuai flow
+      data.sort(
+        (a: any, b: any) =>
+          (urutanTahap[a.kodeTahap] || 999) -
+          (urutanTahap[b.kodeTahap] || 999)
+      );
+
+      // mapping backend → FE
+      return data.map((s: any) => ({
+        kode_tahap: s.kodeTahap,
+        nama_tahap: s.namaTahap || s.kodeTahap,
+
+        // urutan statis
+        urutan: urutanTahap[s.kodeTahap] || 999,
+
+        batas_hari: s.batasHari,
+        warning_persen: s.warningPersen,
+        is_aktif: s.isAktif ?? true,
+      }));
     }
   });
 
@@ -44,41 +68,55 @@ export const useUpdateSLASetting = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ kode_tahap, batas_hari, warning_persen, is_aktif }: {
-      kode_tahap:     string;
-      batas_hari:     number;
+    mutationFn: async ({
+      kode_tahap,
+      batas_hari,
+      warning_persen,
+      is_aktif
+    }: {
+      kode_tahap: string;
+      batas_hari: number;
       warning_persen: number;
-      is_aktif:       boolean;
+      is_aktif: boolean;
     }) => {
+
       const token = localStorage.getItem("token");
 
       const payload = {
-        batasHari:     batas_hari,
+        batasHari: batas_hari,
         warningPersen: warning_persen,
-        isAktif:       is_aktif,
+        isAktif: is_aktif,
       };
 
-      const res = await fetch(`${API_URL}/sla-setting/${kode_tahap}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify(payload)
-      });
+      const res = await fetch(
+        `${API_URL}/sla-setting/${kode_tahap}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify(payload)
+        }
+      );
 
       const data = await res.json();
 
       if (!res.ok) {
         console.error("❌ Update SLA error:", data);
-        throw new Error(data.message || "Gagal update SLA setting");
+        throw new Error(
+          data.message || "Gagal update SLA setting"
+        );
       }
 
       return data;
     },
 
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['sla-setting'] });
+      queryClient.invalidateQueries({
+        queryKey: ['sla-setting']
+      });
+
       toast({
         title: "Berhasil",
         description: "SLA setting berhasil diperbarui",
@@ -88,7 +126,9 @@ export const useUpdateSLASetting = () => {
     onError: (error: any) => {
       toast({
         title: "Error",
-        description: error.message || "Gagal memperbarui SLA setting",
+        description:
+          error.message ||
+          "Gagal memperbarui SLA setting",
         variant: "destructive",
       });
     }
