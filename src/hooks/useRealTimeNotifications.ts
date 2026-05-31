@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useDashboardData } from './useDashboardData';
 import { useAuth } from '@/hooks/useAuth';
+import { useTagihans } from '@/hooks/useTagihans';
 
 interface Notification {
   id: string;
@@ -10,12 +11,17 @@ interface Notification {
   read: boolean;
 }
 
+// Tahap final → tidak perlu dialert lagi
+const isStatusFinal = (status?: string) =>
+  !!status && /payment|selesai/i.test(status);
+
 export const useRealTimeNotifications = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
 
   const { userProfile } = useAuth();
   const { contracts } = useDashboardData();
+  const { tagihans } = useTagihans();
 
   // 🔥 SLA ALERT (tanpa supabase)
   useEffect(() => {
@@ -72,10 +78,35 @@ export const useRealTimeNotifications = () => {
 
     });
 
+    // 🔥 Tagihan mandek > 1 bulan di tahap berjalan
+    (tagihans || []).forEach((t: any) => {
+      // Lewati tagihan yang sudah final (Payment/Selesai)
+      if (isStatusFinal(t.status_tagihan)) return;
+
+      const acuan = t.updated_at || t.created_at;
+      if (!acuan) return;
+
+      const acuanDate = new Date(acuan);
+      if (isNaN(acuanDate.getTime())) return;
+
+      const days = Math.floor((now.getTime() - acuanDate.getTime()) / (1000 * 60 * 60 * 24));
+
+      if (days >= 30) {
+        const judul = t.kontrak?.judul_kontrak ? ` (${t.kontrak.judul_kontrak})` : '';
+        alerts.push({
+          id: `tagihan-sla-${t.id_tagihan}`,
+          title: 'Tagihan Melewati SLA',
+          message: `Tagihan "${t.nomor_tagihan}"${judul} sudah ${days} hari di tahap "${t.status_tagihan}"`,
+          type: 'tagihan_sla_overdue',
+          read: false
+        });
+      }
+    });
+
     setNotifications(alerts);
     setUnreadCount(alerts.length);
 
-  }, [contracts, userProfile]);
+  }, [contracts, tagihans, userProfile]);
 
   const markAsRead = (id: string) => {
     setNotifications(prev =>
