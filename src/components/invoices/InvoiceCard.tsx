@@ -2,7 +2,7 @@ import React from 'react';
 import { Card } from '@/components/ui/card';
 import { InvoiceCardHeader } from './InvoiceCardHeader';
 import { InvoiceCardContent } from './InvoiceCardContent';
-import { InvoiceSlaSection } from './InvoiceSlaSection';
+
 
 interface InvoiceCardProps {
   invoice: any;
@@ -21,7 +21,7 @@ export const InvoiceCard = ({ invoice, onView, onEdit, onDelete }: InvoiceCardPr
         onDelete={onDelete}
       />
       <InvoiceCardContent invoice={invoice} />
-      <InvoiceSlaSection idTagihan={invoice.id_tagihan} statusTagihan={invoice.status_tagihan} />
+      
     </Card>
   );
 };
