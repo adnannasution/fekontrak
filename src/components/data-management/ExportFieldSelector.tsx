@@ -72,14 +72,36 @@ const INVOICE_FIELDS: ExportField[] = [
   { key: "updated_at", label: "Tanggal Diubah", group: "Metadata" }
 ];
 
+const VENDOR_FIELDS: ExportField[] = [
+  // Basic Info
+  { key: "nama_vendor", label: "Nama Vendor", group: "Informasi Dasar" },
+  { key: "status_vendor", label: "Status Vendor", group: "Informasi Dasar" },
+  { key: "score", label: "Score", group: "Informasi Dasar" },
+
+  // Legal
+  { key: "npwp", label: "NPWP", group: "Legal" },
+
+  // Kontak
+  { key: "alamat", label: "Alamat", group: "Kontak" },
+  { key: "pic_nama", label: "Nama PIC", group: "Kontak" },
+  { key: "pic_kontak", label: "Kontak PIC", group: "Kontak" },
+
+  // Metadata
+  { key: "created_at", label: "Tanggal Dibuat", group: "Metadata" },
+  { key: "updated_at", label: "Tanggal Diubah", group: "Metadata" }
+];
+
 interface ExportFieldSelectorProps {
-  type: 'kontrak' | 'tagihan';
+  type: 'kontrak' | 'tagihan' | 'vendor';
   selectedFields: string[];
   onFieldsChange: (fields: string[]) => void;
 }
 
 export function ExportFieldSelector({ type, selectedFields, onFieldsChange }: ExportFieldSelectorProps) {
-  const fields = type === 'kontrak' ? CONTRACT_FIELDS : INVOICE_FIELDS;
+  const fields =
+    type === 'kontrak' ? CONTRACT_FIELDS :
+    type === 'tagihan' ? INVOICE_FIELDS :
+    VENDOR_FIELDS;
   
   const groupedFields = fields.reduce((acc, field) => {
     if (!acc[field.group]) {

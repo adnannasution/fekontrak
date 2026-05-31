@@ -21,7 +21,14 @@ export function ExportSection() {
     "nilai_tagihan"
   ]);
 
-  const { exportContracts, exportInvoices, isExporting } = useExportData();
+  const [selectedVendorFields, setSelectedVendorFields] = useState<string[]>([
+    "nama_vendor",
+    "status_vendor",
+    "pic_nama",
+    "pic_kontak"
+  ]);
+
+  const { exportContracts, exportInvoices, exportVendors, isExporting } = useExportData();
 
   const handleExportContracts = async (format: 'excel' | 'csv') => {
     await exportContracts(selectedContractFields, format);
@@ -29,6 +36,10 @@ export function ExportSection() {
 
   const handleExportInvoices = async (format: 'excel' | 'csv') => {
     await exportInvoices(selectedInvoiceFields, format);
+  };
+
+  const handleExportVendors = async (format: 'excel' | 'csv') => {
+    await exportVendors(selectedVendorFields, format);
   };
 
   return (
@@ -96,6 +107,42 @@ export function ExportSection() {
               variant="outline"
               onClick={() => handleExportInvoices('csv')}
               disabled={isExporting || selectedInvoiceFields.length === 0}
+              className="flex items-center gap-2"
+            >
+              <FileDown className="h-4 w-4" />
+              Export ke CSV
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Export Vendor */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Export Data Vendor</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <ExportFieldSelector
+            type="vendor"
+            selectedFields={selectedVendorFields}
+            onFieldsChange={setSelectedVendorFields}
+          />
+          
+          <Separator />
+          
+          <div className="flex gap-2">
+            <Button 
+              onClick={() => handleExportVendors('excel')}
+              disabled={isExporting || selectedVendorFields.length === 0}
+              className="flex items-center gap-2"
+            >
+              <FileSpreadsheet className="h-4 w-4" />
+              Export ke Excel
+            </Button>
+            <Button 
+              variant="outline"
+              onClick={() => handleExportVendors('csv')}
+              disabled={isExporting || selectedVendorFields.length === 0}
               className="flex items-center gap-2"
             >
               <FileDown className="h-4 w-4" />

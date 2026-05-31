@@ -12,7 +12,7 @@ interface ImportError {
 interface ImportPreviewProps {
   data: any[];
   errors: ImportError[];
-  type: 'kontrak' | 'tagihan';
+  type: 'kontrak' | 'tagihan' | 'vendor';
 }
 
 export function ImportPreview({ data, errors, type }: ImportPreviewProps) {
@@ -85,13 +85,21 @@ export function ImportPreview({ data, errors, type }: ImportPreviewProps) {
                   <TableHead>Nilai</TableHead>
                   <TableHead>Status</TableHead>
                 </>
-              ) : (
+              ) : type === 'tagihan' ? (
                 <>
                   <TableHead>Nomor Tagihan</TableHead>
                   <TableHead>Kontrak</TableHead>
                   <TableHead>Tanggal</TableHead>
                   <TableHead>Nilai</TableHead>
                   <TableHead>Status</TableHead>
+                </>
+              ) : (
+                <>
+                  <TableHead>Nama Vendor</TableHead>
+                  <TableHead>NPWP</TableHead>
+                  <TableHead>PIC</TableHead>
+                  <TableHead>Kontak</TableHead>
+                  <TableHead>Status Vendor</TableHead>
                 </>
               )}
               <TableHead>Status</TableHead>
@@ -113,13 +121,21 @@ export function ImportPreview({ data, errors, type }: ImportPreviewProps) {
                       <TableCell>{row['Nilai Awal'] ? `Rp ${Number(row['Nilai Awal']).toLocaleString('id-ID')}` : '-'}</TableCell>
                       <TableCell>{row['Status Kontrak'] || 'Pre-KOM'}</TableCell>
                     </>
-                  ) : (
+                  ) : type === 'tagihan' ? (
                     <>
                       <TableCell>{row['Nomor Tagihan'] || '-'}</TableCell>
                       <TableCell>{row['Judul Kontrak'] || '-'}</TableCell>
                       <TableCell>{row['Tanggal Tagihan'] || '-'}</TableCell>
                       <TableCell>{row['Nilai Tagihan'] ? `Rp ${Number(row['Nilai Tagihan']).toLocaleString('id-ID')}` : '-'}</TableCell>
                       <TableCell>{row['Status Tagihan'] || 'Punchlist'}</TableCell>
+                    </>
+                  ) : (
+                    <>
+                      <TableCell>{row['Nama Vendor'] || '-'}</TableCell>
+                      <TableCell>{row['NPWP'] || '-'}</TableCell>
+                      <TableCell>{row['Nama PIC'] || '-'}</TableCell>
+                      <TableCell>{row['Kontak PIC'] || '-'}</TableCell>
+                      <TableCell>{row['Status Vendor'] || '-'}</TableCell>
                     </>
                   )}
                   <TableCell>

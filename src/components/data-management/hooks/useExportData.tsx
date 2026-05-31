@@ -79,7 +79,15 @@ export function useExportData() {
       tanggal_pengiriman_memo: 'Tanggal Kirim Memo',
       dokumen_memo: 'Dokumen Memo',
       catatan: 'Catatan',
-      kontrak_title: 'Judul Kontrak'
+      kontrak_title: 'Judul Kontrak',
+
+      // Vendor fields
+      status_vendor: 'Status Vendor',
+      score: 'Score',
+      npwp: 'NPWP',
+      alamat: 'Alamat',
+      pic_nama: 'Nama PIC',
+      pic_kontak: 'Kontak PIC'
     };
     
     return labels[field] || field;
@@ -197,9 +205,56 @@ export function useExportData() {
     }
   };
 
+  const exportVendors = async (selectedFields: string[], fileFormat: 'excel' | 'csv') => {
+    setIsExporting(true);
+    try {
+      // Prepare data (vendor self-contained, tidak perlu lookup)
+      const exportData = vendors.map(vendor => {
+        const row: any = {};
+
+        selectedFields.forEach(field => {
+          row[getFieldLabel(field)] = formatValue(vendor[field as keyof typeof vendor], field);
+        });
+
+        return row;
+      });
+
+      // Create worksheet
+      const worksheet = XLSX.utils.json_to_sheet(exportData);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Vendor');
+
+      // Generate filename
+      const timestamp = format(new Date(), 'yyyyMMdd_HHmmss');
+      const filename = `vendor_export_${timestamp}.${fileFormat === 'excel' ? 'xlsx' : 'csv'}`;
+
+      // Download file
+      if (fileFormat === 'csv') {
+        XLSX.writeFile(workbook, filename, { bookType: 'csv' });
+      } else {
+        XLSX.writeFile(workbook, filename);
+      }
+
+      toast({
+        title: "Export Berhasil",
+        description: `Data vendor berhasil diexport ke ${filename}`,
+      });
+    } catch (error) {
+      console.error('Export error:', error);
+      toast({
+        title: "Export Gagal",
+        description: "Terjadi kesalahan saat export data vendor",
+        variant: "destructive",
+      });
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   return {
     exportContracts,
     exportInvoices,
+    exportVendors,
     isExporting
   };
 }

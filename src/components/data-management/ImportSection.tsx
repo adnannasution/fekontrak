@@ -9,9 +9,11 @@ import { useImportData } from "./hooks/useImportData";
 import { Upload, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
+type ImportType = 'kontrak' | 'tagihan' | 'vendor';
+
 export function ImportSection() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [importType, setImportType] = useState<'kontrak' | 'tagihan' | null>(null);
+  const [importType, setImportType] = useState<ImportType | null>(null);
   
   const {
     previewData,
@@ -23,7 +25,7 @@ export function ImportSection() {
     resetImport
   } = useImportData();
 
-  const handleFileSelect = async (file: File, type: 'kontrak' | 'tagihan') => {
+  const handleFileSelect = async (file: File, type: ImportType) => {
     setSelectedFile(file);
     setImportType(type);
     await processFile(file, type);
@@ -39,6 +41,8 @@ export function ImportSection() {
     setImportType(null);
     resetImport();
   };
+
+  const fileInputClass = "block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90";
 
   return (
     <div className="space-y-6">
@@ -67,7 +71,7 @@ export function ImportSection() {
           <CardTitle>Upload File</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="space-y-2">
               <h4 className="font-medium">Import Kontrak</h4>
               <input
@@ -77,7 +81,7 @@ export function ImportSection() {
                   const file = e.target.files?.[0];
                   if (file) handleFileSelect(file, 'kontrak');
                 }}
-                className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
+                className={fileInputClass}
               />
             </div>
             
@@ -90,7 +94,20 @@ export function ImportSection() {
                   const file = e.target.files?.[0];
                   if (file) handleFileSelect(file, 'tagihan');
                 }}
-                className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
+                className={fileInputClass}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <h4 className="font-medium">Import Vendor</h4>
+              <input
+                type="file"
+                accept=".xlsx,.xls,.csv"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) handleFileSelect(file, 'vendor');
+                }}
+                className={fileInputClass}
               />
             </div>
           </div>

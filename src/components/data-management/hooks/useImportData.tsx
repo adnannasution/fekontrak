@@ -7,6 +7,8 @@ import * as XLSX from 'xlsx';
 
 const API_URL = "https://bekontrak-production.up.railway.app/api";
 
+type ImportType = 'kontrak' | 'tagihan' | 'vendor';
+
 interface ImportError {
   row: number;
   field: string;
@@ -93,6 +95,7 @@ export function useImportData() {
   const [errors, setErrors] = useState<ImportError[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [progress, setProgress] = useState<ImportProgress>({ current: 0, total: 0, status: '' });
+  const [importType, setImportType] = useState<ImportType | null>(null);
   
   const { toast } = useToast();
   const { contracts } = useContracts();
@@ -182,8 +185,23 @@ export function useImportData() {
     return errors;
   };
 
-  const processFile = async (file: File, type: 'kontrak' | 'tagihan') => {
+  const validateVendorRow = (row: any, rowIndex: number): ImportError[] => {
+    const errors: ImportError[] = [];
+
+    if (!row['Nama Vendor']?.toString().trim()) {
+      errors.push({ row: rowIndex, field: 'Nama Vendor', message: 'Wajib diisi' });
+    }
+
+    if (row['Score'] !== undefined && row['Score'] !== '' && isNaN(Number(row['Score']))) {
+      errors.push({ row: rowIndex, field: 'Score', message: 'Harus berupa angka' });
+    }
+
+    return errors;
+  };
+
+  const processFile = async (file: File, type: ImportType) => {
     setIsProcessing(true);
+    setImportType(type);
     
     try {
       const arrayBuffer = await file.arrayBuffer();
@@ -198,9 +216,16 @@ export function useImportData() {
       const allErrors: ImportError[] = [];
       const processedData = jsonData.map((row, index) => {
         const rowIndex = index + 2;
-        const rowErrors = type === 'kontrak' 
-          ? validateContractRow(row, rowIndex)
-          : validateInvoiceRow(row, rowIndex);
+        let rowErrors: ImportError[] = [];
+
+        if (type === 'kontrak') {
+          rowErrors = validateContractRow(row, rowIndex);
+        } else if (type === 'tagihan') {
+          rowErrors = validateInvoiceRow(row, rowIndex);
+        } else if (type === 'vendor') {
+          rowErrors = validateVendorRow(row, rowIndex);
+        }
+
         allErrors.push(...rowErrors);
         return row;
       });
@@ -226,7 +251,7 @@ export function useImportData() {
   };
 
   const executeImport = async () => {
-    if (!previewData || errors.length > 0) return;
+    if (!previewData || errors.length > 0 || !importType) return;
     
     setIsProcessing(true);
     setProgress({ current: 0, total: previewData.length, status: 'Memproses import...' });
@@ -244,7 +269,7 @@ export function useImportData() {
         setProgress({ current: processed, total: previewData.length, status: `Memproses baris ${processed}...` });
         
         try {
-          if (row['Nama Vendor']) {
+          if (importType === 'kontrak') {
             // ===== IMPORT KONTRAK =====
             const vendor = vendors.find(v => 
               v.nama_vendor.toLowerCase().trim() === row['Nama Vendor'].toString().toLowerCase().trim()
@@ -292,7 +317,7 @@ export function useImportData() {
             console.log('✅ Contract inserted successfully');
             successCount++;
 
-          } else if (row['Nomor Tagihan']) {
+          } else if (importType === 'tagihan') {
             // ===== IMPORT TAGIHAN =====
             const contract = contracts.find(c => 
               c.judul_kontrak.toLowerCase().trim() === row['Judul Kontrak']?.toString().toLowerCase().trim()
@@ -324,6 +349,63 @@ export function useImportData() {
             if (!res.ok) throw new Error(data.message || `HTTP ${res.status}`);
             
             console.log('✅ Tagihan inserted successfully');
+            successCount++;
+
+          } else if (importType === 'vendor') {
+            // ===== IMPORT VENDOR =====
+            const namaVendor = row['Nama Vendor']?.toString().trim();
+            if (!namaVendor) throw new Error('Nama Vendor kosong');
+
+            const scoreRaw = row['Score'];
+            const payload = {
+              namaVendor: sanitizeInput(namaVendor),
+              npwp: sanitizeInput(row['NPWP']?.toString() || '') || null,
+              alamat: sanitizeInput(row['Alamat']?.toString() || '') || null,
+              picNama: sanitizeInput(row['Nama PIC']?.toString() || '') || null,
+              picKontak: sanitizeInput(row['Kontak PIC']?.toString() || '') || null,
+              statusVendor: sanitizeInput(row['Status Vendor']?.toString() || '') || null,
+              score: scoreRaw !== undefined && scoreRaw !== '' ? Number(scoreRaw) : null,
+            };
+
+            // Cari vendor yang sudah ada berdasarkan nama (case-insensitive)
+            const existing = vendors.find(v =>
+              v.nama_vendor.toLowerCase().trim() === namaVendor.toLowerCase()
+            );
+
+            if (existing) {
+              // ===== UPDATE vendor yang sudah ada =====
+              console.log('📤 Updating vendor via API:', payload);
+              const res = await fetch(`${API_URL}/vendors/${existing.id}`, {
+                method: "PUT",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify(payload)
+              });
+
+              const data = await res.json();
+              if (!res.ok) throw new Error(data.message || `HTTP ${res.status}`);
+
+              console.log('✅ Vendor updated successfully');
+            } else {
+              // ===== INSERT vendor baru =====
+              console.log('📤 Inserting vendor via API:', payload);
+              const res = await fetch(`${API_URL}/vendors`, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify(payload)
+              });
+
+              const data = await res.json();
+              if (!res.ok) throw new Error(data.message || `HTTP ${res.status}`);
+
+              console.log('✅ Vendor inserted successfully');
+            }
+
             successCount++;
           }
           
@@ -366,6 +448,7 @@ export function useImportData() {
     setPreviewData(null);
     setErrors([]);
     setProgress({ current: 0, total: 0, status: '' });
+    setImportType(null);
   };
 
   return {
