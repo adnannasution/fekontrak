@@ -23,37 +23,17 @@ export const useSLASetting = () => {
         throw new Error("Gagal ambil SLA setting");
       }
 
-const urutanTahap: any = {
-  LKP: 1,
-  PUNCHLIST: 2,
-  BAST: 3,
-  BAKP: 4,
-  IVENDOR: 5,
-  SA: 6,
-  PA: 7,
-  VERIFIKASI: 8,
-  PAYMENT: 9
-};
-
-// urutkan dulu sesuai flow
-data.sort(
-  (a: any, b: any) =>
-    (urutanTahap[a.kodeTahap] || 999) -
-    (urutanTahap[b.kodeTahap] || 999)
-);
-
-// mapping backend → frontend
-return data.map((s: any) => ({
-  kode_tahap: s.kodeTahap,
-  nama_tahap: s.namaTahap || s.kodeTahap,
-  
-  // ambil urutan statis
-  urutan: urutanTahap[s.kodeTahap] || 999,
-
-  batas_hari: s.batasHari,
-  warning_persen: s.warningPersen,
-  is_aktif: s.isAktif ?? true,
-}));
+      // mapping backend → FE (sesuaikan dengan response backend kamu)
+     return data.map((s: any, index: number) => ({
+    kode_tahap:     s.kodeTahap,
+    nama_tahap:     s.namaTahap || s.kodeTahap,  // fallback ke kode kalau null
+    urutan:         index + 1,
+    batas_hari:     s.batasHari,
+    warning_persen: s.warningPersen,
+    is_aktif:       s.isAktif ?? true,  // default true kalau null
+    }));
+    }
+  });
 
   return { slaSetting, isLoading, error };
 };
