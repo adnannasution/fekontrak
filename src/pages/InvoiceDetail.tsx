@@ -16,6 +16,7 @@ import { jsonToTagihanDocuments } from '@/lib/utils/databaseTypes';
 import { useQuery } from '@tanstack/react-query';
 import { format, parseISO } from 'date-fns';
 import { id as idLocale } from 'date-fns/locale';
+import { InvoiceSlaSection } from '@/components/invoices/InvoiceSlaSection';
 
 const API_URL = "https://bekontrak-production.up.railway.app/api";
 
@@ -273,6 +274,9 @@ const InvoiceDetail = () => {
                         <p className="text-sm text-gray-800">{inv.catatan}</p>
                       </div>
                     )}
+                     <div className="mt-4 pt-4 border-t">
+                      <InvoiceSlaSection idTagihan={inv.id_tagihan} statusTagihan={inv.status_tagihan} />
+                    </div>
                   </CardContent>
                 </Card>
               );
