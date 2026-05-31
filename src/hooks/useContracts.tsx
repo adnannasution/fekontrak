@@ -31,6 +31,10 @@ const buildPayload = (contract: any) => ({
   disiplin: contract.disiplin || null,
   tkdnPercentage: contract.tkdn_percentage || null,
   tanggalLkp: contract.tanggal_lkp || null,
+  // MPL/MPA/Masa Pemeliharaan — angka (hari). ?? null biar nilai 0 tetap terkirim
+  tanggalMpl: contract.tanggal_mpl ?? null,
+  tanggalMpa: contract.tanggal_mpa ?? null,
+  masaPemeliharaanHari: contract.masa_pemeliharaan_hari ?? null,
   contractDocuments: contract.contract_documents
     ? (typeof contract.contract_documents === 'string'
         ? contract.contract_documents
@@ -82,6 +86,10 @@ export const useContracts = () => {
         disiplin: c.disiplin,
         tkdn_percentage: c.tkdnPercentage,
         sla_kom_hari: c.slaKomHari,
+        // MPL/MPA/Masa Pemeliharaan — petakan balik dari API
+        tanggal_mpl: c.tanggalMpl,
+        tanggal_mpa: c.tanggalMpa,
+        masa_pemeliharaan_hari: c.masaPemeliharaanHari,
         contract_documents: c.contractDocuments || null,
         amendment_documents: c.amendmentDocuments || null,
         created_at: c.createdAt,

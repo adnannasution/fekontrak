@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -12,8 +13,8 @@ interface TechnicalDetailsFormProps {
     tkdn_percentage: string;
     aktivitas_saat_ini: string;
     kendala: string;
-    tanggal_mpl?: string;
-    tanggal_mpa?: string;
+    tanggal_mpl?: number;
+    tanggal_mpa?: number;
     masa_pemeliharaan_hari?: number;
   };
   setFormData: (data: any) => void;
@@ -21,6 +22,25 @@ interface TechnicalDetailsFormProps {
 
 export const TechnicalDetailsForm = ({ formData, setFormData }: TechnicalDetailsFormProps) => {
   const isContractActive = formData.status_kontrak !== 'Pre-KOM';
+
+  // Hitung MPL otomatis: (Tanggal Selesai - Tanggal Mulai) + 1, dalam hari (tanggal mulai = hari ke-1)
+  const computedMpl = (() => {
+    if (!formData.tanggal_mulai || !formData.tanggal_selesai) return undefined;
+    const start = new Date(formData.tanggal_mulai);
+    const end = new Date(formData.tanggal_selesai);
+    if (isNaN(start.getTime()) || isNaN(end.getTime())) return undefined;
+    const diffDays = Math.round((end.getTime() - start.getTime()) / 86400000);
+    if (diffDays < 0) return undefined; // Tanggal Selesai lebih awal dari Tanggal Mulai
+    return diffDays + 1;
+  })();
+
+  // Sinkronkan hasil hitung MPL ke formData agar ikut terkirim ke backend
+  useEffect(() => {
+    if (computedMpl !== formData.tanggal_mpl) {
+      setFormData({ ...formData, tanggal_mpl: computedMpl });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [computedMpl]);
 
   // Hitung otomatis tanggal selesai pemeliharaan
   const tanggalSelesaiPemeliharaan = (() => {
@@ -58,24 +78,31 @@ export const TechnicalDetailsForm = ({ formData, setFormData }: TechnicalDetails
             </div>
           </div>
 
-          {/* MPL, MPA, Masa Pemeliharaan */}
+          {/* MPL (auto), MPA (manual hari) */}
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Label htmlFor="tanggal_mpl">MPL (Masa Penyelesaian Lingkup)</Label>
               <Input
                 id="tanggal_mpl"
-                type="date"
-                value={formData.tanggal_mpl || ''}
-                onChange={(e) => setFormData({ ...formData, tanggal_mpl: e.target.value })}
+                type="text"
+                readOnly
+                value={computedMpl != null ? `${computedMpl} hari` : ''}
+                placeholder="Otomatis dari Tanggal Mulai & Selesai"
+                className="bg-muted"
               />
+              <p className="text-xs text-muted-foreground mt-1">
+                Dihitung otomatis dari Tanggal Mulai sampai Tanggal Selesai (tanggal mulai dihitung hari ke-1).
+              </p>
             </div>
             <div>
-              <Label htmlFor="tanggal_mpa">MPA (Masa Penyelesaian Administrasi)</Label>
+              <Label htmlFor="tanggal_mpa">MPA (Masa Penyelesaian Administrasi) — hari</Label>
               <Input
                 id="tanggal_mpa"
-                type="date"
-                value={formData.tanggal_mpa || ''}
-                onChange={(e) => setFormData({ ...formData, tanggal_mpa: e.target.value })}
+                type="number"
+                min="0"
+                value={formData.tanggal_mpa ?? ''}
+                onChange={(e) => setFormData({ ...formData, tanggal_mpa: e.target.value ? parseInt(e.target.value) : undefined })}
+                placeholder="Jumlah hari, contoh: 30"
               />
             </div>
           </div>

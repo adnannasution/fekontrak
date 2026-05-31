@@ -36,9 +36,9 @@ export interface ContractFormData {
   alasan_perubahan?: string;
   contract_documents?: any[];
   amendment_documents?: any[];
-  // MPL, MPA, Masa Pemeliharaan
-  tanggal_mpl?: string;
-  tanggal_mpa?: string;
+  // MPL, MPA, Masa Pemeliharaan (semua dalam satuan hari)
+  tanggal_mpl?: number;
+  tanggal_mpa?: number;
   masa_pemeliharaan_hari?: number;
 }
 
@@ -78,8 +78,8 @@ export const initialFormData: ContractFormData = {
   alasan_perubahan: '',
   contract_documents: [],
   amendment_documents: [],
-  tanggal_mpl: '',
-  tanggal_mpa: '',
+  tanggal_mpl: undefined,
+  tanggal_mpa: undefined,
   masa_pemeliharaan_hari: undefined,
 };
 
@@ -132,9 +132,10 @@ export const createFormDataFromContract = (contract: Kontrak): ContractFormData 
     alasan_perubahan: contract.alasan_perubahan || '',
     contract_documents: Array.isArray(contract.contract_documents) ? contract.contract_documents : [],
     amendment_documents: Array.isArray(contract.amendment_documents) ? contract.amendment_documents : [],
-    tanggal_mpl: toDateStr((contract as any).tanggal_mpl),
-    tanggal_mpa: toDateStr((contract as any).tanggal_mpa),
-    masa_pemeliharaan_hari: (contract as any).masa_pemeliharaan_hari || undefined,
+    // MPL/MPA sekarang angka (hari) — JANGAN lewat toDateStr
+    tanggal_mpl: (contract as any).tanggal_mpl ?? undefined,
+    tanggal_mpa: (contract as any).tanggal_mpa ?? undefined,
+    masa_pemeliharaan_hari: (contract as any).masa_pemeliharaan_hari ?? undefined,
   };
 };
 
@@ -178,8 +179,9 @@ export const createContractFromFormData = (formData: ContractFormData) => {
     sla_kom_hari: 14,
     estimasi_tanggal_kom: formData.tanggal_maksimal_kom || null,
     kom_terlambat: null,
-    tanggal_mpl: formData.tanggal_mpl || null,
-    tanggal_mpa: formData.tanggal_mpa || null,
-    masa_pemeliharaan_hari: formData.masa_pemeliharaan_hari || null,
+    // MPL/MPA kirim sebagai angka apa adanya (?? null biar nilai 0 tetap terkirim)
+    tanggal_mpl: formData.tanggal_mpl ?? null,
+    tanggal_mpa: formData.tanggal_mpa ?? null,
+    masa_pemeliharaan_hari: formData.masa_pemeliharaan_hari ?? null,
   };
 };
