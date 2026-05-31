@@ -24,14 +24,14 @@ export const useSLASetting = () => {
       }
 
       // mapping backend → FE (sesuaikan dengan response backend kamu)
-      return data.map((s: any) => ({
-        kode_tahap:     s.kodeTahap,
-        nama_tahap:     s.namaTahap,
-        urutan:         s.urutan,
-        batas_hari:     s.batasHari,
-        warning_persen: s.warningPersen,
-        is_aktif:       s.isAktif,
-      }));
+     return data.map((s: any, index: number) => ({
+    kode_tahap:     s.kodeTahap,
+    nama_tahap:     s.namaTahap || s.kodeTahap,  // fallback ke kode kalau null
+    urutan:         index + 1,
+    batas_hari:     s.batasHari,
+    warning_persen: s.warningPersen,
+    is_aktif:       s.isAktif ?? true,  // default true kalau null
+    }));
     }
   });
 
