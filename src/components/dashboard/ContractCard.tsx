@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useVendors } from "@/hooks/useVendors";
@@ -41,6 +40,17 @@ interface ContractCardProps {
   viewMode?: 'grid' | 'list';
 }
 
+// MPL: (Tanggal Selesai - Tanggal Mulai) + 1, dalam hari (tanggal mulai = hari ke-1)
+const computeMplDays = (startDate?: string, endDate?: string): number | null => {
+  if (!startDate || !endDate) return null;
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  if (isNaN(start.getTime()) || isNaN(end.getTime())) return null;
+  const diffDays = Math.round((end.getTime() - start.getTime()) / 86400000);
+  if (diffDays < 0) return null;
+  return diffDays + 1;
+};
+
 export const ContractCard = ({ 
   contract, 
   onEdit, 
@@ -53,6 +63,8 @@ export const ContractCard = ({
   
   const vendor = vendors.find(v => v.id_vendor === contract.vendor_id);
   const vendorName = vendor?.nama_vendor || 'Vendor tidak ditemukan';
+
+  const mplDays = computeMplDays(contract.start_date, contract.end_date);
 
   const handleEdit = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -119,6 +131,9 @@ export const ContractCard = ({
                   Rp {(contract.value || 0).toLocaleString('id-ID')}
                 </p>
                 <ContractDates startDate={contract.start_date} endDate={contract.end_date} />
+                {mplDays != null && (
+                  <p className="text-xs text-gray-500 mt-1">MPL: {mplDays} hari</p>
+                )}
               </div>
             </div>
 
@@ -183,7 +198,14 @@ export const ContractCard = ({
 
       <CardContent className="p-4 space-y-3 bg-white dark:bg-gray-800 cursor-pointer" onClick={handleCardClick}>
         <ContractDates startDate={contract.start_date} endDate={contract.end_date} />
-        
+
+        {mplDays != null && (
+          <div className="flex items-center justify-between text-sm">
+            <span className="text-gray-500">MPL (Masa Penyelesaian Lingkup)</span>
+            <span className="font-semibold text-gray-800 dark:text-gray-100">{mplDays} hari</span>
+          </div>
+        )}
+
         <ContractDurationProgress 
           startDate={contract.start_date} 
           endDate={contract.end_date} 

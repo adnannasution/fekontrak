@@ -22,6 +22,18 @@ export const ContractTimeInfo = ({ contract, fieldText }: ContractTimeInfoProps)
     });
   };
 
+  // MPL: (Tanggal Selesai - Tanggal Mulai) + 1, dalam hari (tanggal mulai = hari ke-1)
+  const computeMpl = () => {
+    if (!contract.tanggal_mulai || !effectiveTanggalSelesai) return null;
+    const start = new Date(contract.tanggal_mulai);
+    const end = new Date(effectiveTanggalSelesai);
+    if (isNaN(start.getTime()) || isNaN(end.getTime())) return null;
+    const diffDays = Math.round((end.getTime() - start.getTime()) / 86400000);
+    if (diffDays < 0) return null;
+    return diffDays + 1;
+  };
+  const mplDays = computeMpl();
+
   const calculateDurationProgress = () => {
     if (!contract.tanggal_mulai || !effectiveTanggalSelesai)
       return { progress: 0, daysRemaining: 0, totalDays: 0, elapsedDays: 0 };
@@ -98,6 +110,22 @@ export const ContractTimeInfo = ({ contract, fieldText }: ContractTimeInfoProps)
             )}
           </div>
         </div>
+      </div>
+
+      {/* MPL - Masa Penyelesaian Lingkup */}
+      <div className="bg-white rounded-lg p-5 border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200">
+        <div className="flex items-center justify-between">
+          <h4 className="text-blue-600 font-semibold flex items-center gap-2">
+            <Clock className="h-4 w-4 text-purple-500" />
+            MPL (Masa Penyelesaian Lingkup)
+          </h4>
+          <span className="text-lg font-bold text-gray-800">
+            {mplDays != null ? `${mplDays} hari` : '-'}
+          </span>
+        </div>
+        <p className="text-xs text-gray-400 mt-1">
+          Dihitung dari Tanggal Mulai sampai Tanggal Selesai (tanggal mulai dihitung hari ke-1).
+        </p>
       </div>
     </div>
   );

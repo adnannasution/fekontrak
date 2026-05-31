@@ -39,6 +39,9 @@ export interface Kontrak {
   disiplin?: string;
   tkdn_percentage?: number;
   tanggal_lkp?: string;
+  tanggal_mpl?: number;
+  tanggal_mpa?: number;
+  masa_pemeliharaan_hari?: number;
   // Amendment fields
   has_amendment?: boolean;
   no_amandemen?: string;

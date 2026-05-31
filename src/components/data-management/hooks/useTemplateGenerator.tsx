@@ -11,6 +11,11 @@ export function useTemplateGenerator() {
     setIsGenerating(true);
     
     try {
+      // Contoh tanggal mulai & selesai
+      const contohMulai = new Date();
+      const contohSelesai = new Date();
+      contohSelesai.setDate(contohSelesai.getDate() + 365);
+
       // Define headers for contract template - improved
       const headers = [
         'Judul Kontrak',
@@ -21,6 +26,8 @@ export function useTemplateGenerator() {
         'Direksi Pekerjaan',
         'Disiplin',
         'Tanggal Terima Dokumen',
+        'Tanggal Mulai',
+        'Tanggal Selesai',
         'No PO/PR',
         'No Dokumen Kontrak'
       ];
@@ -36,6 +43,8 @@ export function useTemplateGenerator() {
           'Direksi Pekerjaan': 'MA5',
           'Disiplin': 'Rotating',
           'Tanggal Terima Dokumen': format(new Date(), 'dd-MM-yyyy'),
+          'Tanggal Mulai': format(contohMulai, 'dd-MM-yyyy'),
+          'Tanggal Selesai': format(contohSelesai, 'dd-MM-yyyy'),
           'No PO/PR': 'PO-2024-001',
           'No Dokumen Kontrak': 'DOC-001/2024'
         },
@@ -48,6 +57,8 @@ export function useTemplateGenerator() {
           'Direksi Pekerjaan': 'MA7',
           'Disiplin': 'Stationary',
           'Tanggal Terima Dokumen': format(new Date(), 'dd-MM-yyyy'),
+          'Tanggal Mulai': format(contohMulai, 'dd-MM-yyyy'),
+          'Tanggal Selesai': format(contohSelesai, 'dd-MM-yyyy'),
           'No PO/PR': 'PO-2024-003',
           'No Dokumen Kontrak': 'DOC-003/2024'
         }
@@ -65,6 +76,8 @@ export function useTemplateGenerator() {
         { wch: 20 }, // Direksi Pekerjaan
         { wch: 15 }, // Disiplin
         { wch: 22 }, // Tanggal Terima Dokumen
+        { wch: 18 }, // Tanggal Mulai
+        { wch: 18 }, // Tanggal Selesai
         { wch: 15 }, // No PO/PR
         { wch: 20 }  // No Dokumen Kontrak
       ];
@@ -78,6 +91,7 @@ export function useTemplateGenerator() {
         'Nama Vendor: Harus sesuai dengan vendor yang sudah terdaftar',
         'Nilai Awal: Harus berupa angka tanpa pemisah ribuan',
         'Tanggal: Format DD-MM-YYYY',
+        'Tanggal Mulai & Tanggal Selesai: Format DD-MM-YYYY (opsional, isi untuk kontrak aktif)',
         'Direksi Pekerjaan: MA5, MA6, MA7, atau Workshop',
         'Disiplin: Instrumentasi, Electric, Rotating, Stationary, atau Alat Berat',
         'No PO/PR & No Dokumen: Opsional, boleh dikosongkan',
@@ -207,9 +221,88 @@ export function useTemplateGenerator() {
     }
   };
 
+  const generateVendorTemplate = async () => {
+    setIsGenerating(true);
+
+    try {
+      const exampleData = [
+        {
+          'Nama Vendor': 'PT ABC Engineering',
+          'NPWP': '01.234.567.8-901.000',
+          'Alamat': 'Jl. Industri No. 1, Cilacap',
+          'Nama PIC': 'Budi Santoso',
+          'Kontak PIC': '081234567890',
+          'Status Vendor': 'Active',
+          'Score': 85
+        },
+        {
+          'Nama Vendor': 'PT DEF Service',
+          'NPWP': '09.876.543.2-109.000',
+          'Alamat': 'Jl. Pelabuhan No. 5, Cilacap',
+          'Nama PIC': 'Siti Aminah',
+          'Kontak PIC': '081298765432',
+          'Status Vendor': 'Active',
+          'Score': 90
+        }
+      ];
+
+      const ws = XLSX.utils.json_to_sheet(exampleData);
+
+      // Set column widths
+      ws['!cols'] = [
+        { wch: 25 }, // Nama Vendor
+        { wch: 22 }, // NPWP
+        { wch: 35 }, // Alamat
+        { wch: 20 }, // Nama PIC
+        { wch: 18 }, // Kontak PIC
+        { wch: 15 }, // Status Vendor
+        { wch: 10 }  // Score
+      ];
+
+      // Add validation notes
+      const notes = [
+        '',
+        'CATATAN VALIDASI:',
+        'Nama Vendor: WAJIB diisi.',
+        '  - Jika nama sudah ada di sistem → data vendor akan DIPERBARUI (overwrite)',
+        '  - Jika nama belum ada → vendor BARU akan ditambahkan',
+        'Status Vendor: Active, Inactive, atau Blacklist',
+        'Score: Opsional, berupa angka (contoh: 85)',
+        'NPWP, Alamat, Nama PIC, Kontak PIC: Opsional, boleh dikosongkan'
+      ];
+
+      // Add notes starting from row 4
+      notes.forEach((note, index) => {
+        const cellRef = XLSX.utils.encode_cell({ r: index + 3, c: 0 });
+        ws[cellRef] = { v: note, t: 's' };
+      });
+
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Template Vendor');
+
+      XLSX.writeFile(wb, `Template_Import_Vendor_${format(new Date(), 'dd-MM-yyyy')}.xlsx`);
+
+      toast({
+        title: "Template Downloaded",
+        description: "Template vendor berhasil didownload",
+      });
+
+    } catch (error) {
+      console.error('Error generating vendor template:', error);
+      toast({
+        title: "Error",
+        description: "Gagal membuat template vendor",
+        variant: "destructive",
+      });
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
   return {
     generateContractTemplate,
     generateInvoiceTemplate,
+    generateVendorTemplate,
     isGenerating
   };
 }
