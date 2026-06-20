@@ -134,6 +134,7 @@ export const ContractDetailContent = ({
               <SCurveManager
                 idKontrak={(contract as any).idKontrak || contract.id_kontrak}
                 judulKontrak={(contract as any).judulKontrak || contract.judul_kontrak}
+                hasAmendment={!!contract.has_amendment}
               />
             </div>
           </TabsContent>
