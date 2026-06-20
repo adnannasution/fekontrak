@@ -14,6 +14,10 @@ export interface ContractFormData {
   tanggal_selesai?: string;
   durasi_kontrak_hari?: number;
   direksi_pekerjaan?: string;
+  id_direksi_pekerjaan?: string;
+  id_program_kerja?: string;
+  id_planner?: string;
+  kbo_bagian?: string;
   disiplin?: string;
   tkdn_percentage?: number;
   id_vendor?: string;
@@ -56,6 +60,10 @@ export const initialFormData: ContractFormData = {
   tanggal_selesai: '',
   durasi_kontrak_hari: 0,
   direksi_pekerjaan: '',
+  id_direksi_pekerjaan: '',
+  id_program_kerja: '',
+  id_planner: '',
+  kbo_bagian: '',
   disiplin: '',
   tkdn_percentage: 0,
   id_vendor: '',
@@ -110,6 +118,10 @@ export const createFormDataFromContract = (contract: Kontrak): ContractFormData 
     tanggal_selesai: toDateStr(contract.tanggal_selesai),
     durasi_kontrak_hari: contract.durasi_kontrak_hari || 0,
     direksi_pekerjaan: contract.direksi_pekerjaan || '',
+    id_direksi_pekerjaan: contract.id_direksi_pekerjaan || '',
+    id_program_kerja: contract.id_program_kerja || '',
+    id_planner: contract.id_planner || '',
+    kbo_bagian: contract.kbo_bagian || '',
     disiplin: contract.disiplin || '',
     tkdn_percentage: contract.tkdn_percentage || 0,
     id_vendor: contract.id_vendor || '',
@@ -156,6 +168,10 @@ export const createContractFromFormData = (formData: ContractFormData) => {
     tanggal_selesai: formData.tanggal_selesai || null,
     durasi_kontrak_hari: formData.durasi_kontrak_hari || null,
     direksi_pekerjaan: formData.direksi_pekerjaan || null,
+    id_direksi_pekerjaan: formData.id_direksi_pekerjaan || null,
+    id_program_kerja: formData.id_program_kerja || null,
+    id_planner: formData.id_planner || null,
+    kbo_bagian: formData.kbo_bagian || null,
     disiplin: formData.disiplin || null,
     tkdn_percentage: formData.tkdn_percentage || null,
     id_vendor: formData.id_vendor,

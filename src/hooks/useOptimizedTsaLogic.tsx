@@ -11,6 +11,9 @@ export const useOptimizedTsaLogic = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [workDirectionFilter, setWorkDirectionFilter] = useState('all');
   const [amendmentFilter, setAmendmentFilter] = useState('all');
+  const [programKerjaFilter, setProgramKerjaFilter] = useState('all');
+  const [plannerFilter, setPlannerFilter] = useState('all');
+  const [disiplinFilter, setDisiplinFilter] = useState('all');
   const [viewMode, setViewMode] = useState<'card' | 'list'>('card');
   const [isFormDialogOpen, setIsFormDialogOpen] = useState(false);
   const [editingContract, setEditingContract] = useState<Kontrak | null>(null);
@@ -57,9 +60,19 @@ export const useOptimizedTsaLogic = () => {
       const matchesWorkDirection =
         workDirectionFilter === 'all' || normalizedDir === workDirectionFilter;
 
-      return matchesSearch && matchesStatus && matchesAmendment && matchesWorkDirection;
+      const matchesProgramKerja =
+        programKerjaFilter === 'all' || contract.id_program_kerja === programKerjaFilter;
+
+      const matchesPlanner =
+        plannerFilter === 'all' || contract.id_planner === plannerFilter;
+
+      const matchesDisiplin =
+        disiplinFilter === 'all' || contract.disiplin === disiplinFilter;
+
+      return matchesSearch && matchesStatus && matchesAmendment && matchesWorkDirection
+        && matchesProgramKerja && matchesPlanner && matchesDisiplin;
     });
-  }, [allContracts, searchTerm, statusFilter, amendmentFilter, workDirectionFilter]);
+  }, [allContracts, searchTerm, statusFilter, amendmentFilter, workDirectionFilter, programKerjaFilter, plannerFilter, disiplinFilter]);
 
   // 📄 PAGINATION
   const pagination = usePagination({
@@ -136,6 +149,12 @@ export const useOptimizedTsaLogic = () => {
     setWorkDirectionFilter,
     amendmentFilter,
     setAmendmentFilter,
+    programKerjaFilter,
+    setProgramKerjaFilter,
+    plannerFilter,
+    setPlannerFilter,
+    disiplinFilter,
+    setDisiplinFilter,
     viewMode,
     setViewMode,
     isFormDialogOpen,

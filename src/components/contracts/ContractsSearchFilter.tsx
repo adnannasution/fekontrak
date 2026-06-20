@@ -5,6 +5,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Search } from "lucide-react";
 import { AmendmentFilter } from './AmendmentFilter';
 import { ViewModeToggle } from './ViewModeToggle';
+import { useProgramKerja } from "@/hooks/useProgramKerja";
+import { usePlanner } from "@/hooks/usePlanner";
 
 interface ContractsSearchFilterProps {
   searchTerm: string;
@@ -24,7 +26,15 @@ interface ContractsSearchFilterProps {
   setAmendmentFilter?: (v: string) => void;
   viewMode?: 'card' | 'list';
   onViewModeChange?: (mode: 'card' | 'list') => void;
+  programKerjaFilter?: string;
+  setProgramKerjaFilter?: (v: string) => void;
+  plannerFilter?: string;
+  setPlannerFilter?: (v: string) => void;
+  disiplinFilter?: string;
+  setDisiplinFilter?: (v: string) => void;
 }
+
+const disiplinOptions = ['Instrumentasi', 'Stationary', 'Electrical', 'Rotating', 'Alat Berat'];
 
 export function ContractsSearchFilter({
   searchTerm,
@@ -39,7 +49,15 @@ export function ContractsSearchFilter({
   setAmendmentFilter,
   viewMode = 'card',
   onViewModeChange,
+  programKerjaFilter = 'all',
+  setProgramKerjaFilter,
+  plannerFilter = 'all',
+  setPlannerFilter,
+  disiplinFilter = 'all',
+  setDisiplinFilter,
 }: ContractsSearchFilterProps) {
+  const { programKerjaList } = useProgramKerja();
+  const { plannerList } = usePlanner();
   return (
     <div className="mb-8">
       <div className="flex flex-col space-y-4 md:flex-row md:space-y-0 md:space-x-4 md:items-center">
@@ -66,6 +84,45 @@ export function ContractsSearchFilter({
             <SelectContent>
               <SelectItem value="all">Semua Direksi</SelectItem>
               {workDirectionOptions.map(option => (
+                <SelectItem key={option} value={option}>{option}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
+        {setProgramKerjaFilter && (
+          <Select value={programKerjaFilter} onValueChange={setProgramKerjaFilter}>
+            <SelectTrigger className="w-[200px]">
+              <SelectValue placeholder="Filter Program Kerja" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Semua Program Kerja</SelectItem>
+              {programKerjaList.map((p: any) => (
+                <SelectItem key={p.id_program_kerja} value={p.id_program_kerja}>{p.nama}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
+        {setPlannerFilter && (
+          <Select value={plannerFilter} onValueChange={setPlannerFilter}>
+            <SelectTrigger className="w-[200px]">
+              <SelectValue placeholder="Filter Planner" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Semua Planner</SelectItem>
+              {plannerList.map((p: any) => (
+                <SelectItem key={p.id_planner} value={p.id_planner}>{p.nama}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
+        {setDisiplinFilter && (
+          <Select value={disiplinFilter} onValueChange={setDisiplinFilter}>
+            <SelectTrigger className="w-[200px]">
+              <SelectValue placeholder="Filter Disiplin" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Semua Disiplin</SelectItem>
+              {disiplinOptions.map(option => (
                 <SelectItem key={option} value={option}>{option}</SelectItem>
               ))}
             </SelectContent>

@@ -12,6 +12,29 @@ export interface Vendor {
   updated_at?: string;
 }
 
+export interface DireksiPekerjaan {
+  id_direksi_pekerjaan: string;
+  nama: string;
+  jabatan?: string;
+  sub_area?: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface ProgramKerja {
+  id_program_kerja: string;
+  nama: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface Planner {
+  id_planner: string;
+  nama: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
 export interface Kontrak {
   id_kontrak: string;
   id_vendor: string;
@@ -19,6 +42,13 @@ export interface Kontrak {
   no_dokumen_kontrak?: string;
   no_po_pr?: string;
   direksi_pekerjaan?: string;
+  id_direksi_pekerjaan?: string;
+  direksi_pekerjaan_detail?: DireksiPekerjaan;
+  id_program_kerja?: string;
+  program_kerja_detail?: ProgramKerja;
+  id_planner?: string;
+  planner_detail?: Planner;
+  kbo_bagian?: string;
   tipe_kontrak: 'Lumpsum' | 'Unit Price' | 'TSA';
   status_kontrak: 'Pre-KOM' | 'Active' | 'Completed' | 'Terminated' | 'Aktif' | 'Selesai';
   tanggal_spb_diterima: string;

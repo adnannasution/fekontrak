@@ -20,6 +20,7 @@ interface Contract {
   status_kontrak: string;
   tanggal_mulai: string;
   tanggal_selesai: string;
+  kbo_bagian?: string;
   vendor: {
     nama_vendor: string;
   };
@@ -67,6 +68,7 @@ export const ContractSearchDialog = ({
         status_kontrak: c.statusKontrak,
         tanggal_mulai: c.tanggalMulai,
         tanggal_selesai: c.tanggalSelesai,
+        kbo_bagian: c.kboBagian,
         vendor: c.vendor
           ? { nama_vendor: c.vendor.namaVendor }
           : null,

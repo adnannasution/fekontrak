@@ -23,7 +23,10 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   ShoppingCart,
-  GitBranch
+  GitBranch,
+  HardHat,
+  CalendarRange,
+  UserCog
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
@@ -103,6 +106,9 @@ items: [
       items: [
         { name: 'Vendor', href: '/vendors', icon: Building2 },
         { name: 'Pengguna', href: '/users', icon: Users },
+        { name: 'Direksi Pekerjaan', href: '/master/direksi-pekerjaan', icon: HardHat },
+        { name: 'Program Kerja', href: '/master/program-kerja', icon: CalendarRange },
+        { name: 'Planner', href: '/master/planner', icon: UserCog },
       ]
     },
     {

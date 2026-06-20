@@ -2,6 +2,9 @@ import { useEffect } from 'react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useDireksiPekerjaan } from '@/hooks/useDireksiPekerjaan';
+import { useProgramKerja } from '@/hooks/useProgramKerja';
+import { usePlanner } from '@/hooks/usePlanner';
 
 interface TechnicalDetailsFormProps {
   formData: {
@@ -10,6 +13,10 @@ interface TechnicalDetailsFormProps {
     tanggal_selesai: string;
     disiplin: string;
     direksi_pekerjaan: string;
+    id_direksi_pekerjaan?: string;
+    id_program_kerja?: string;
+    id_planner?: string;
+    kbo_bagian?: string;
     tkdn_percentage: string;
     aktivitas_saat_ini: string;
     kendala: string;
@@ -22,6 +29,9 @@ interface TechnicalDetailsFormProps {
 
 export const TechnicalDetailsForm = ({ formData, setFormData }: TechnicalDetailsFormProps) => {
   const isContractActive = formData.status_kontrak !== 'Pre-KOM';
+  const { direksiPekerjaanList } = useDireksiPekerjaan();
+  const { programKerjaList } = useProgramKerja();
+  const { plannerList } = usePlanner();
 
   // Hitung MPL otomatis: (Tanggal Selesai - Tanggal Mulai) + 1, dalam hari (tanggal mulai = hari ke-1)
   const computedMpl = (() => {
@@ -161,6 +171,69 @@ export const TechnicalDetailsForm = ({ formData, setFormData }: TechnicalDetails
               <SelectItem value="MA6">MA6</SelectItem>
               <SelectItem value="MA7">MA7</SelectItem>
               <SelectItem value="Workshop">Workshop</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <Label htmlFor="id_direksi_pekerjaan">Direksi Pekerjaan (Penanggung Jawab)</Label>
+          <Select
+            value={formData.id_direksi_pekerjaan || ''}
+            onValueChange={(value) => setFormData({ ...formData, id_direksi_pekerjaan: value })}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Pilih direksi pekerjaan" />
+            </SelectTrigger>
+            <SelectContent>
+              {direksiPekerjaanList.map((d: any) => (
+                <SelectItem key={d.id_direksi_pekerjaan} value={d.id_direksi_pekerjaan}>{d.nama}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label htmlFor="kbo_bagian">KBO Bagian</Label>
+          <Input
+            id="kbo_bagian"
+            value={formData.kbo_bagian || ''}
+            onChange={(e) => setFormData({ ...formData, kbo_bagian: e.target.value })}
+            placeholder="Masukkan KBO Bagian"
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <Label htmlFor="id_program_kerja">Program Kerja</Label>
+          <Select
+            value={formData.id_program_kerja || ''}
+            onValueChange={(value) => setFormData({ ...formData, id_program_kerja: value })}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Pilih program kerja" />
+            </SelectTrigger>
+            <SelectContent>
+              {programKerjaList.map((p: any) => (
+                <SelectItem key={p.id_program_kerja} value={p.id_program_kerja}>{p.nama}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label htmlFor="id_planner">Planner</Label>
+          <Select
+            value={formData.id_planner || ''}
+            onValueChange={(value) => setFormData({ ...formData, id_planner: value })}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Pilih planner" />
+            </SelectTrigger>
+            <SelectContent>
+              {plannerList.map((p: any) => (
+                <SelectItem key={p.id_planner} value={p.id_planner}>{p.nama}</SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
