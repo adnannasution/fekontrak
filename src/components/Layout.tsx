@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, 
@@ -53,6 +53,20 @@ const Layout = ({ children }: LayoutProps) => {
 
   const location = useLocation();
   const navigate = useNavigate();
+
+  const desktopNavScrollRef = useRef<HTMLDivElement>(null);
+  const mobileNavScrollRef = useRef<HTMLDivElement>(null);
+  const desktopNavScrollPos = useRef(0);
+  const mobileNavScrollPos = useRef(0);
+
+  useEffect(() => {
+    if (desktopNavScrollRef.current) {
+      desktopNavScrollRef.current.scrollTop = desktopNavScrollPos.current;
+    }
+    if (mobileNavScrollRef.current) {
+      mobileNavScrollRef.current.scrollTop = mobileNavScrollPos.current;
+    }
+  }, [location.pathname]);
   const { signOut, userProfile } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const { isAdmin, isPic, isViewer, isVendor, canManageUsers, canManageVendors } = usePermissions();
@@ -175,7 +189,18 @@ items: [
         </div>
 
         {/* Navigation */}
-        <div className="flex-1 py-4 overflow-y-auto overflow-x-hidden">
+        <div
+          ref={isMobile ? mobileNavScrollRef : desktopNavScrollRef}
+          onScroll={(e) => {
+            const pos = e.currentTarget.scrollTop;
+            if (isMobile) {
+              mobileNavScrollPos.current = pos;
+            } else {
+              desktopNavScrollPos.current = pos;
+            }
+          }}
+          className="flex-1 py-4 overflow-y-auto overflow-x-hidden"
+        >
           {navigationGroups
             .filter(group => group.show && group.items.length > 0)
             .map((group, groupIndex, filteredGroups) => (
