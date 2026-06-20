@@ -5,23 +5,115 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Plus, Trash2, Save, TrendingUp, BarChart2, Settings, AlertCircle } from 'lucide-react';
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle,
+} from '@/components/ui/dialog';
+import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from '@/components/ui/select';
+import { Plus, Trash2, Save, TrendingUp, BarChart2, Settings, AlertCircle, History, Sparkles } from 'lucide-react';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip,
   Legend, ResponsiveContainer, ReferenceLine
 } from 'recharts';
 import {
-  useSCurve, SCurveActivity, SCurvePeriod,
+  useSCurve, SCurveActivity, SCurvePeriod, SCurveData,
   SCurvePeriodActivity, calcWeightedProgress
 } from '@/hooks/useSCurve';
 
 interface SCurveManagerProps {
   idKontrak: string;
   judulKontrak?: string;
+  hasAmendment?: boolean;
 }
 
-export const SCurveManager = ({ idKontrak }: SCurveManagerProps) => {
-  const { sCurveData, isLoading, saveSCurve } = useSCurve(idKontrak);
+// Tampilan chart + tabel untuk satu set data S-Curve (dipakai untuk Kontrak, Amandemen, & modal Recovery)
+const SCurveDataView = ({
+  data,
+  readOnly,
+  onChange,
+}: {
+  data: SCurveData;
+  readOnly: boolean;
+  onChange?: (data: SCurveData) => void;
+}) => {
+  const { activities, periods } = data;
+
+  const chartData = useMemo(() => {
+    let cumPlan = 0;
+    let cumActual = 0;
+    let hasActual = true;
+
+    return periods.map((p) => {
+      const wPlan = calcWeightedProgress(p.activities, activities, 'plan');
+      const wActual = calcWeightedProgress(p.activities, activities, 'actual');
+      const hasActualData = p.activities.some(pa => pa.actual !== null);
+
+      cumPlan += wPlan;
+      if (hasActual && hasActualData) cumActual += wActual;
+      else if (!hasActualData) hasActual = false;
+
+      return {
+        periode: p.periode,
+        plan: parseFloat(Math.min(cumPlan, 100).toFixed(2)),
+        actual: hasActualData ? parseFloat(Math.min(cumActual, 100).toFixed(2)) : null,
+      };
+    });
+  }, [periods, activities]);
+
+  return (
+    <Card>
+      <CardContent className="p-6">
+        {chartData.length === 0 ? (
+          <div className="text-center py-16 text-gray-400">
+            <TrendingUp className="h-12 w-12 mx-auto mb-3 opacity-30" />
+            <p>Belum ada data.</p>
+          </div>
+        ) : (
+          <ResponsiveContainer width="100%" height={400}>
+            <LineChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 60 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+              <XAxis dataKey="periode" tick={{ fontSize: 11 }} angle={-35} textAnchor="end" height={70} />
+              <YAxis domain={[0, 100]} tickFormatter={(v) => `${v}%`} tick={{ fontSize: 12 }} />
+              <Tooltip formatter={(value: any) => [`${Number(value).toFixed(2)}%`]} />
+              <Legend verticalAlign="top" />
+              <ReferenceLine y={100} stroke="#e5e7eb" strokeDasharray="4 4" />
+              <Line type="monotone" dataKey="plan" stroke="#3b82f6" strokeWidth={2.5} dot={{ fill: '#3b82f6', r: 4 }} name="Plan Kumulatif (%)" connectNulls />
+              <Line type="monotone" dataKey="actual" stroke="#22c55e" strokeWidth={2.5} dot={{ fill: '#22c55e', r: 4 }} name="Actual Kumulatif (%)" connectNulls />
+            </LineChart>
+          </ResponsiveContainer>
+        )}
+      </CardContent>
+    </Card>
+  );
+};
+
+export const SCurveManager = ({ idKontrak, hasAmendment }: SCurveManagerProps) => {
+  const {
+    sCurveData, isLoading, saveSCurve,
+    amandemenVersions, latestAmandemen, saveAmandemen,
+    recoveryVersions, createRecovery,
+  } = useSCurve(idKontrak);
+
+  const [mainTab, setMainTab] = useState<'kontrak' | 'amandemen'>('kontrak');
+  const [selectedAmandemenId, setSelectedAmandemenId] = useState<string | null>(null);
+  const [showRecoveryModal, setShowRecoveryModal] = useState(false);
+  const [activeRecovery, setActiveRecovery] = useState<SCurveData | null>(null);
+
+  const showAmandemenTab = !!hasAmendment || amandemenVersions.length > 0;
+
+  const selectedAmandemen = useMemo(() => {
+    if (selectedAmandemenId) {
+      return amandemenVersions.find(v => v.id === selectedAmandemenId) ?? latestAmandemen;
+    }
+    return latestAmandemen;
+  }, [selectedAmandemenId, amandemenVersions, latestAmandemen]);
+
+  const handleCreateRecovery = async () => {
+    const version = await createRecovery.mutateAsync();
+    setActiveRecovery(version.data);
+    setShowRecoveryModal(true);
+  };
 
   const [activities, setActivities] = useState<SCurveActivity[]>([]);
   const [periods, setPeriods] = useState<SCurvePeriod[]>([]);
@@ -161,13 +253,34 @@ export const SCurveManager = ({ idKontrak }: SCurveManagerProps) => {
             <p className="text-sm text-gray-500">Plan vs Actual berdasarkan bobot aktivitas</p>
           </div>
         </div>
-        {isEditing && (
-          <Button onClick={handleSave} disabled={saveSCurve.isPending} className="gap-2">
-            <Save className="h-4 w-4" />
-            {saveSCurve.isPending ? 'Menyimpan...' : 'Simpan'}
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            onClick={handleCreateRecovery}
+            disabled={createRecovery.isPending}
+            className="gap-2"
+          >
+            <Sparkles className="h-4 w-4" />
+            {createRecovery.isPending ? 'Membuat...' : 'Create S-Curve Recovery'}
           </Button>
-        )}
+          {mainTab === 'kontrak' && isEditing && (
+            <Button onClick={handleSave} disabled={saveSCurve.isPending} className="gap-2">
+              <Save className="h-4 w-4" />
+              {saveSCurve.isPending ? 'Menyimpan...' : 'Simpan'}
+            </Button>
+          )}
+        </div>
       </div>
+
+      <Tabs value={mainTab} onValueChange={(v) => setMainTab(v as 'kontrak' | 'amandemen')}>
+        <TabsList className={`grid w-full ${showAmandemenTab ? 'grid-cols-2' : 'grid-cols-1'}`}>
+          <TabsTrigger value="kontrak"><TrendingUp className="h-4 w-4 mr-1" />S-Curve Kontrak</TabsTrigger>
+          {showAmandemenTab && (
+            <TabsTrigger value="amandemen"><History className="h-4 w-4 mr-1" />S-Curve Amandemen</TabsTrigger>
+          )}
+        </TabsList>
+
+        <TabsContent value="kontrak" className="space-y-6 mt-4">
 
       {/* Summary */}
       {chartData.length > 0 && (
@@ -469,6 +582,100 @@ export const SCurveManager = ({ idKontrak }: SCurveManagerProps) => {
           </Card>
         </TabsContent>
       </Tabs>
+        </TabsContent>
+
+        {showAmandemenTab && (
+          <TabsContent value="amandemen" className="space-y-4 mt-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h4 className="font-semibold text-gray-800">S-Curve Amandemen</h4>
+                <p className="text-sm text-gray-500">
+                  {amandemenVersions.length > 1
+                    ? 'Menampilkan amandemen terakhir. History amandemen sebelumnya tersimpan & bisa dipilih.'
+                    : 'Kurva hasil amandemen kontrak.'}
+                </p>
+              </div>
+              {amandemenVersions.length > 1 && (
+                <Select
+                  value={selectedAmandemen?.id ?? ''}
+                  onValueChange={(v) => setSelectedAmandemenId(v)}
+                >
+                  <SelectTrigger className="w-56">
+                    <SelectValue placeholder="Pilih versi amandemen" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {amandemenVersions.map((v, idx) => (
+                      <SelectItem key={v.id} value={v.id}>
+                        {v.no_amandemen ? `Amandemen ${v.no_amandemen}` : `Amandemen ke-${idx + 1}`}
+                        {idx === amandemenVersions.length - 1 ? ' (terakhir)' : ''}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            </div>
+            {selectedAmandemen ? (
+              <SCurveDataView data={selectedAmandemen.data} readOnly />
+            ) : (
+              <Card>
+                <CardContent className="p-6">
+                  <div className="text-center py-12 text-gray-400">
+                    <History className="h-10 w-10 mx-auto mb-3 opacity-30" />
+                    <p>Belum ada S-Curve Amandemen.</p>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+            <div className="flex justify-end">
+              <Button
+                variant="outline"
+                disabled={saveAmandemen.isPending}
+                onClick={() => saveAmandemen.mutate({ data: { activities, periods } })}
+                className="gap-2"
+              >
+                <Plus className="h-4 w-4" />
+                {saveAmandemen.isPending ? 'Menyimpan...' : 'Simpan S-Curve Kontrak Saat Ini sebagai Amandemen Baru'}
+              </Button>
+            </div>
+          </TabsContent>
+        )}
+      </Tabs>
+
+      {/* Modal S-Curve Recovery */}
+      <Dialog open={showRecoveryModal} onOpenChange={setShowRecoveryModal}>
+        <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>S-Curve Recovery</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-gray-500 -mt-2">
+            Kurva penuh dari awal hingga akhir, disalin dari S-Curve asli (baseline).
+          </p>
+          {activeRecovery && <SCurveDataView data={activeRecovery} readOnly />}
+          {recoveryVersions.length > 1 && (
+            <div>
+              <Label className="text-xs">Riwayat S-Curve Recovery</Label>
+              <Select
+                value={activeRecovery ? recoveryVersions.find(v => v.data === activeRecovery)?.id ?? '' : ''}
+                onValueChange={(id) => {
+                  const v = recoveryVersions.find(v => v.id === id);
+                  if (v) setActiveRecovery(v.data);
+                }}
+              >
+                <SelectTrigger className="w-full mt-1">
+                  <SelectValue placeholder="Pilih versi recovery" />
+                </SelectTrigger>
+                <SelectContent>
+                  {recoveryVersions.map((v, idx) => (
+                    <SelectItem key={v.id} value={v.id}>
+                      Recovery ke-{idx + 1} ({new Date(v.created_at).toLocaleDateString('id-ID')})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

@@ -25,7 +25,43 @@ export interface SCurveData {
   periods: SCurvePeriod[];
 }
 
+export interface SCurveVersion {
+  id: string;
+  no_amandemen?: string | null;
+  created_at: string;
+  data: SCurveData;
+}
+
+// Bentuk tersimpan di field sCurveData (string JSON) sejak ada fitur amandemen/recovery.
+// Kontrak lama menyimpan SCurveData polos (activities/periods langsung) — dideteksi & dimigrasi otomatis.
+export interface SCurveStore {
+  asli: SCurveData;
+  amandemen: SCurveVersion[];
+  recovery: SCurveVersion[];
+}
+
 const defaultSCurveData: SCurveData = { activities: [], periods: [] };
+const defaultSCurveStore: SCurveStore = { asli: defaultSCurveData, amandemen: [], recovery: [] };
+
+const isLegacyShape = (parsed: any): parsed is SCurveData =>
+  parsed && Array.isArray(parsed.activities) && Array.isArray(parsed.periods);
+
+const parseSCurveStore = (raw: string | null | undefined): SCurveStore => {
+  if (!raw) return defaultSCurveStore;
+  try {
+    const parsed = JSON.parse(raw);
+    if (isLegacyShape(parsed)) {
+      return { asli: parsed, amandemen: [], recovery: [] };
+    }
+    return {
+      asli: parsed.asli ?? defaultSCurveData,
+      amandemen: Array.isArray(parsed.amandemen) ? parsed.amandemen : [],
+      recovery: Array.isArray(parsed.recovery) ? parsed.recovery : [],
+    };
+  } catch {
+    return defaultSCurveStore;
+  }
+};
 
 // Hitung weighted progress satu periode
 export const calcWeightedProgress = (
@@ -62,59 +98,62 @@ const calcCumulativeProgress = (data: SCurveData) => {
   };
 };
 
+const fetchSCurveStore = async (idKontrak: string): Promise<SCurveStore> => {
+  const token = localStorage.getItem("token");
+  const res = await fetch(`${API_URL}/Contracts/${idKontrak}`, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  if (!res.ok) throw new Error("Gagal ambil data");
+  const data = await res.json();
+  return parseSCurveStore(data.sCurveData || data.s_curve_data);
+};
+
+const persistSCurveStore = async (idKontrak: string, store: SCurveStore) => {
+  const token = localStorage.getItem("token");
+  const res = await fetch(`${API_URL}/Contracts/${idKontrak}/scurve`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+    body: JSON.stringify({ sCurveData: JSON.stringify(store) })
+  });
+  if (!res.ok) throw new Error("Gagal simpan S-Curve");
+  return res.json();
+};
+
 export const useSCurve = (idKontrak?: string) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { data: sCurveData, isLoading } = useQuery({
+  const { data: store, isLoading } = useQuery({
     queryKey: ['scurve', idKontrak],
-    queryFn: async () => {
-      if (!idKontrak) return defaultSCurveData;
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${API_URL}/Contracts/${idKontrak}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (!res.ok) throw new Error("Gagal ambil data");
-      const data = await res.json();
-      const raw = data.sCurveData || data.s_curve_data;
-      if (!raw) return defaultSCurveData;
-      try { return JSON.parse(raw) as SCurveData; }
-      catch { return defaultSCurveData; }
-    },
+    queryFn: () => (idKontrak ? fetchSCurveStore(idKontrak) : Promise.resolve(defaultSCurveStore)),
     enabled: !!idKontrak,
   });
 
+  const invalidateAll = () => {
+    queryClient.invalidateQueries({ queryKey: ['scurve', idKontrak] });
+    queryClient.invalidateQueries({ queryKey: ['contract', idKontrak] });
+    queryClient.invalidateQueries({ queryKey: ['contracts'] });
+  };
+
+  // Simpan S-Curve asli (baseline) + update progress_plan/actual kontrak
   const saveSCurve = useMutation({
     mutationFn: async (newData: SCurveData) => {
-      const token = localStorage.getItem("token");
+      const current = store ?? defaultSCurveStore;
+      const updatedStore: SCurveStore = { ...current, asli: newData };
+      const result = await persistSCurveStore(idKontrak!, updatedStore);
 
-      // 1. Simpan S-Curve data
-      const res = await fetch(`${API_URL}/Contracts/${idKontrak}/scurve`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ sCurveData: JSON.stringify(newData) })
-      });
-      if (!res.ok) throw new Error("Gagal simpan S-Curve");
-
-      // 2. Hitung progress kumulatif terakhir
       const { plan, actual } = calcCumulativeProgress(newData);
-
-      // 3. Update progress_plan dan progress_actual di kontrak
+      const token = localStorage.getItem("token");
       await fetch(`${API_URL}/Contracts/${idKontrak}/progress`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({
-          progressPlan: plan,
-          progressActual: actual,
-        })
+        body: JSON.stringify({ progressPlan: plan, progressActual: actual })
       });
 
-      return await res.json();
+      return result;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['scurve', idKontrak] });
-      queryClient.invalidateQueries({ queryKey: ['contract', idKontrak] });
-      queryClient.invalidateQueries({ queryKey: ['contracts'] });
+      invalidateAll();
       toast({ title: "Berhasil", description: "S-Curve & progress kontrak berhasil diperbarui" });
     },
     onError: () => {
@@ -122,5 +161,62 @@ export const useSCurve = (idKontrak?: string) => {
     }
   });
 
-  return { sCurveData: sCurveData ?? defaultSCurveData, isLoading, saveSCurve };
+  // Simpan versi S-Curve Amandemen baru (history ditambah, tidak menimpa versi lama)
+  const saveAmandemen = useMutation({
+    mutationFn: async ({ data, noAmandemen }: { data: SCurveData; noAmandemen?: string | null }) => {
+      const current = store ?? defaultSCurveStore;
+      const newVersion: SCurveVersion = {
+        id: Date.now().toString(),
+        no_amandemen: noAmandemen ?? null,
+        created_at: new Date().toISOString(),
+        data,
+      };
+      const updatedStore: SCurveStore = { ...current, amandemen: [...current.amandemen, newVersion] };
+      return persistSCurveStore(idKontrak!, updatedStore);
+    },
+    onSuccess: () => {
+      invalidateAll();
+      toast({ title: "Berhasil", description: "S-Curve Amandemen berhasil disimpan" });
+    },
+    onError: () => {
+      toast({ title: "Error", description: "Gagal menyimpan S-Curve Amandemen", variant: "destructive" });
+    }
+  });
+
+  // Buat S-Curve Recovery — selalu copy persis dari S-Curve asli (baseline)
+  const createRecovery = useMutation({
+    mutationFn: async () => {
+      const current = store ?? defaultSCurveStore;
+      const newVersion: SCurveVersion = {
+        id: Date.now().toString(),
+        created_at: new Date().toISOString(),
+        data: JSON.parse(JSON.stringify(current.asli)) as SCurveData,
+      };
+      const updatedStore: SCurveStore = { ...current, recovery: [...current.recovery, newVersion] };
+      await persistSCurveStore(idKontrak!, updatedStore);
+      return newVersion;
+    },
+    onSuccess: () => {
+      invalidateAll();
+      toast({ title: "Berhasil", description: "S-Curve Recovery berhasil dibuat dari S-Curve asli" });
+    },
+    onError: () => {
+      toast({ title: "Error", description: "Gagal membuat S-Curve Recovery", variant: "destructive" });
+    }
+  });
+
+  const amandemenVersions = store?.amandemen ?? [];
+  const latestAmandemen = amandemenVersions.slice(-1)[0] ?? null;
+  const recoveryVersions = store?.recovery ?? [];
+
+  return {
+    sCurveData: store?.asli ?? defaultSCurveData,
+    isLoading,
+    saveSCurve,
+    amandemenVersions,
+    latestAmandemen,
+    saveAmandemen,
+    recoveryVersions,
+    createRecovery,
+  };
 };
