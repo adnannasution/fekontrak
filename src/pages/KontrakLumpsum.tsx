@@ -38,6 +38,7 @@ export default function KontrakLumpsum() {
     
     // Data
     filteredContracts,
+    totalCount,
     workDirectionOptions,
     summary,
     isLoading,
@@ -109,7 +110,7 @@ export default function KontrakLumpsum() {
         statusFilter={statusFilter}
         viewMode={viewMode}
         pagination={pagination}
-        totalCount={0}
+        totalCount={totalCount}
         onContractSelect={(contractId) => navigate(`/contracts/${contractId}`)}
       />
 

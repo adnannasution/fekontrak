@@ -1,6 +1,6 @@
 
 import { Badge } from '@/components/ui/badge';
-import { FileEdit, DollarSign, Calendar } from 'lucide-react';
+import { FileEdit, Coins, Calendar } from 'lucide-react';
 import { Kontrak } from '@/types/database';
 import { useAmandemenKontrak } from '@/hooks/useAmandemenKontrak';
 
@@ -57,7 +57,7 @@ export function ContractAmendmentBadge({ contract, formatCurrency }: ContractAme
           )}
           {latestAmendment.nilai_kontrak_baru && (
             <div className="flex items-center gap-1 text-muted-foreground md:col-span-2">
-              <DollarSign className="h-3 w-3" />
+              <Coins className="h-3 w-3" />
               <span>Nilai Terakhir: <span className="font-medium text-green-600">{formatCurrency(latestAmendment.nilai_kontrak_baru)}</span></span>
             </div>
           )}

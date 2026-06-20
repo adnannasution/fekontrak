@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, Search, Edit, Trash2, FileText, DollarSign, Calendar, Building, Eye } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, FileText, Coins, Calendar, Building, Eye } from 'lucide-react';
 import { useTagihans, useCreateTagihan, useUpdateTagihan, useDeleteTagihan } from '@/hooks/useTagihans';
 import { InvoiceFormDialog } from '@/components/invoices/InvoiceFormDialog';
 import { InvoiceCard } from '@/components/invoices/InvoiceCard';
@@ -76,8 +76,7 @@ const Invoices = () => {
   };
 
   const filteredInvoices = (invoices ?? []).filter(invoice => {
-    const matchesSearch = invoice.nomor_tagihan.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         (invoice.kontrak?.judul_kontrak || '').toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = (invoice.kontrak?.judul_kontrak || '').toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === 'all' || invoice.status_tagihan === statusFilter;
     return matchesSearch && matchesStatus;
   });
@@ -229,7 +228,7 @@ const Invoices = () => {
             <div className="relative flex-1">
               <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
               <Input
-                placeholder="Cari nomor tagihan..."
+                placeholder="Cari judul kontrak..."
                 className="pl-10"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}

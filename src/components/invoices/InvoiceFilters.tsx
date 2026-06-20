@@ -10,8 +10,6 @@ import { InvoiceViewToggle } from './InvoiceViewToggle';
 interface InvoiceFiltersProps {
   searchTerm: string;
   setSearchTerm: (value: string) => void;
-  filterKontrak: string;
-  setFilterKontrak: (value: string) => void;
   filterTipe: string;
   setFilterTipe: (value: string) => void;
   filterDireksiPekerjaan: string;
@@ -26,8 +24,6 @@ interface InvoiceFiltersProps {
 export const InvoiceFilters = ({
   searchTerm,
   setSearchTerm,
-  filterKontrak,
-  setFilterKontrak,
   filterTipe,
   setFilterTipe,
   filterDireksiPekerjaan,
@@ -59,12 +55,12 @@ export const InvoiceFilters = ({
         </div>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {/* Pencarian */}
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input
-              placeholder="Cari nomor tagihan..."
+              placeholder="Cari judul kontrak..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
@@ -96,26 +92,6 @@ export const InvoiceFilters = ({
                 .map((direksi) => (
                   <SelectItem key={direksi} value={direksi}>
                     {direksi}
-                  </SelectItem>
-                ))}
-            </SelectContent>
-          </Select>
-          
-          {/* Filter Kontrak - DENGAN PROTEKSI VALUE KOSONG */}
-          <Select value={filterKontrak} onValueChange={setFilterKontrak}>
-            <SelectTrigger>
-              <SelectValue placeholder="Kontrak" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Semua Kontrak</SelectItem>
-              {safeKontraks
-                .filter(k => k?.id_kontrak && k.id_kontrak.toString().trim() !== "") // Buang yang ID-nya kosong
-                .map((kontrak) => (
-                  <SelectItem key={kontrak.id_kontrak} value={kontrak.id_kontrak.toString()}>
-                    {kontrak.judul_kontrak?.length > 40 ? 
-                      `${kontrak.judul_kontrak.substring(0, 40)}...` : 
-                      (kontrak.judul_kontrak || "Kontrak Tanpa Judul")
-                    }
                   </SelectItem>
                 ))}
             </SelectContent>

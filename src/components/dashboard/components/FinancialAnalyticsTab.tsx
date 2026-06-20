@@ -3,7 +3,7 @@ import React, { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { Kontrak } from '@/types/database';
-import { TrendingUp, DollarSign, AlertTriangle, Target, Eye } from 'lucide-react';
+import { TrendingUp, Coins, AlertTriangle, Target, Eye } from 'lucide-react';
 import { AppleBudgetChart } from './AppleBudgetChart';
 import { useNavigate } from 'react-router-dom';
 import { navigateToContract } from '@/utils/navigationUtils';
@@ -92,7 +92,7 @@ export const FinancialAnalyticsTab = ({ contracts, metrics, onContractClick }: F
                 <p className="text-sm font-medium opacity-90">Total Budget</p>
                 <p className="text-2xl font-bold">{formatCurrency(metrics.totalBudget / 1000000)}</p>
               </div>
-              <DollarSign className="h-8 w-8 opacity-80" />
+              <Coins className="h-8 w-8 opacity-80" />
             </div>
             <div className="mt-2 text-xs opacity-75">
               {contracts.length} total kontrak

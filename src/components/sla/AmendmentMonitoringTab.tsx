@@ -17,7 +17,7 @@ import {
   Download,
   X,
   Building,
-  DollarSign,
+  Coins,
   Users
 } from 'lucide-react';
 import { useAmendmentAlerts, AmendmentAlert } from '@/hooks/useAmendmentAlerts';
@@ -348,7 +348,7 @@ const AmendmentMonitoringTab: React.FC = () => {
 
                           {alert.nilai_awal && (
                             <div className="flex items-center gap-2">
-                              <DollarSign className="h-4 w-4 text-gray-500" />
+                              <Coins className="h-4 w-4 text-gray-500" />
                               <div>
                                 <div className="font-medium">{formatCurrency(alert.nilai_awal)}</div>
                                 <div className="text-xs text-muted-foreground">Nilai Kontrak</div>

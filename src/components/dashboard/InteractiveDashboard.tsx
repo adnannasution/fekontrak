@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { BarChart3, Clock, TrendingUp, DollarSign, AlertTriangle } from 'lucide-react';
+import { BarChart3, Clock, TrendingUp, Coins, AlertTriangle } from 'lucide-react';
 import { Kontrak } from '@/types/database';
 import { useTagihans } from '@/hooks/useTagihans';
 import { Top5Chart } from './Top5Chart';
@@ -315,7 +315,7 @@ export const InteractiveDashboard = ({
             Time Series
           </TabsTrigger>
           <TabsTrigger value="financial" className="flex items-center gap-2 text-xs sm:text-sm">
-            <DollarSign className="h-3 w-3 sm:h-4 sm:w-4" />
+            <Coins className="h-3 w-3 sm:h-4 sm:w-4" />
             Financial
           </TabsTrigger>
           <TabsTrigger value="risk" className="flex items-center gap-2 text-xs sm:text-sm">

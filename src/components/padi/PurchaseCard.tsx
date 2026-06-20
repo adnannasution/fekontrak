@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { 
   Calendar, 
-  DollarSign, 
+  Coins, 
   Building2, 
   FileText, 
   Edit, 
@@ -117,7 +117,7 @@ export const PurchaseCard = ({ purchase, onView, onEdit, onDelete }: PurchaseCar
         </div>
 
         <div className="flex items-center gap-2">
-          <DollarSign className="h-4 w-4 text-emerald-600" />
+          <Coins className="h-4 w-4 text-emerald-600" />
           <span className="font-bold text-lg text-emerald-700">
             {formatCurrency(purchase.nilai)}
           </span>

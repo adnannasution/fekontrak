@@ -11,7 +11,7 @@ import {
   Calendar,
   Clock,
   User,
-  DollarSign,
+  Coins,
   Eye,
   Download,
   History
@@ -243,7 +243,7 @@ export const EnhancedSLAContractCard: React.FC<EnhancedSLAContractCardProps> = (
 
             {contract.nilai_kontrak && (
               <div className="flex items-center gap-2">
-                <DollarSign className="h-4 w-4 text-gray-400" />
+                <Coins className="h-4 w-4 text-gray-400" />
                 <div>
                   <span className="text-gray-500 block">Nilai Kontrak:</span>
                   <span className="font-medium">{formatCurrency(contract.nilai_kontrak)}</span>

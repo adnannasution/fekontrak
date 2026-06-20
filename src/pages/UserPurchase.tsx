@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, Search, TrendingUp, DollarSign, ShoppingBag, Activity } from "lucide-react";
+import { Plus, Search, TrendingUp, Coins, ShoppingBag, Activity } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -136,7 +136,7 @@ const UserPurchase = () => {
                 <CardTitle className="text-sm font-medium text-emerald-100">Total Nilai</CardTitle>
                 <div className="text-2xl font-bold mt-2">{formatCurrency(totalValue)}</div>
               </div>
-              <DollarSign className="h-8 w-8 text-emerald-200" />
+              <Coins className="h-8 w-8 text-emerald-200" />
             </div>
           </CardHeader>
         </Card>

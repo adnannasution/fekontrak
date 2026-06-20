@@ -1,7 +1,7 @@
 
 import React, { useState, Suspense, lazy, useMemo } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { BarChart3, DollarSign, TrendingUp, AlertTriangle, Clock } from 'lucide-react';
+import { BarChart3, Coins, TrendingUp, AlertTriangle, Clock } from 'lucide-react';
 import { OptimizedMetricsCards } from './components/OptimizedMetricsCards';
 import { OptimizedContractListSkeleton } from '@/components/contracts/OptimizedLoadingStates';
 import { useSuperOptimizedDashboard, SuperOptimizedContract } from '@/hooks/useSuperOptimizedDashboard';
@@ -118,7 +118,7 @@ export const OptimizedInteractiveDashboard = ({
             <span className="sm:hidden">Info</span>
           </TabsTrigger>
           <TabsTrigger value="keuangan" className="flex items-center gap-1.5 text-xs sm:text-sm">
-            <DollarSign className="h-3 w-3 sm:h-4 sm:w-4" />
+            <Coins className="h-3 w-3 sm:h-4 sm:w-4" />
             <span>Keuangan</span>
           </TabsTrigger>
           <TabsTrigger value="progress" className="flex items-center gap-1.5 text-xs sm:text-sm">

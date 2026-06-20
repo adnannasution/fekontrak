@@ -12,7 +12,7 @@ export const ContractStatusByDirectionChart = ({
 }: ContractStatusByDirectionChartProps) => {
   // Define complete work directions and disciplines from project requirements
   const workDirections = ['MA5', 'MA6', 'MA7', 'Workshop'];
-  const disciplines = ['Instrumentasi', 'Electrical', 'Rotating', 'Stationary', 'Alat Berat'];
+  const disciplines = ['Instrumentasi', 'Electrical', 'Rotating', 'Stationary', 'Alat Berat', 'Tools'];
 
   // Process data for the work direction chart
   const directionChartData = React.useMemo(() => {
@@ -170,7 +170,7 @@ export const ContractStatusByDirectionChart = ({
             Status Kontrak berdasarkan Disiplin
           </CardTitle>
           <p className="text-sm text-muted-foreground">
-            Distribusi kontrak berdasarkan 5 disiplin: Instrumentasi, Electrical, Rotating, Stationary, dan Alat Berat
+            Distribusi kontrak berdasarkan 6 disiplin: Instrumentasi, Electrical, Rotating, Stationary, Alat Berat, dan Tools
           </p>
         </CardHeader>
         <CardContent>

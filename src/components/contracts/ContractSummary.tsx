@@ -1,6 +1,6 @@
 
 import { CardContent } from "@/components/ui/card";
-import { DollarSign, User, Calendar } from "lucide-react";
+import { Coins, User, Calendar } from "lucide-react";
 
 interface ContractSummaryProps {
   contract: any;
@@ -14,7 +14,7 @@ export function ContractSummary({ contract, formatCurrency, fieldText }: Contrac
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-slate-700/30 backdrop-blur-sm rounded-lg p-5 border border-slate-600/30">
           <div className="flex items-center gap-3 mb-3">
-            <DollarSign className="h-5 w-5 text-yellow-400" />
+            <Coins className="h-5 w-5 text-yellow-400" />
             <h3 className="text-white font-semibold">Nilai Kontrak</h3>
           </div>
           <p className="text-2xl font-bold text-yellow-400">{formatCurrency(contract.value)}</p>

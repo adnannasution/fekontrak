@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { FileText, Search, DollarSign, ArrowUpDown } from 'lucide-react';
+import { FileText, Search, Coins, ArrowUpDown } from 'lucide-react';
 import { useContracts } from '@/hooks/useContracts';
 import { useQuery } from '@tanstack/react-query';
 //import { supabase } from '@/integrations/supabase/client';
@@ -183,7 +183,7 @@ const { data: allAmendments = [], isLoading: isLoadingAmendments } = useQuery({
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-lg bg-accent">
-                <DollarSign className="h-5 w-5 text-accent-foreground" />
+                <Coins className="h-5 w-5 text-accent-foreground" />
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Total Nilai Baru</p>

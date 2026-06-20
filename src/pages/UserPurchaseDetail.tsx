@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, ExternalLink, Download, Calendar, Hash, FileText, DollarSign, Building2, MapPin, Edit, Trash2 } from "lucide-react";
+import { ArrowLeft, ExternalLink, Download, Calendar, Hash, FileText, Coins, Building2, MapPin, Edit, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -168,12 +168,12 @@ const UserPurchaseDetail = () => {
         <Card className="bg-white shadow-lg border border-gray-100">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <DollarSign className="h-5 w-5 text-emerald-600" /> Informasi Finansial & Lokasi
+              <Coins className="h-5 w-5 text-emerald-600" /> Informasi Finansial & Lokasi
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center gap-3">
-              <DollarSign className="h-4 w-4 text-emerald-600" />
+              <Coins className="h-4 w-4 text-emerald-600" />
               <div><p className="text-sm text-gray-500">Nilai Pembelian</p><p className="font-bold text-lg text-emerald-700">{formatCurrency(padi.nilai)}</p></div>
             </div>
             {padi.bagian && (

@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
 import { 
-  ArrowLeft, FileText, Calendar, DollarSign, Building, 
+  ArrowLeft, FileText, Calendar, Coins, Building, 
   CheckCircle, Clock, AlertCircle, Mail, Upload, User,
   MapPin, Phone, Eye, Download
 } from 'lucide-react';
@@ -318,7 +318,7 @@ const InvoiceDetail = () => {
               </CardContent>
             </Card>
             <Card className="md:col-span-2">
-              <CardHeader><CardTitle className="flex items-center gap-2"><DollarSign className="h-5 w-5" />Ringkasan Tagihan</CardTitle></CardHeader>
+              <CardHeader><CardTitle className="flex items-center gap-2"><Coins className="h-5 w-5" />Ringkasan Tagihan</CardTitle></CardHeader>
               <CardContent>
                 <div className="grid md:grid-cols-3 gap-6">
                   <div className="text-center"><p className="text-2xl font-bold text-blue-600">{allInvoices.length}</p><p className="text-sm text-gray-600">Total Termin</p></div>

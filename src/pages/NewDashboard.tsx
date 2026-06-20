@@ -11,7 +11,7 @@ import {
   Clock, 
   AlertTriangle,
   CheckCircle,
-  DollarSign,
+  Coins,
   Building2,
   FileText,
   Calendar,
