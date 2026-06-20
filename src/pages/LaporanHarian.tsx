@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { ClipboardList, Filter, RefreshCw, Search, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useDailyReport } from '@/hooks/useDailyReport';
 
-const DISIPLIN_OPTIONS = ['Electrical', 'Instrument', 'Rotating', 'Stationary', 'Alat Berat'];
+const DISIPLIN_OPTIONS = ['Electrical', 'Instrument', 'Rotating', 'Stationary', 'Alat Berat', 'Tools'];
 const KATEGORI_OPTIONS = ['Corrective Maintenance', 'Preventive Maintenance', 'Plant Patrol', 'Progress', 'Challenge Session'];
 const STATUS_OPTIONS   = ['Done', 'In Progress', 'Waiting Material', 'Pending'];
 const PAGE_SIZE_OPTIONS = [10, 25, 50, 100];

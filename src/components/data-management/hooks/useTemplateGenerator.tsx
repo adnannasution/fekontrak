@@ -93,7 +93,7 @@ export function useTemplateGenerator() {
         'Tanggal: Format DD-MM-YYYY',
         'Tanggal Mulai & Tanggal Selesai: Format DD-MM-YYYY (opsional, isi untuk kontrak aktif)',
         'Direksi Pekerjaan: MA5, MA6, MA7, atau Workshop',
-        'Disiplin: Instrumentasi, Electric, Rotating, Stationary, atau Alat Berat',
+        'Disiplin: Instrumentasi, Electric, Rotating, Stationary, Alat Berat, atau Tools',
         'No PO/PR & No Dokumen: Opsional, boleh dikosongkan',
         'SLA KOM: Otomatis 14 hari dari sistem (tidak perlu diisi)',
         '',

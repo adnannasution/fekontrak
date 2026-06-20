@@ -3,7 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
-import { FileText, Calendar, DollarSign, CheckCircle, Clock, Plus, FileEdit, Download, ExternalLink, Mail } from 'lucide-react';
+import { FileText, Calendar, Coins, CheckCircle, Clock, Plus, FileEdit, Download, ExternalLink, Mail } from 'lucide-react';
 import ContractDetailInfo from "./ContractDetailInfo";
 import ContractDocumentsCard from "./ContractDocumentsCard";
 import { ContractAmendments } from "./ContractAmendments";
@@ -198,7 +198,7 @@ export const ContractDetailContent = ({
                     <div className="grid md:grid-cols-3 gap-6">
                       <div className="space-y-3">
                         <div className="flex items-center gap-2 text-green-600">
-                          <DollarSign className="h-4 w-4" />
+                          <Coins className="h-4 w-4" />
                           <span className="text-sm font-medium">Nilai Tagihan</span>
                         </div>
                         <p className="text-xl font-bold text-green-600">{formatCurrency(tagihan.nilai_tagihan)}</p>

@@ -34,7 +34,7 @@ interface ContractsSearchFilterProps {
   setDisiplinFilter?: (v: string) => void;
 }
 
-const disiplinOptions = ['Instrumentasi', 'Stationary', 'Electrical', 'Rotating', 'Alat Berat'];
+const disiplinOptions = ['Instrumentasi', 'Stationary', 'Electrical', 'Rotating', 'Alat Berat', 'Tools'];
 
 export function ContractsSearchFilter({
   searchTerm,

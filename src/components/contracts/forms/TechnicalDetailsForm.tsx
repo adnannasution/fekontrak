@@ -154,6 +154,7 @@ export const TechnicalDetailsForm = ({ formData, setFormData }: TechnicalDetails
               <SelectItem value="Electrical">Electrical</SelectItem>
               <SelectItem value="Rotating">Rotating</SelectItem>
               <SelectItem value="Alat Berat">Alat Berat</SelectItem>
+              <SelectItem value="Tools">Tools</SelectItem>
             </SelectContent>
           </Select>
         </div>

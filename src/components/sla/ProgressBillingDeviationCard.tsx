@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { AlertTriangle, TrendingUp, DollarSign, CheckCircle } from 'lucide-react';
+import { AlertTriangle, TrendingUp, Coins, CheckCircle } from 'lucide-react';
 import { useProgressBillingDeviation, DeviationWarning } from '@/hooks/useProgressBillingDeviation';
 
 export const ProgressBillingDeviationCard = () => {
@@ -88,7 +88,7 @@ const DeviationWarningItem = ({ deviation }: { deviation: DeviationWarning }) =>
 
         <div className="text-right">
           <div className="flex items-center gap-1 text-red-600">
-            <DollarSign className="h-4 w-4" />
+            <Coins className="h-4 w-4" />
             <span className="font-medium">{deviation.total_billing_percentage.toFixed(1)}%</span>
           </div>
           <span className="text-xs text-gray-500">Billing</span>

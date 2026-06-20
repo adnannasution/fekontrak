@@ -1,6 +1,6 @@
 
 import { CardContent } from '@/components/ui/card';
-import { DollarSign, AlertTriangle } from 'lucide-react';
+import { Coins, AlertTriangle } from 'lucide-react';
 import { Kontrak } from '@/types/database';
 import { PreKomContent } from './PreKomContent';
 import { ActiveContractContent } from './ActiveContractContent';
@@ -44,7 +44,7 @@ export function ContractCardContent({
 
       {/* Contract Value */}
       <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
-        <DollarSign className="h-4 w-4 text-green-600" />
+        <Coins className="h-4 w-4 text-green-600" />
         <div className="flex-1">
           <p className="text-sm text-gray-600">
             {contract.has_amendment && contract.nilai_kontrak_baru ? 'Nilai Kontrak (Baru)' : 'Nilai Kontrak'}

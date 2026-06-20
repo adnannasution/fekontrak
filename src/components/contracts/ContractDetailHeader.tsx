@@ -1,7 +1,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, Edit, Trash2, Building2, Calendar, DollarSign } from "lucide-react";
+import { ChevronLeft, Edit, Trash2, Building2, Calendar, Coins } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Kontrak } from "@/types/database";
 
@@ -132,7 +132,7 @@ export const ContractDetailHeader = ({
           <div className="space-y-4 animate-scale-in">
             <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
               <div className="flex items-center gap-3 mb-2">
-                <DollarSign className="h-6 w-6 text-green-300" />
+                <Coins className="h-6 w-6 text-green-300" />
                 <span className="text-blue-200 text-sm">{getValueLabel()}</span>
               </div>
               <div className="text-3xl font-bold text-green-300">
@@ -147,7 +147,7 @@ export const ContractDetailHeader = ({
             
             <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
               <div className="flex items-center gap-3 mb-2">
-                <DollarSign className="h-6 w-6 text-yellow-300" />
+                <Coins className="h-6 w-6 text-yellow-300" />
                 <span className="text-blue-200 text-sm">Total Tagihan</span>
               </div>
               <div className="text-2xl font-bold text-yellow-300">

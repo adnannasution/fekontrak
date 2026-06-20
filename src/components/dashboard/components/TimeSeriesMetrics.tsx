@@ -1,7 +1,7 @@
 
 import React, { useMemo } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { TrendingUp, TrendingDown, DollarSign, BarChart3, CheckCircle } from 'lucide-react';
+import { TrendingUp, TrendingDown, Coins, BarChart3, CheckCircle } from 'lucide-react';
 import { Kontrak } from '@/types/database';
 
 interface TimeSeriesMetricsProps {
@@ -133,7 +133,7 @@ export const TimeSeriesMetrics = ({
         title="Total Nilai Kontrak"
         value={formatCurrency(metrics.totalValue)}
         change={`${Math.abs(metrics.trends.value * 5.2).toFixed(1)}%`}
-        icon={DollarSign}
+        icon={Coins}
         color="blue"
         trend={metrics.trends.value}
       />

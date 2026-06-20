@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { DollarSign, TrendingUp, TrendingDown, Calculator } from 'lucide-react';
+import { Coins, TrendingUp, TrendingDown, Calculator } from 'lucide-react';
 import { useTagihans } from '@/hooks/useTagihans';
 import { Kontrak } from '@/types/database';
 
@@ -16,7 +16,7 @@ export const FinancialSummaryCard = ({ contracts }: FinancialSummaryCardProps) =
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <DollarSign className="h-5 w-5" />
+            <Coins className="h-5 w-5" />
             Ringkasan Finansial
           </CardTitle>
         </CardHeader>
@@ -54,7 +54,7 @@ export const FinancialSummaryCard = ({ contracts }: FinancialSummaryCardProps) =
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <DollarSign className="h-5 w-5 text-blue-600" />
+          <Coins className="h-5 w-5 text-blue-600" />
           Ringkasan Finansial
         </CardTitle>
       </CardHeader>

@@ -37,8 +37,8 @@ export const DashboardSearchFilter = ({
   disciplines,
   metrics
 }: DashboardSearchFilterProps) => {
-  // Add "Alat Berat" to disciplines if not already present
-  const enhancedDisciplines = [...new Set([...disciplines, 'Alat Berat'])];
+  // Add "Alat Berat" and "Tools" to disciplines if not already present
+  const enhancedDisciplines = [...new Set([...disciplines, 'Alat Berat', 'Tools'])];
 
   // Handle filter click with proper status mapping
   const handleFilterClick = (filterValue: string) => {

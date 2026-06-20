@@ -28,7 +28,6 @@ const InvoiceManagement = () => {
 
   const {
     searchTerm, setSearchTerm,
-    filterKontrak, setFilterKontrak,
     filterTipe, setFilterTipe,
     filterDireksiPekerjaan, setFilterDireksiPekerjaan,
     isCreateDialogOpen, setIsCreateDialogOpen,
@@ -89,8 +88,6 @@ const InvoiceManagement = () => {
       <InvoiceFilters
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
-        filterKontrak={filterKontrak}
-        setFilterKontrak={setFilterKontrak}
         filterTipe={filterTipe}
         setFilterTipe={setFilterTipe}
         filterDireksiPekerjaan={filterDireksiPekerjaan}

@@ -1,6 +1,6 @@
 import React from 'react';
 import { CardContent } from '@/components/ui/card';
-import { FileText, Calendar, DollarSign } from 'lucide-react';
+import { FileText, Calendar, Coins } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { id } from 'date-fns/locale';
 import { useNavigate } from 'react-router-dom';
@@ -66,7 +66,7 @@ export const InvoiceCardContent = ({ invoice }: InvoiceCardContentProps) => {
 
       {/* Nilai Tagihan */}
       <div className="flex items-center gap-2 p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200">
-        <DollarSign className="h-5 w-5 text-green-600" />
+        <Coins className="h-5 w-5 text-green-600" />
         <div>
           <p className="text-sm text-gray-600">Nilai Tagihan</p>
           <p className="font-bold text-lg text-green-600">

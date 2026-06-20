@@ -1,7 +1,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { useAmandemenKontrak } from '@/hooks/useAmandemenKontrak';
-import { FileEdit, Calendar, DollarSign } from 'lucide-react';
+import { FileEdit, Calendar, Coins } from 'lucide-react';
 
 interface ContractAmendmentInfoProps {
   contract: any;
@@ -72,7 +72,7 @@ export const ContractAmendmentInfo = ({
               <div>
                 <label className="text-muted-foreground text-xs">Nilai Kontrak Baru</label>
                 <p className="font-medium flex items-center gap-1 text-green-600">
-                  <DollarSign className="h-3 w-3" />
+                  <Coins className="h-3 w-3" />
                   {formatCurrency(amendment.nilai_kontrak_baru)}
                 </p>
               </div>

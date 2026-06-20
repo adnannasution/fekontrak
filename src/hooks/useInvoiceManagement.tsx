@@ -10,7 +10,6 @@ export const useInvoiceManagement = () => {
   const navigate = useNavigate();
 
   const [searchTerm, setSearchTerm] = useState('');
-  const [filterKontrak, setFilterKontrak] = useState<string>('all');
   const [filterTipe, setFilterTipe] = useState<string>('all');
   const [filterDireksiPekerjaan, setFilterDireksiPekerjaan] = useState<string>('all');
 
@@ -33,15 +32,9 @@ export const useInvoiceManagement = () => {
   const filteredTagihans = (tagihans || []).filter(tagihan => {
     const search = (searchTerm ?? '').toLowerCase();
 
-    const nomor = (tagihan?.nomor_tagihan ?? '').toLowerCase();
     const judul = (tagihan?.kontrak?.judul_kontrak ?? '').toLowerCase();
 
-    const matchesSearch =
-      nomor.includes(search) ||
-      judul.includes(search);
-
-    const matchesKontrak =
-      filterKontrak === 'all' || tagihan?.id_kontrak === filterKontrak;
+    const matchesSearch = judul.includes(search);
 
     const matchesTipe =
       filterTipe === 'all' || tagihan?.tipe_kontrak === filterTipe;
@@ -57,7 +50,7 @@ export const useInvoiceManagement = () => {
       filterDireksiPekerjaan === 'all' ||
       normalizedContractDirection === filterDireksiPekerjaan;
 
-    return matchesSearch && matchesKontrak && matchesTipe && matchesDireksiPekerjaan;
+    return matchesSearch && matchesTipe && matchesDireksiPekerjaan;
   });
 
   // ================= STATISTICS =================
@@ -162,7 +155,6 @@ export const useInvoiceManagement = () => {
 
   const resetFilters = () => {
     setSearchTerm('');
-    setFilterKontrak('all');
     setFilterTipe('all');
     setFilterDireksiPekerjaan('all');
   };
@@ -171,8 +163,6 @@ export const useInvoiceManagement = () => {
     // state
     searchTerm,
     setSearchTerm,
-    filterKontrak,
-    setFilterKontrak,
     filterTipe,
     setFilterTipe,
     filterDireksiPekerjaan,

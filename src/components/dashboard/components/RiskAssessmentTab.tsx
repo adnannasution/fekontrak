@@ -8,7 +8,7 @@ import {
   AlertTriangle, 
   TrendingDown, 
   Clock, 
-  DollarSign,
+  Coins,
   Users,
   Target,
   Calendar,
@@ -202,7 +202,7 @@ export const RiskAssessmentTab = ({ contracts, onContractClick }: RiskAssessment
                 <p className="text-sm font-medium text-blue-600">Budget Risk</p>
                 <p className="text-2xl font-bold text-blue-700">{riskMetrics.budgetOverrunRisk}</p>
               </div>
-              <DollarSign className="h-8 w-8 text-blue-600" />
+              <Coins className="h-8 w-8 text-blue-600" />
             </div>
           </CardContent>
         </Card>

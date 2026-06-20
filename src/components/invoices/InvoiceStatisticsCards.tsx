@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { FileText, DollarSign } from 'lucide-react';
+import { FileText, Coins } from 'lucide-react';
 
 interface InvoiceStatisticsCardsProps {
   totalInvoices: number;
@@ -74,7 +74,7 @@ export const InvoiceStatisticsCards = ({
               <p className="text-purple-100 text-sm">Total Nilai</p>
               <p className="text-lg font-bold">{formatCurrency(totalValue)}</p>
             </div>
-            <DollarSign className="h-8 w-8 text-purple-200" />
+            <Coins className="h-8 w-8 text-purple-200" />
           </div>
         </CardContent>
       </Card>

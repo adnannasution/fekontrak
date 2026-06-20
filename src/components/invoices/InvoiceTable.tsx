@@ -1,7 +1,7 @@
 import React from 'react';
 import { format } from 'date-fns';
 import { id as localeId } from 'date-fns/locale';
-import { Eye, Edit, Trash2, FileText, Calendar, DollarSign, Building, ExternalLink } from 'lucide-react';
+import { Eye, Edit, Trash2, FileText, Calendar, Coins, Building, ExternalLink } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { navigateToContract } from '@/utils/navigationUtils';
 import { Button } from '@/components/ui/button';
@@ -119,7 +119,7 @@ export const InvoiceTable = ({ invoices, onView, onEdit, onDelete }: InvoiceTabl
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
-                      <DollarSign className="h-4 w-4 text-emerald-600" />
+                      <Coins className="h-4 w-4 text-emerald-600" />
                       <span className="font-semibold text-emerald-700">{formatCurrency(invoice.nilai_tagihan)}</span>
                     </div>
                   </TableCell>

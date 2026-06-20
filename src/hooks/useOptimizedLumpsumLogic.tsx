@@ -162,6 +162,7 @@ export const useOptimizedLumpsumLogic = () => {
     setDeleteContract,
 
     filteredContracts: pagination.paginatedData,
+    totalCount: filteredContracts.length,
     workDirectionOptions,
     summary,
     isLoading,

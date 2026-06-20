@@ -178,7 +178,8 @@ export const EnhancedContractsTable = ({
         { label: 'Electric', value: 'Electric' },
         { label: 'Rotating', value: 'Rotating' },
         { label: 'Stationary', value: 'Stationary' },
-        { label: 'Alat Berat', value: 'Alat Berat' }
+        { label: 'Alat Berat', value: 'Alat Berat' },
+        { label: 'Tools', value: 'Tools' }
       ]
     }
   ];

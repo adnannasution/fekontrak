@@ -3,7 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
-import { Calculator, Package, TrendingUp, DollarSign } from 'lucide-react';
+import { Calculator, Package, TrendingUp, Coins } from 'lucide-react';
 import { useUnitPriceProgress } from '@/hooks/useUnitPriceProgress';
 
 interface UnitPriceProgressCardProps {
@@ -103,7 +103,7 @@ export const UnitPriceProgressCard = ({ contractId }: UnitPriceProgressCardProps
         {progressSummary.remainingValue > 0 && (
           <div className="bg-orange-50 rounded-lg p-3 border border-orange-200">
             <div className="flex items-center gap-2">
-              <DollarSign className="h-4 w-4 text-orange-600" />
+              <Coins className="h-4 w-4 text-orange-600" />
               <span className="text-sm font-medium text-orange-800">Remaining Value</span>
             </div>
             <div className="text-lg font-bold text-orange-600 mt-1">
