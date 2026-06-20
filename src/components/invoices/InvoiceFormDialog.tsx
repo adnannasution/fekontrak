@@ -14,6 +14,7 @@ interface InvoiceFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   invoice?: Tagihan | null;
+  initialContractId?: string;
   onSubmit: (data: Omit<Tagihan, 'id_tagihan' | 'created_at' | 'updated_at'>) => Promise<void>;
   isLoading?: boolean;
 }
@@ -22,6 +23,7 @@ export const InvoiceFormDialog = ({
   open,
   onOpenChange,
   invoice,
+  initialContractId,
   onSubmit,
   isLoading = false
 }: InvoiceFormDialogProps) => {
@@ -34,7 +36,7 @@ export const InvoiceFormDialog = ({
     selectedContract,
     isEditMode,
     contractsLoading
-  } = useInvoiceFormLogic({ open, invoice });
+  } = useInvoiceFormLogic({ open, invoice, initialContractId });
 
   const { hasUnsavedChanges } = useInvoiceFormChangeDetection({
     formData,

@@ -3,7 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
-import { FileText, Calendar, DollarSign, CheckCircle, Clock, Plus, FileEdit } from 'lucide-react';
+import { FileText, Calendar, DollarSign, CheckCircle, Clock, Plus, FileEdit, Download, ExternalLink, Mail } from 'lucide-react';
 import ContractDetailInfo from "./ContractDetailInfo";
 import ContractDocumentsCard from "./ContractDocumentsCard";
 import { ContractAmendments } from "./ContractAmendments";
@@ -12,6 +12,8 @@ import { useQuery } from '@tanstack/react-query';
 import { SCurveManager } from "./SCurveManager";
 import { DokumenUploadForm } from "./DokumenUploadForm";
 import { usePermissions } from '@/hooks/usePermissions';
+import { jsonToTagihanDocuments } from '@/lib/utils/databaseTypes';
+import { formatFileSize } from '@/lib/utils/formatters';
 
 interface ContractDetailContentProps {
   contract: Kontrak;
@@ -227,6 +229,61 @@ export const ContractDetailContent = ({
                         </p>
                       </div>
                     </div>
+                    {(() => {
+                      const rawDocs = tagihan.dokumen_tagihan ?? tagihan.dokumenTagihan;
+                      const parsedDocs = typeof rawDocs === 'string'
+                        ? (() => { try { return JSON.parse(rawDocs); } catch { return []; } })()
+                        : rawDocs;
+                      const docs = jsonToTagihanDocuments(parsedDocs);
+                      const memoUrl = tagihan.dokumen_memo ?? tagihan.dokumenMemo;
+                      if (docs.length === 0 && !memoUrl) return null;
+                      return (
+                        <div className="mt-4 pt-4 border-t border-gray-100">
+                          <div className="flex items-center gap-2 text-gray-600 mb-3">
+                            <FileText className="h-4 w-4" />
+                            <span className="text-sm font-medium">Dokumen Tagihan</span>
+                          </div>
+                          <div className="space-y-2">
+                            {docs.map((doc) => (
+                              <div key={doc.id} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg bg-gray-50">
+                                <div className="flex items-center gap-3 min-w-0">
+                                  <FileText className="h-4 w-4 text-blue-600 shrink-0" />
+                                  <div className="min-w-0">
+                                    <p className="text-sm font-medium text-gray-800 truncate">{doc.name}</p>
+                                    <p className="text-xs text-gray-500">{formatFileSize(doc.size)}</p>
+                                  </div>
+                                </div>
+                                <div className="flex items-center gap-1 shrink-0">
+                                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => window.open(doc.url, '_blank')}>
+                                    <ExternalLink className="h-4 w-4" />
+                                  </Button>
+                                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => { const a = document.createElement('a'); a.href = doc.url; a.download = doc.name; a.target = '_blank'; a.click(); }}>
+                                    <Download className="h-4 w-4" />
+                                  </Button>
+                                </div>
+                              </div>
+                            ))}
+                            {memoUrl && (
+                              <div className="flex items-center justify-between p-3 border border-blue-200 rounded-lg bg-blue-50">
+                                <div className="flex items-center gap-3 min-w-0">
+                                  <Mail className="h-4 w-4 text-blue-600 shrink-0" />
+                                  <p className="text-sm font-medium text-gray-800">Dokumen Memo</p>
+                                </div>
+                                <div className="flex items-center gap-1 shrink-0">
+                                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => window.open(memoUrl, '_blank')}>
+                                    <ExternalLink className="h-4 w-4" />
+                                  </Button>
+                                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => { const a = document.createElement('a'); a.href = memoUrl; a.download = 'memo'; a.target = '_blank'; a.click(); }}>
+                                    <Download className="h-4 w-4" />
+                                  </Button>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })()}
+
                     {tagihan.memo_required && (
                       <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
                         <div className="flex items-center gap-2 text-yellow-700 mb-2">
