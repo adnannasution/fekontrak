@@ -60,8 +60,8 @@ export function ContractsSearchFilter({
   const { plannerList } = usePlanner();
   return (
     <div className="mb-8">
-      <div className="flex flex-col space-y-4 md:flex-row md:space-y-0 md:space-x-4 md:items-center">
-        <div className="relative flex-1">
+      <div className="flex flex-col gap-4 md:flex-row md:flex-wrap md:items-center">
+        <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Cari kontrak berdasarkan judul atau nomor..."
@@ -78,7 +78,7 @@ export function ContractsSearchFilter({
         )}
         {workDirectionOptions.length > 0 && (
           <Select value={workDirectionFilter} onValueChange={setWorkDirectionFilter}>
-            <SelectTrigger className="w-[200px]">
+            <SelectTrigger className="w-full sm:w-[180px]">
               <SelectValue placeholder="Filter Direksi Pekerjaan" />
             </SelectTrigger>
             <SelectContent>
@@ -91,7 +91,7 @@ export function ContractsSearchFilter({
         )}
         {setProgramKerjaFilter && (
           <Select value={programKerjaFilter} onValueChange={setProgramKerjaFilter}>
-            <SelectTrigger className="w-[200px]">
+            <SelectTrigger className="w-full sm:w-[180px]">
               <SelectValue placeholder="Filter Program Kerja" />
             </SelectTrigger>
             <SelectContent>
@@ -104,7 +104,7 @@ export function ContractsSearchFilter({
         )}
         {setPlannerFilter && (
           <Select value={plannerFilter} onValueChange={setPlannerFilter}>
-            <SelectTrigger className="w-[200px]">
+            <SelectTrigger className="w-full sm:w-[180px]">
               <SelectValue placeholder="Filter Planner" />
             </SelectTrigger>
             <SelectContent>
@@ -117,7 +117,7 @@ export function ContractsSearchFilter({
         )}
         {setDisiplinFilter && (
           <Select value={disiplinFilter} onValueChange={setDisiplinFilter}>
-            <SelectTrigger className="w-[200px]">
+            <SelectTrigger className="w-full sm:w-[180px]">
               <SelectValue placeholder="Filter Disiplin" />
             </SelectTrigger>
             <SelectContent>
