@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/tooltip';
 import { Padi } from '@/types/padi';
 import { getStatusColor, getStatusProgress, getProgressGradient } from './constants/purchaseStatusOptions';
+import { formatCurrency } from '@/lib/utils/formatters';
 
 interface PadiTableProps {
   padiList: Padi[];
@@ -23,9 +24,6 @@ interface PadiTableProps {
 }
 
 export const PadiTable = ({ padiList, onEdit, onDelete, onView }: PadiTableProps) => {
-  const formatCurrency = (amount: number) =>
-    new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(amount);
-
   const formatDate = (dateString: string) => {
     try { return format(new Date(dateString), 'dd/MM/yyyy'); }
     catch { return dateString; }

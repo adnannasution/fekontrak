@@ -40,11 +40,4 @@ export const getProgressGradient = (progress: number) => {
   return 'from-red-400 to-red-600'; // Punchlist
 };
 
-export const formatCurrency = (amount: number) => {
-  return new Intl.NumberFormat('id-ID', {
-    style: 'currency',
-    currency: 'IDR',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0
-  }).format(amount);
-};
+export { formatCurrency } from '@/lib/utils/formatters';

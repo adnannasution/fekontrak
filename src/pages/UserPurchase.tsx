@@ -10,11 +10,13 @@ import { PurchaseViewToggle } from "@/components/padi/PurchaseViewToggle";
 import { ContractsPagination } from "@/components/dashboard/components/ContractsPagination";
 import { useNavigate } from "react-router-dom";
 import { PadiFormDialog } from "@/components/padi/PadiFormDialog";
+import { ConfirmDeleteDialog } from "@/components/shared/ConfirmDeleteDialog";
 import { usePadi } from "@/hooks/usePadi";
 import { usePagination } from "@/hooks/usePagination";
 import { Padi, PadiFormData } from "@/types/padi";
 import { useToast } from "@/hooks/use-toast";
 import { usePermissions } from "@/hooks/usePermissions";
+import { formatCurrency } from "@/lib/utils/formatters";
 
 const UserPurchase = () => {
   const { toast } = useToast();
@@ -26,6 +28,7 @@ const UserPurchase = () => {
   const [selectedBagian, setSelectedBagian] = useState<string>("all");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingPadi, setEditingPadi] = useState<Padi | null>(null);
+  const [deletingPadi, setDeletingPadi] = useState<Padi | null>(null);
   const [viewMode, setViewMode] = useState<'card' | 'table'>('card');
 
   const filteredPadi = padiList.filter((padi) => {
@@ -56,10 +59,14 @@ const UserPurchase = () => {
 
   const handleEditPadi = (padi: Padi) => { setEditingPadi(padi); setDialogOpen(true); };
 
-  const handleDeletePadi = async (purchase: Padi) => {
-    if (window.confirm('Apakah Anda yakin ingin menghapus data pembelian ini?')) {
-      try { await deletePadi(purchase.id_padi); } catch (error) {}
-    }
+  const handleDeletePadi = (purchase: Padi) => {
+    setDeletingPadi(purchase);
+  };
+
+  const confirmDeletePadi = async () => {
+    if (!deletingPadi) return;
+    try { await deletePadi(deletingPadi.id_padi); } catch (error) {}
+    setDeletingPadi(null);
   };
 
   const handleAddNew = () => { setEditingPadi(null); setDialogOpen(true); };
@@ -69,10 +76,6 @@ const UserPurchase = () => {
   const highValuePurchases = filteredPadi.filter(padi => padi.nilai >= 50000000).length;
   const completedPurchases = filteredPadi.filter(padi => padi.status_purchase === 'Invoice Paid').length;
   const inProgressPurchases = filteredPadi.filter(padi => padi.status_purchase && padi.status_purchase !== 'Invoice Paid').length;
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(amount);
-  };
 
   if (isLoading) {
     return (
@@ -254,6 +257,14 @@ const UserPurchase = () => {
           isSubmitting={isCreating || isUpdating}
         />
       )}
+
+      <ConfirmDeleteDialog
+        open={!!deletingPadi}
+        onOpenChange={(open) => !open && setDeletingPadi(null)}
+        onConfirm={confirmDeletePadi}
+        title="Hapus Data Pembelian?"
+        description="Apakah Anda yakin ingin menghapus data pembelian ini? Aksi ini tidak dapat dibatalkan."
+      />
     </div>
   );
 };

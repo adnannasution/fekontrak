@@ -6,12 +6,14 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { usePadi } from "@/hooks/usePadi";
 import { PadiFormDialog } from "@/components/padi/PadiFormDialog";
+import { ConfirmDeleteDialog } from "@/components/shared/ConfirmDeleteDialog";
 import { Padi, PadiFormData } from "@/types/padi";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { id as localeId } from "date-fns/locale";
 import { useState } from "react";
 import { usePermissions } from "@/hooks/usePermissions";
+import { formatCurrency } from "@/lib/utils/formatters";
 
 const UserPurchaseDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -21,11 +23,9 @@ const UserPurchaseDetail = () => {
   const { padiList, isLoading, updatePadi, deletePadi, isUpdating, isDeleting } = usePadi();
 
   const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   const padi = padiList.find(p => p.id_padi === id);
-
-  const formatCurrency = (amount: number) =>
-    new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(amount);
 
   const formatDate = (dateString: string) =>
     format(new Date(dateString), 'dd MMMM yyyy', { locale: localeId });
@@ -55,16 +55,21 @@ const UserPurchaseDetail = () => {
     }
   };
 
-  const handleDelete = async () => {
+  const handleDelete = () => {
     if (!padi) return;
-    if (window.confirm('Apakah Anda yakin ingin menghapus data pembelian ini?')) {
-      try {
-        await deletePadi(padi.id_padi);
-        toast({ title: "Berhasil", description: "Data pembelian berhasil dihapus" });
-        navigate('/user-purchase');
-      } catch (error) {
-        toast({ title: "Error", description: "Gagal menghapus data pembelian", variant: "destructive" });
-      }
+    setDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!padi) return;
+    try {
+      await deletePadi(padi.id_padi);
+      toast({ title: "Berhasil", description: "Data pembelian berhasil dihapus" });
+      navigate('/user-purchase');
+    } catch (error) {
+      toast({ title: "Error", description: "Gagal menghapus data pembelian", variant: "destructive" });
+    } finally {
+      setDeleteDialogOpen(false);
     }
   };
 
@@ -269,6 +274,14 @@ const UserPurchaseDetail = () => {
           isSubmitting={isUpdating}
         />
       )}
+
+      <ConfirmDeleteDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        onConfirm={confirmDelete}
+        title="Hapus Data Pembelian?"
+        description="Apakah Anda yakin ingin menghapus data pembelian ini? Aksi ini tidak dapat dibatalkan."
+      />
     </div>
   );
 };

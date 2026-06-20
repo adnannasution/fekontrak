@@ -13,6 +13,7 @@ import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Card } from '@/components/ui/card';
+import { formatCurrency } from '@/lib/utils/formatters';
 
 interface InvoiceTableProps {
   invoices: any[];
@@ -23,9 +24,6 @@ interface InvoiceTableProps {
 
 export const InvoiceTable = ({ invoices, onView, onEdit, onDelete }: InvoiceTableProps) => {
   const navigate = useNavigate();
-
-  const formatCurrency = (amount: number) =>
-    new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(amount);
 
   const formatDate = (dateString: string) => {
     if (!dateString) return '-';

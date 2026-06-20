@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { formatCurrency } from '@/lib/utils/formatters';
 import { 
   Plus, 
   Search, 
@@ -334,11 +335,7 @@ const NewContracts = () => {
                       <p className="text-gray-600">{kontrak.vendor?.nama_vendor}</p>
                       {kontrak.nilai_awal && (
                         <p className="text-sm font-medium text-green-600">
-                          {new Intl.NumberFormat('id-ID', { 
-                            style: 'currency', 
-                            currency: 'IDR',
-                            minimumFractionDigits: 0 
-                          }).format(kontrak.nilai_awal)}
+                          {formatCurrency(kontrak.nilai_awal)}
                         </p>
                       )}
                     </div>
