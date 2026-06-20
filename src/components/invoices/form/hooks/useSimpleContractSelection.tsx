@@ -39,6 +39,7 @@ export const useSimpleContractSelection = ({ open, selectedContractId }: UseSimp
         tipe_kontrak: c.tipeKontrak,
         status_kontrak: c.statusKontrak,
         direksi_pekerjaan: c.direksiPekerjaan,
+        kbo_bagian: c.kboBagian,
         tanggal_mulai: c.tanggalMulai,
         tanggal_selesai: c.tanggalSelesai,
         vendor: c.vendor

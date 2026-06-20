@@ -281,6 +281,7 @@ const ContractDetail = () => {
         <InvoiceFormDialog
           open={showInvoiceDialog}
           onOpenChange={setShowInvoiceDialog}
+          initialContractId={contract.id_kontrak}
           onSubmit={handleInvoiceSubmit}
           isLoading={createTagihan.isPending}
         />

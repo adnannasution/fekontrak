@@ -7,6 +7,8 @@ interface FormData {
   nomor_tagihan: string;
   tanggal_tagihan: string;
   direksi_pekerjaan: string;
+  tipe_kontrak: string;
+  kbo_bagian: string;
   termin: string;
   nilai_tagihan: string;
   status_tagihan: string;
@@ -22,6 +24,8 @@ const initialFormData: FormData = {
   nomor_tagihan: '',
   tanggal_tagihan: '',
   direksi_pekerjaan: '',
+  tipe_kontrak: '',
+  kbo_bagian: '',
   termin: '',
   nilai_tagihan: '',
   status_tagihan: '',
@@ -49,6 +53,8 @@ export const useInvoiceForm = (invoice?: Tagihan | null) => {
         nomor_tagihan: invoiceData.nomor_tagihan || '',
         tanggal_tagihan: invoiceData.tanggal_tagihan || '',
         direksi_pekerjaan: '', // Will be set from contract data
+        tipe_kontrak: invoiceData.tipe_kontrak || '',
+        kbo_bagian: '', // Tidak disimpan di tagihan; diisi dari kontrak terpilih
         termin: invoiceData.termin || '',
         nilai_tagihan: invoiceData.nilai_tagihan?.toString() || '',
         status_tagihan: invoiceData.status_tagihan || '',
