@@ -6,6 +6,7 @@ import { Edit, Trash2, ExternalLink } from "lucide-react";
 import { Padi } from "@/types/padi";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
+import { formatCurrency } from "@/lib/utils/formatters";
 
 interface PadiCardProps {
   padi: Padi;
@@ -14,14 +15,6 @@ interface PadiCardProps {
 }
 
 export const PadiCard = ({ padi, onEdit, onDelete }: PadiCardProps) => {
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
-      minimumFractionDigits: 0,
-    }).format(amount);
-  };
-
   const formatDate = (dateString: string) => {
     return format(new Date(dateString), 'dd MMMM yyyy', { locale: id });
   };

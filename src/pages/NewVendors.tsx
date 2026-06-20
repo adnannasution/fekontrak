@@ -7,6 +7,7 @@ import { Search, Plus, Users as UsersIcon, Building2, SquareStack, Star, Table, 
 import { VendorCard } from "@/components/vendors/VendorCard";
 import { VendorTable } from "@/components/vendors/VendorTable";
 import { VendorFormDialog } from "@/components/vendors/VendorFormDialog";
+import { ConfirmDeleteDialog } from "@/components/shared/ConfirmDeleteDialog";
 import { useVendors } from "@/hooks/useVendors";
 import { useAuth } from "@/hooks/useAuth";
 import { Vendor } from "@/types/database";
@@ -52,6 +53,7 @@ const NewVendors = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [formOpen, setFormOpen] = useState(false);
   const [editingVendor, setEditingVendor] = useState<Vendor | null>(null);
+  const [deletingVendor, setDeletingVendor] = useState<Vendor | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>(() => {
     return (localStorage.getItem('vendor-view-mode') as ViewMode) || 'list';
   });
@@ -80,9 +82,13 @@ const NewVendors = () => {
   };
 
   const handleDelete = (vendor: Vendor) => {
-    if (window.confirm(`Yakin ingin menghapus vendor '${vendor.nama_vendor}'?`)) {
-      deleteVendor.mutate(vendor.id_vendor);
-    }
+    setDeletingVendor(vendor);
+  };
+
+  const confirmDelete = () => {
+    if (!deletingVendor) return;
+    deleteVendor.mutate(deletingVendor.id_vendor);
+    setDeletingVendor(null);
   };
 
   const handleViewModeChange = (mode: ViewMode) => {
@@ -242,6 +248,14 @@ const NewVendors = () => {
           createVendor.status === "pending" ||
           updateVendor.status === "pending"
         }
+      />
+
+      <ConfirmDeleteDialog
+        open={!!deletingVendor}
+        onOpenChange={(open) => !open && setDeletingVendor(null)}
+        onConfirm={confirmDelete}
+        title="Hapus Vendor?"
+        description={`Apakah Anda yakin ingin menghapus vendor '${deletingVendor?.nama_vendor}'?`}
       />
     </div>
   );

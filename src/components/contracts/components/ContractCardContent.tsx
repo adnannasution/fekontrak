@@ -6,6 +6,8 @@ import { PreKomContent } from './PreKomContent';
 import { ActiveContractContent } from './ActiveContractContent';
 import { ContractAmendmentBadge } from './ContractAmendmentBadge';
 import { ContractBillingTerms } from './ContractBillingTerms';
+import { ContractAlertBadge } from './ContractAlertBadge';
+import { ContractLastUpdateInfo } from './ContractLastUpdateInfo';
 
 interface ContractCardContentProps {
   contract: Kontrak;
@@ -20,11 +22,19 @@ export function ContractCardContent({
 
   return (
     <CardContent className="p-4 space-y-4">
+      {!isPreKom && (
+        <div className="flex items-center justify-between">
+          <ContractAlertBadge contract={contract} />
+        </div>
+      )}
+
       {isPreKom ? (
         <PreKomContent contract={contract} />
       ) : (
         <ActiveContractContent contract={contract} />
       )}
+
+      <ContractLastUpdateInfo contract={contract} />
 
       {/* Amendment Information */}
       <ContractAmendmentBadge 

@@ -16,6 +16,7 @@ import {
 import { Padi } from '@/types/padi';
 import { format } from 'date-fns';
 import { id as localeId } from 'date-fns/locale';
+import { formatCurrency } from '@/lib/utils/formatters';
 
 interface PurchaseCardProps {
   purchase: Padi;
@@ -25,14 +26,6 @@ interface PurchaseCardProps {
 }
 
 export const PurchaseCard = ({ purchase, onView, onEdit, onDelete }: PurchaseCardProps) => {
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
-      minimumFractionDigits: 0,
-    }).format(amount);
-  };
-
   const formatDate = (dateString: string) => {
     return format(new Date(dateString), 'dd MMM yyyy', { locale: localeId });
   };

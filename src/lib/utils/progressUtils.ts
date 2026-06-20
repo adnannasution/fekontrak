@@ -154,6 +154,78 @@ export const analyzeContractProgressDeviations = (
     });
 };
 
+export type ContractAlertLevel = 'Good' | 'Warning' | 'Alert' | 'Danger';
+
+export interface ContractAlertStatus {
+  level: ContractAlertLevel;
+  text: string;
+  className: string;
+  reason: 'waktu' | 'progress' | 'aman';
+}
+
+const ALERT_RANK: Record<ContractAlertLevel, number> = {
+  Good: 0,
+  Warning: 1,
+  Alert: 2,
+  Danger: 3,
+};
+
+const ALERT_STYLE: Record<ContractAlertLevel, { text: string; className: string }> = {
+  Good: { text: 'Good', className: 'bg-green-100 text-green-800' },
+  Warning: { text: 'Warning', className: 'bg-yellow-100 text-yellow-800' },
+  Alert: { text: 'Alert', className: 'bg-orange-100 text-orange-800' },
+  Danger: { text: 'Habis/Danger', className: 'bg-red-100 text-red-800' },
+};
+
+const monthsUntil = (dateString?: string | null): number | null => {
+  if (!dateString) return null;
+  const target = new Date(dateString);
+  if (isNaN(target.getTime())) return null;
+  const diffMs = target.getTime() - Date.now();
+  return diffMs / (1000 * 60 * 60 * 24 * 30);
+};
+
+/**
+ * Status waktu berdasarkan sisa bulan sampai tanggal_selesai kontrak.
+ * < 8 bulan: Warning, < 6 bulan: Alert, sudah lewat: Danger (Habis).
+ */
+export const calculateTimeAlertLevel = (contract: Kontrak): ContractAlertLevel => {
+  const remainingMonths = monthsUntil(contract.tanggal_selesai);
+  if (remainingMonths === null) return 'Good';
+  if (remainingMonths <= 0) return 'Danger';
+  if (remainingMonths < 6) return 'Alert';
+  if (remainingMonths < 8) return 'Warning';
+  return 'Good';
+};
+
+/**
+ * Status progress berdasarkan progress_actual.
+ * < 50%: Warning, < 20%: Alert, < 5%: Danger.
+ */
+export const calculateProgressAlertLevel = (contract: Kontrak): ContractAlertLevel => {
+  const actual = Number(contract.progress_actual) || 0;
+  if (actual < 5) return 'Danger';
+  if (actual < 20) return 'Alert';
+  if (actual < 50) return 'Warning';
+  return 'Good';
+};
+
+/**
+ * Status gabungan waktu & progress kontrak. Mengambil level paling parah
+ * dari kedua kriteria (sesuai aturan: kalau salah satu kriteria buruk,
+ * statusnya ikut buruk; hanya Good kalau waktu > 6 bulan & progress > 50%).
+ */
+export const calculateContractAlertStatus = (contract: Kontrak): ContractAlertStatus => {
+  const timeLevel = calculateTimeAlertLevel(contract);
+  const progressLevel = calculateProgressAlertLevel(contract);
+
+  const level = ALERT_RANK[timeLevel] >= ALERT_RANK[progressLevel] ? timeLevel : progressLevel;
+  const reason: ContractAlertStatus['reason'] =
+    level === 'Good' ? 'aman' : ALERT_RANK[timeLevel] >= ALERT_RANK[progressLevel] ? 'waktu' : 'progress';
+
+  return { level, reason, ...ALERT_STYLE[level] };
+};
+
 /**
  * Get progress status configuration from system settings
  */
