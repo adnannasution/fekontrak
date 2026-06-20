@@ -11,6 +11,12 @@ interface KontrakLumpsumFiltersProps {
   workDirectionOptions: string[];
   amendmentFilter: string;
   setAmendmentFilter: (filter: string) => void;
+  programKerjaFilter?: string;
+  setProgramKerjaFilter?: (filter: string) => void;
+  plannerFilter?: string;
+  setPlannerFilter?: (filter: string) => void;
+  disiplinFilter?: string;
+  setDisiplinFilter?: (filter: string) => void;
   viewMode: 'card' | 'list';
   onViewModeChange: (mode: 'card' | 'list') => void;
   summary: {
@@ -31,6 +37,12 @@ export function KontrakLumpsumFilters({
   workDirectionOptions,
   amendmentFilter,
   setAmendmentFilter,
+  programKerjaFilter,
+  setProgramKerjaFilter,
+  plannerFilter,
+  setPlannerFilter,
+  disiplinFilter,
+  setDisiplinFilter,
   viewMode,
   onViewModeChange,
   summary,
@@ -47,6 +59,12 @@ export function KontrakLumpsumFilters({
       setWorkDirectionFilter={setWorkDirectionFilter}
       amendmentFilter={amendmentFilter}
       setAmendmentFilter={setAmendmentFilter}
+      programKerjaFilter={programKerjaFilter}
+      setProgramKerjaFilter={setProgramKerjaFilter}
+      plannerFilter={plannerFilter}
+      setPlannerFilter={setPlannerFilter}
+      disiplinFilter={disiplinFilter}
+      setDisiplinFilter={setDisiplinFilter}
       viewMode={viewMode}
       onViewModeChange={onViewModeChange}
     />

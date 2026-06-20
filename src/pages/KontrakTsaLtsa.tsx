@@ -18,6 +18,9 @@ const KontrakTsaLtsa = () => {
     statusFilter, setStatusFilter,
     workDirectionFilter, setWorkDirectionFilter,
     amendmentFilter, setAmendmentFilter,
+    programKerjaFilter, setProgramKerjaFilter,
+    plannerFilter, setPlannerFilter,
+    disiplinFilter, setDisiplinFilter,
     viewMode, setViewMode,
     isFormDialogOpen, setIsFormDialogOpen,
     deleteContract, setDeleteContract,
@@ -90,6 +93,12 @@ const KontrakTsaLtsa = () => {
         setWorkDirectionFilter={setWorkDirectionFilter}
         amendmentFilter={amendmentFilter}
         setAmendmentFilter={setAmendmentFilter}
+        programKerjaFilter={programKerjaFilter}
+        setProgramKerjaFilter={setProgramKerjaFilter}
+        plannerFilter={plannerFilter}
+        setPlannerFilter={setPlannerFilter}
+        disiplinFilter={disiplinFilter}
+        setDisiplinFilter={setDisiplinFilter}
         viewMode={viewMode}
         onViewModeChange={setViewMode}
       />

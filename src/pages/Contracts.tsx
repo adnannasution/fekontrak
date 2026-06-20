@@ -14,6 +14,9 @@ const Contracts = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [workDirectionFilter, setWorkDirectionFilter] = useState('all');
+  const [programKerjaFilter, setProgramKerjaFilter] = useState('all');
+  const [plannerFilter, setPlannerFilter] = useState('all');
+  const [disiplinFilter, setDisiplinFilter] = useState('all');
   const [isFormDialogOpen, setIsFormDialogOpen] = useState(false);
   const [editingContract, setEditingContract] = useState<any | null>(null);
   const [deleteContract, setDeleteContract] = useState<any | null>(null);
@@ -60,8 +63,13 @@ const Contracts = () => {
     // Normalize contract direction for comparison
     const normalizedContractDirection = normalizeWorkDirection(contract.direksi_pekerjaan || '');
     const matchesWorkDirection = workDirectionFilter === 'all' || normalizedContractDirection === workDirectionFilter;
-    
-    return matchesSearch && matchesStatus && matchesWorkDirection;
+
+    const matchesProgramKerja = programKerjaFilter === 'all' || contract.id_program_kerja === programKerjaFilter;
+    const matchesPlanner = plannerFilter === 'all' || contract.id_planner === plannerFilter;
+    const matchesDisiplin = disiplinFilter === 'all' || contract.disiplin === disiplinFilter;
+
+    return matchesSearch && matchesStatus && matchesWorkDirection
+      && matchesProgramKerja && matchesPlanner && matchesDisiplin;
   });
 
   const totalContracts = contracts?.length || 0;
@@ -213,6 +221,12 @@ const Contracts = () => {
         workDirectionOptions={workDirectionOptions}
         workDirectionFilter={workDirectionFilter}
         setWorkDirectionFilter={setWorkDirectionFilter}
+        programKerjaFilter={programKerjaFilter}
+        setProgramKerjaFilter={setProgramKerjaFilter}
+        plannerFilter={plannerFilter}
+        setPlannerFilter={setPlannerFilter}
+        disiplinFilter={disiplinFilter}
+        setDisiplinFilter={setDisiplinFilter}
       />
       <div>
         <div className="flex justify-between items-center mb-4">

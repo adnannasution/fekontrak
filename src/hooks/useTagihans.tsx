@@ -46,6 +46,25 @@ export const useTagihans = () => {
   return { tagihans, isLoading, error };
 };
 
+// ===================== TAGIHAN COUNT =====================
+export const useTagihanCount = (idKontrak?: string) => {
+  const { data: jumlahTagihan = 0, isLoading } = useQuery({
+    queryKey: ['tagihan-count', idKontrak],
+    queryFn: async () => {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${API_URL}/contracts/${idKontrak}/tagihan-count`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (!res.ok) throw new Error("Gagal ambil jumlah tagihan");
+      const data = await res.json();
+      return data.jumlahTagihan ?? 0;
+    },
+    enabled: !!idKontrak,
+  });
+
+  return { jumlahTagihan, isLoading };
+};
+
 // ===================== CREATE =====================
 export const useCreateTagihan = () => {
   const { toast } = useToast();

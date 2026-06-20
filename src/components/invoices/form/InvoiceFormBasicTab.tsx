@@ -7,7 +7,9 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Search, Building2, Calendar, FileText } from 'lucide-react';
 import { ContractSearchDialog } from './components/ContractSearchDialog';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useTagihanCount } from '@/hooks/useTagihans';
+import { generateNomorTagihan } from '@/lib/utils/generateNomorTagihan';
 
 interface Contract {
   id_kontrak: string;
@@ -17,6 +19,7 @@ interface Contract {
   direksi_pekerjaan: string;
   tanggal_mulai: string;
   tanggal_selesai: string;
+  kbo_bagian?: string;
   vendor: {
     nama_vendor: string;
   };
@@ -36,14 +39,23 @@ export const InvoiceFormBasicTab = ({
   isEditMode = false
 }: InvoiceFormBasicTabProps) => {
   const [contractDialogOpen, setContractDialogOpen] = useState(false);
+  const { jumlahTagihan } = useTagihanCount(formData.id_kontrak);
 
   const handleSelectContract = (contract: Contract) => {
     console.log('🎯 Contract selected:', contract);
     updateFormData('id_kontrak', contract.id_kontrak);
     updateFormData('direksi_pekerjaan', contract.direksi_pekerjaan);
     updateFormData('tipe_kontrak', contract.tipe_kontrak);
+    updateFormData('kbo_bagian', contract.kbo_bagian);
     setContractDialogOpen(false);
   };
+
+  useEffect(() => {
+    if (!isEditMode && formData.id_kontrak) {
+      updateFormData('nomor_tagihan', generateNomorTagihan(formData.kbo_bagian, jumlahTagihan));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData.id_kontrak, formData.kbo_bagian, jumlahTagihan, isEditMode]);
 
   const formatDate = (dateString: string) => {
     if (!dateString) return '-';
@@ -59,7 +71,9 @@ export const InvoiceFormBasicTab = ({
             id="nomor_tagihan"
             value={formData.nomor_tagihan}
             onChange={(e) => updateFormData('nomor_tagihan', e.target.value)}
-            placeholder="Masukkan nomor tagihan"
+            placeholder="Otomatis setelah kontrak dipilih"
+            readOnly={!isEditMode}
+            className={!isEditMode ? 'bg-muted' : undefined}
             required
           />
         </div>

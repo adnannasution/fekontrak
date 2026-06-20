@@ -23,6 +23,12 @@ export default function KontrakLumpsum() {
     setWorkDirectionFilter,
     amendmentFilter,
     setAmendmentFilter,
+    programKerjaFilter,
+    setProgramKerjaFilter,
+    plannerFilter,
+    setPlannerFilter,
+    disiplinFilter,
+    setDisiplinFilter,
     viewMode,
     setViewMode,
     isFormDialogOpen,
@@ -79,6 +85,12 @@ export default function KontrakLumpsum() {
         workDirectionOptions={workDirectionOptions}
         amendmentFilter={amendmentFilter}
         setAmendmentFilter={setAmendmentFilter}
+        programKerjaFilter={programKerjaFilter}
+        setProgramKerjaFilter={setProgramKerjaFilter}
+        plannerFilter={plannerFilter}
+        setPlannerFilter={setPlannerFilter}
+        disiplinFilter={disiplinFilter}
+        setDisiplinFilter={setDisiplinFilter}
         viewMode={viewMode}
         onViewModeChange={setViewMode}
         summary={summary}

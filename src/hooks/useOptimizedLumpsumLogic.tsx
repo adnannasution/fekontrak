@@ -11,6 +11,9 @@ export const useOptimizedLumpsumLogic = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [workDirectionFilter, setWorkDirectionFilter] = useState('all');
   const [amendmentFilter, setAmendmentFilter] = useState('all');
+  const [programKerjaFilter, setProgramKerjaFilter] = useState('all');
+  const [plannerFilter, setPlannerFilter] = useState('all');
+  const [disiplinFilter, setDisiplinFilter] = useState('all');
   const [viewMode, setViewMode] = useState<'card' | 'list'>('card');
   const [isFormDialogOpen, setIsFormDialogOpen] = useState(false);
   const [editingContract, setEditingContract] = useState<Kontrak | null>(null);
@@ -56,9 +59,19 @@ export const useOptimizedLumpsumLogic = () => {
       const matchesWorkDirection =
         workDirectionFilter === 'all' || normalizedDir === workDirectionFilter;
 
-      return matchesSearch && matchesStatus && matchesAmendment && matchesWorkDirection;
+      const matchesProgramKerja =
+        programKerjaFilter === 'all' || contract.id_program_kerja === programKerjaFilter;
+
+      const matchesPlanner =
+        plannerFilter === 'all' || contract.id_planner === plannerFilter;
+
+      const matchesDisiplin =
+        disiplinFilter === 'all' || contract.disiplin === disiplinFilter;
+
+      return matchesSearch && matchesStatus && matchesAmendment && matchesWorkDirection
+        && matchesProgramKerja && matchesPlanner && matchesDisiplin;
     });
-  }, [allContracts, searchTerm, statusFilter, amendmentFilter, workDirectionFilter]);
+  }, [allContracts, searchTerm, statusFilter, amendmentFilter, workDirectionFilter, programKerjaFilter, plannerFilter, disiplinFilter]);
 
   const pagination = usePagination({ data: filteredContracts, initialPageSize: 10 });
 
@@ -135,6 +148,12 @@ export const useOptimizedLumpsumLogic = () => {
     setWorkDirectionFilter,
     amendmentFilter,
     setAmendmentFilter,
+    programKerjaFilter,
+    setProgramKerjaFilter,
+    plannerFilter,
+    setPlannerFilter,
+    disiplinFilter,
+    setDisiplinFilter,
     viewMode,
     setViewMode,
     isFormDialogOpen,
