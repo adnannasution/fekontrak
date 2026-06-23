@@ -76,7 +76,6 @@ export const useContractFormSubmission = ({
         no_dokumen_kontrak: formData.no_dokumen_kontrak || null,
         no_po_pr: formData.no_po_pr || null,
         direksi_pekerjaan: formData.direksi_pekerjaan || null,
-        id_direksi_pekerjaan: formData.id_direksi_pekerjaan || null,
         id_program_kerja: formData.id_program_kerja || null,
         id_planner: formData.id_planner || null,
         kbo_bagian: formData.kbo_bagian || null,

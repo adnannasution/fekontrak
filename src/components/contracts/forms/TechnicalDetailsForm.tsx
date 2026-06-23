@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useDireksiPekerjaan } from '@/hooks/useDireksiPekerjaan';
 import { useProgramKerja } from '@/hooks/useProgramKerja';
 import { usePlanner } from '@/hooks/usePlanner';
 
@@ -13,7 +12,6 @@ interface TechnicalDetailsFormProps {
     tanggal_selesai: string;
     disiplin: string;
     direksi_pekerjaan: string;
-    id_direksi_pekerjaan?: string;
     id_program_kerja?: string;
     id_planner?: string;
     kbo_bagian?: string;
@@ -29,7 +27,6 @@ interface TechnicalDetailsFormProps {
 
 export const TechnicalDetailsForm = ({ formData, setFormData }: TechnicalDetailsFormProps) => {
   const isContractActive = formData.status_kontrak !== 'Pre-KOM';
-  const { direksiPekerjaanList } = useDireksiPekerjaan();
   const { programKerjaList } = useProgramKerja();
   const { plannerList } = usePlanner();
 
@@ -177,32 +174,14 @@ export const TechnicalDetailsForm = ({ formData, setFormData }: TechnicalDetails
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <Label htmlFor="id_direksi_pekerjaan">Direksi Pekerjaan (Penanggung Jawab)</Label>
-          <Select
-            value={formData.id_direksi_pekerjaan || ''}
-            onValueChange={(value) => setFormData({ ...formData, id_direksi_pekerjaan: value })}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Pilih direksi pekerjaan" />
-            </SelectTrigger>
-            <SelectContent>
-              {direksiPekerjaanList.map((d: any) => (
-                <SelectItem key={d.id_direksi_pekerjaan} value={d.id_direksi_pekerjaan}>{d.nama}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        <div>
-          <Label htmlFor="kbo_bagian">KBO Bagian</Label>
-          <Input
-            id="kbo_bagian"
-            value={formData.kbo_bagian || ''}
-            onChange={(e) => setFormData({ ...formData, kbo_bagian: e.target.value })}
-            placeholder="Masukkan KBO Bagian"
-          />
-        </div>
+      <div>
+        <Label htmlFor="kbo_bagian">KBO Bagian</Label>
+        <Input
+          id="kbo_bagian"
+          value={formData.kbo_bagian || ''}
+          onChange={(e) => setFormData({ ...formData, kbo_bagian: e.target.value })}
+          placeholder="Masukkan KBO Bagian"
+        />
       </div>
 
       <div className="grid grid-cols-2 gap-4">
