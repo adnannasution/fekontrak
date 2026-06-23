@@ -45,6 +45,8 @@ const mapContract = (data: any): Kontrak => ({
   disiplin: data.disiplin,
   tkdn_percentage: data.tkdnPercentage,
   kbo_bagian: data.kboBagian,
+  id_program_kerja: data.idProgramKerja,
+  id_planner: data.idPlanner,
   tanggal_lkp: data.tanggalLkp,
   tanggal_mpl: data.tanggalMpl,
   tanggal_mpa: data.tanggalMpa,
