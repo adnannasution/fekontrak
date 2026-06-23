@@ -326,7 +326,7 @@ const handleEdit = (amendment: AmandemenKontrak) => {
           if (mulai && selesai) {
             const diff = Math.round(
               (new Date(selesai).getTime() - new Date(mulai).getTime()) / (1000 * 60 * 60 * 24)
-            );
+            ) + 1;
             durasi = diff > 0 ? diff.toString() : '';
           }
           setDraft(d => ({ ...d, tanggal_mulai_baru: mulai, durasi_amandemen: durasi }));
@@ -345,7 +345,7 @@ const handleEdit = (amendment: AmandemenKontrak) => {
           if (mulai && selesai) {
             const diff = Math.round(
               (new Date(selesai).getTime() - new Date(mulai).getTime()) / (1000 * 60 * 60 * 24)
-            );
+            ) + 1;
             durasi = diff > 0 ? diff.toString() : '';
           }
           setDraft(d => ({ ...d, tanggal_selesai_baru: selesai, durasi_amandemen: durasi }));
