@@ -19,7 +19,6 @@ interface ContractsSearchFilterProps {
     pending: number;
     completed: number;
   };
-  workDirectionOptions: string[];
   workDirectionFilter: string;
   setWorkDirectionFilter: (v: string) => void;
   amendmentFilter?: string;
@@ -35,6 +34,7 @@ interface ContractsSearchFilterProps {
 }
 
 const disiplinOptions = ['Instrumentasi', 'Stationary', 'Electrical', 'Rotating', 'Alat Berat', 'Tools'];
+const workDirectionOptionsStatic = ['MA5', 'MA6', 'MA7', 'Workshop'];
 
 export function ContractsSearchFilter({
   searchTerm,
@@ -42,7 +42,6 @@ export function ContractsSearchFilter({
   statusFilter,
   setStatusFilter,
   summary,
-  workDirectionOptions,
   workDirectionFilter,
   setWorkDirectionFilter,
   amendmentFilter = 'all',
@@ -82,7 +81,7 @@ export function ContractsSearchFilter({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Semua Direksi</SelectItem>
-            {workDirectionOptions.map(option => (
+            {workDirectionOptionsStatic.map(option => (
               <SelectItem key={option} value={option}>{option}</SelectItem>
             ))}
           </SelectContent>
