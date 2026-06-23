@@ -8,7 +8,7 @@ import { ContractList } from "@/components/contracts/ContractList";
 import { ContractFormDialog } from "@/components/contracts/ContractFormDialog";
 import { ContractDeleteDialog } from "@/components/contracts/ContractDeleteDialog";
 import { useToast } from "@/hooks/use-toast";
-import { getUniqueWorkDirections, normalizeWorkDirection } from "@/utils/filterUtils";
+import { normalizeWorkDirection } from "@/utils/filterUtils";
 
 const Contracts = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -51,9 +51,6 @@ const Contracts = () => {
       maximumFractionDigits: 0
     }).format(amount);
   };
-
-  // Get unique work directions from contract data with normalization
-  const workDirectionOptions = getUniqueWorkDirections(contracts || []);
 
   // Filtering data dengan normalisasi
   const filteredContracts = (contracts ?? []).filter(contract => {
@@ -218,7 +215,6 @@ const Contracts = () => {
           pending: pendingContracts,
           completed: completedContracts
         }}
-        workDirectionOptions={workDirectionOptions}
         workDirectionFilter={workDirectionFilter}
         setWorkDirectionFilter={setWorkDirectionFilter}
         programKerjaFilter={programKerjaFilter}
