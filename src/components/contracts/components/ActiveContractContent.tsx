@@ -2,6 +2,7 @@
 import { Progress } from '@/components/ui/progress';
 import { Kontrak } from '@/types/database';
 import { useProgressCalculations } from '../hooks/useProgressCalculations';
+import { getEffectiveTanggalSelesai } from '@/utils/contractDateUtils';
 
 interface ActiveContractContentProps {
   contract: Kontrak;
@@ -9,9 +10,10 @@ interface ActiveContractContentProps {
 
 export function ActiveContractContent({ contract }: ActiveContractContentProps) {
   const { calculateDurationProgress } = useProgressCalculations();
-  
-  const durationInfo = contract.tanggal_mulai && contract.tanggal_selesai 
-    ? calculateDurationProgress(contract.tanggal_mulai, contract.tanggal_selesai) 
+  const effectiveTanggalSelesai = getEffectiveTanggalSelesai(contract);
+
+  const durationInfo = contract.tanggal_mulai && effectiveTanggalSelesai
+    ? calculateDurationProgress(contract.tanggal_mulai, effectiveTanggalSelesai)
     : null;
 
   return (
@@ -27,8 +29,11 @@ export function ActiveContractContent({ contract }: ActiveContractContentProps) 
         <div>
           <p className="text-gray-600 mb-1">Tanggal Selesai</p>
           <p className="font-medium">
-            {contract.tanggal_selesai ? new Date(contract.tanggal_selesai).toLocaleDateString('id-ID') : '-'}
+            {effectiveTanggalSelesai ? new Date(effectiveTanggalSelesai).toLocaleDateString('id-ID') : '-'}
           </p>
+          {contract.has_amendment && contract.tanggal_selesai_baru && (
+            <p className="text-xs text-purple-600 mt-0.5">Dari amandemen</p>
+          )}
         </div>
       </div>
 
