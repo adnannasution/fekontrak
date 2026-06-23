@@ -32,6 +32,8 @@ const buildPayload = (contract: any) => ({
   tkdnPercentage: contract.tkdn_percentage || null,
   tanggalLkp: contract.tanggal_lkp || null,
   kboBagian: contract.kbo_bagian || null,
+  idProgramKerja: contract.id_program_kerja || null,
+  idPlanner: contract.id_planner || null,
   // MPL/MPA/Masa Pemeliharaan — angka (hari). ?? null biar nilai 0 tetap terkirim
   tanggalMpl: contract.tanggal_mpl ?? null,
   tanggalMpa: contract.tanggal_mpa ?? null,
@@ -77,6 +79,7 @@ export const useContracts = () => {
         tanggal_selesai: c.tanggalSelesai,
         tanggal_terima_dokumen: c.tanggalTerimaDokumen,
         estimasi_tanggal_kom: c.estimasiTanggalKom,
+        tanggal_kom: c.tanggalKom,
         tanggal_lkp: c.tanggalLkp,
         nilai_awal: c.nilaiAwal,
         durasi_kontrak_hari: c.durasiKontrakHari,
@@ -87,6 +90,8 @@ export const useContracts = () => {
         disiplin: c.disiplin,
         tkdn_percentage: c.tkdnPercentage,
         kbo_bagian: c.kboBagian,
+        id_program_kerja: c.idProgramKerja,
+        id_planner: c.idPlanner,
         sla_kom_hari: c.slaKomHari,
         // MPL/MPA/Masa Pemeliharaan — petakan balik dari API
         tanggal_mpl: c.tanggalMpl,
