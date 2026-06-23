@@ -76,19 +76,17 @@ export function ContractsSearchFilter({
             setAmendmentFilter={setAmendmentFilter}
           />
         )}
-        {workDirectionOptions.length > 0 && (
-          <Select value={workDirectionFilter} onValueChange={setWorkDirectionFilter}>
-            <SelectTrigger className="w-full sm:w-[180px]">
-              <SelectValue placeholder="Filter Direksi Pekerjaan" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Semua Direksi</SelectItem>
-              {workDirectionOptions.map(option => (
-                <SelectItem key={option} value={option}>{option}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        )}
+        <Select value={workDirectionFilter} onValueChange={setWorkDirectionFilter}>
+          <SelectTrigger className="w-full sm:w-[180px]">
+            <SelectValue placeholder="Filter Direksi Pekerjaan" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Semua Direksi</SelectItem>
+            {workDirectionOptions.map(option => (
+              <SelectItem key={option} value={option}>{option}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
         {setProgramKerjaFilter && (
           <Select value={programKerjaFilter} onValueChange={setProgramKerjaFilter}>
             <SelectTrigger className="w-full sm:w-[180px]">
