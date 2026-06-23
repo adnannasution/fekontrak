@@ -31,6 +31,7 @@ const buildPayload = (contract: any) => ({
   disiplin: contract.disiplin || null,
   tkdnPercentage: contract.tkdn_percentage || null,
   tanggalLkp: contract.tanggal_lkp || null,
+  kboBagian: contract.kbo_bagian || null,
   // MPL/MPA/Masa Pemeliharaan — angka (hari). ?? null biar nilai 0 tetap terkirim
   tanggalMpl: contract.tanggal_mpl ?? null,
   tanggalMpa: contract.tanggal_mpa ?? null,
@@ -85,6 +86,7 @@ export const useContracts = () => {
         kendala: c.kendala,
         disiplin: c.disiplin,
         tkdn_percentage: c.tkdnPercentage,
+        kbo_bagian: c.kboBagian,
         sla_kom_hari: c.slaKomHari,
         // MPL/MPA/Masa Pemeliharaan — petakan balik dari API
         tanggal_mpl: c.tanggalMpl,
