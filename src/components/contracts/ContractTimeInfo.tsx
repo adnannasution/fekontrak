@@ -1,5 +1,6 @@
 import { Calendar, Clock } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
+import { getEffectiveTanggalSelesai } from '@/utils/contractDateUtils';
 
 interface ContractTimeInfoProps {
   contract: any;
@@ -8,9 +9,7 @@ interface ContractTimeInfoProps {
 
 export const ContractTimeInfo = ({ contract, fieldText }: ContractTimeInfoProps) => {
   // Tanggal selesai efektif: pakai dari amandemen kalau ada
-  const effectiveTanggalSelesai = contract.has_amendment && contract.tanggal_selesai_baru
-    ? contract.tanggal_selesai_baru
-    : contract.tanggal_selesai;
+  const effectiveTanggalSelesai = getEffectiveTanggalSelesai(contract);
 
   const formatDate = (date: string | null) => {
     if (!date) return '-';
