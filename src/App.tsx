@@ -36,7 +36,6 @@ import Vendors from "@/pages/Vendors";
 import NewVendors from "@/pages/NewVendors";
 
 // Import master data pages
-import MasterDireksiPekerjaan from "@/pages/MasterDireksiPekerjaan";
 import MasterProgramKerja from "@/pages/MasterProgramKerja";
 import MasterPlanner from "@/pages/MasterPlanner";
 
@@ -85,7 +84,6 @@ const App = () => (
                         <Route path="/admin-settings" element={<AdminSettings />} />
                         <Route path="/users" element={<Users />} />
                         <Route path="/vendors" element={<NewVendors />} />
-                        <Route path="/master/direksi-pekerjaan" element={<MasterDireksiPekerjaan />} />
                         <Route path="/master/program-kerja" element={<MasterProgramKerja />} />
                         <Route path="/master/planner" element={<MasterPlanner />} />
                         <Route path="/user-purchase" element={<UserPurchase />} />

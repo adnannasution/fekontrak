@@ -12,15 +12,6 @@ export interface Vendor {
   updated_at?: string;
 }
 
-export interface DireksiPekerjaan {
-  id_direksi_pekerjaan: string;
-  nama: string;
-  jabatan?: string;
-  sub_area?: string;
-  created_at?: string;
-  updated_at?: string;
-}
-
 export interface ProgramKerja {
   id_program_kerja: string;
   nama: string;
@@ -42,8 +33,6 @@ export interface Kontrak {
   no_dokumen_kontrak?: string;
   no_po_pr?: string;
   direksi_pekerjaan?: string;
-  id_direksi_pekerjaan?: string;
-  direksi_pekerjaan_detail?: DireksiPekerjaan;
   id_program_kerja?: string;
   program_kerja_detail?: ProgramKerja;
   id_planner?: string;
