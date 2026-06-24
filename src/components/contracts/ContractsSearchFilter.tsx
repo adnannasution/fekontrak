@@ -5,8 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Search } from "lucide-react";
 import { AmendmentFilter } from './AmendmentFilter';
 import { ViewModeToggle } from './ViewModeToggle';
-import { useProgramKerja } from "@/hooks/useProgramKerja";
-import { usePlanner } from "@/hooks/usePlanner";
+import { workDirectionOptionsStatic, programKerjaOptionsStatic, plannerOptionsStatic } from "@/utils/contractStaticOptions";
 
 interface ContractsSearchFilterProps {
   searchTerm: string;
@@ -34,7 +33,6 @@ interface ContractsSearchFilterProps {
 }
 
 const disiplinOptions = ['Instrumentasi', 'Stationary', 'Electrical', 'Rotating', 'Alat Berat', 'Tools'];
-const workDirectionOptionsStatic = ['MA5', 'MA6', 'MA7', 'Workshop'];
 
 export function ContractsSearchFilter({
   searchTerm,
@@ -55,8 +53,6 @@ export function ContractsSearchFilter({
   disiplinFilter = 'all',
   setDisiplinFilter,
 }: ContractsSearchFilterProps) {
-  const { programKerjaList } = useProgramKerja();
-  const { plannerList } = usePlanner();
   return (
     <div className="mb-8">
       <div className="flex flex-col gap-4 md:flex-row md:flex-wrap md:items-center">
@@ -93,8 +89,8 @@ export function ContractsSearchFilter({
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Semua Program Kerja</SelectItem>
-              {programKerjaList.map((p: any) => (
-                <SelectItem key={p.id_program_kerja} value={p.id_program_kerja}>{p.nama}</SelectItem>
+              {programKerjaOptionsStatic.map(option => (
+                <SelectItem key={option} value={option}>{option}</SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -106,8 +102,8 @@ export function ContractsSearchFilter({
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Semua Planner</SelectItem>
-              {plannerList.map((p: any) => (
-                <SelectItem key={p.id_planner} value={p.id_planner}>{p.nama}</SelectItem>
+              {plannerOptionsStatic.map(option => (
+                <SelectItem key={option} value={option}>{option}</SelectItem>
               ))}
             </SelectContent>
           </Select>

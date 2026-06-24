@@ -2,8 +2,7 @@ import { useEffect } from 'react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useProgramKerja } from '@/hooks/useProgramKerja';
-import { usePlanner } from '@/hooks/usePlanner';
+import { programKerjaOptionsStatic, plannerOptionsStatic } from '@/utils/contractStaticOptions';
 
 interface TechnicalDetailsFormProps {
   formData: {
@@ -27,8 +26,6 @@ interface TechnicalDetailsFormProps {
 
 export const TechnicalDetailsForm = ({ formData, setFormData }: TechnicalDetailsFormProps) => {
   const isContractActive = formData.status_kontrak !== 'Pre-KOM';
-  const { programKerjaList } = useProgramKerja();
-  const { plannerList } = usePlanner();
 
   // Hitung MPL otomatis: (Tanggal Selesai - Tanggal Mulai) + 1, dalam hari (tanggal mulai = hari ke-1)
   const computedMpl = (() => {
@@ -195,8 +192,8 @@ export const TechnicalDetailsForm = ({ formData, setFormData }: TechnicalDetails
               <SelectValue placeholder="Pilih program kerja" />
             </SelectTrigger>
             <SelectContent>
-              {programKerjaList.map((p: any) => (
-                <SelectItem key={p.id_program_kerja} value={p.id_program_kerja}>{p.nama}</SelectItem>
+              {programKerjaOptionsStatic.map(option => (
+                <SelectItem key={option} value={option}>{option}</SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -211,8 +208,8 @@ export const TechnicalDetailsForm = ({ formData, setFormData }: TechnicalDetails
               <SelectValue placeholder="Pilih planner" />
             </SelectTrigger>
             <SelectContent>
-              {plannerList.map((p: any) => (
-                <SelectItem key={p.id_planner} value={p.id_planner}>{p.nama}</SelectItem>
+              {plannerOptionsStatic.map(option => (
+                <SelectItem key={option} value={option}>{option}</SelectItem>
               ))}
             </SelectContent>
           </Select>
