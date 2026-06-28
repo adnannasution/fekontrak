@@ -13,11 +13,15 @@ export interface RolePermissionFlags {
   canManageVendors: boolean;
   canUploadDokumen: boolean;
   canApprovalDokumen: boolean;
+  visibleMenus: string[];
 }
 
 export type RolePermissionMatrix = Record<ConfigurableRole, RolePermissionFlags>;
 
-export const PERMISSION_LABELS: Record<keyof RolePermissionFlags, string> = {
+export const PERMISSION_LABELS: Record<
+  Exclude<keyof RolePermissionFlags, 'visibleMenus'>,
+  string
+> = {
   canCreate: 'Tambah Data',
   canEdit: 'Ubah Data',
   canDelete: 'Hapus Data',
@@ -26,6 +30,25 @@ export const PERMISSION_LABELS: Record<keyof RolePermissionFlags, string> = {
   canUploadDokumen: 'Upload Dokumen',
   canApprovalDokumen: 'Approval Dokumen',
 };
+
+/**
+ * Menu yang aksesnya hanya dijaga oleh visibilitas sidebar (bukan oleh guard
+ * khusus di halaman), sehingga aman dijadikan configurable per role. Menu
+ * admin-only seperti Vendor, Pengguna, Manajemen Data, Pengaturan Admin, dan
+ * Pengaturan Role sengaja TIDAK dimasukkan di sini - tetap selalu admin-only.
+ */
+export const CONFIGURABLE_MENU_ITEMS: { key: string; label: string; group: string }[] = [
+  { key: 'dashboard', label: 'Executive Dashboard', group: 'Monitoring & Analytics' },
+  { key: 'contract-performance', label: 'Performance Monitoring', group: 'Monitoring & Analytics' },
+  { key: 'kontrak-lumpsum', label: 'Kontrak Lumpsum', group: 'Contract Management' },
+  { key: 'kontrak-unit-price', label: 'Kontrak Unit Price', group: 'Contract Management' },
+  { key: 'kontrak-tsa-ltsa', label: 'Kontrak TSA/LTSA', group: 'Contract Management' },
+  { key: 'amandemen', label: 'Amandemen', group: 'Contract Management' },
+  { key: 'invoices', label: 'Tagihan', group: 'Operations' },
+  { key: 'user-purchase', label: 'User Purchase (PADI)', group: 'Operations' },
+  { key: 'approval', label: 'Approval Dokumen', group: 'Operations' },
+  { key: 'laporan-harian', label: 'Laporan Harian', group: 'Operations' },
+];
 
 export const DEFAULT_ROLE_PERMISSIONS: RolePermissionMatrix = {
   pic: {
@@ -36,6 +59,7 @@ export const DEFAULT_ROLE_PERMISSIONS: RolePermissionMatrix = {
     canManageVendors: false,
     canUploadDokumen: true,
     canApprovalDokumen: true,
+    visibleMenus: CONFIGURABLE_MENU_ITEMS.map((m) => m.key),
   },
   viewer: {
     canCreate: false,
@@ -45,6 +69,7 @@ export const DEFAULT_ROLE_PERMISSIONS: RolePermissionMatrix = {
     canManageVendors: false,
     canUploadDokumen: false,
     canApprovalDokumen: false,
+    visibleMenus: CONFIGURABLE_MENU_ITEMS.map((m) => m.key),
   },
   vendor: {
     canCreate: false,
@@ -54,6 +79,7 @@ export const DEFAULT_ROLE_PERMISSIONS: RolePermissionMatrix = {
     canManageVendors: false,
     canUploadDokumen: false,
     canApprovalDokumen: false,
+    visibleMenus: ['kontrak-lumpsum', 'kontrak-unit-price', 'kontrak-tsa-ltsa'],
   },
 };
 
@@ -77,6 +103,15 @@ const readLocalOverride = (): RolePermissionMatrix | null => {
   }
 };
 
+/** Deep-merge per role+field, supaya data lama (sebelum field baru ditambahkan) tidak rusak. */
+const mergeWithDefaults = (saved: Partial<RolePermissionMatrix>): RolePermissionMatrix => {
+  const roles = Object.keys(DEFAULT_ROLE_PERMISSIONS) as ConfigurableRole[];
+  return roles.reduce((acc, role) => {
+    acc[role] = { ...DEFAULT_ROLE_PERMISSIONS[role], ...(saved[role] ?? {}) };
+    return acc;
+  }, {} as RolePermissionMatrix);
+};
+
 /**
  * Pengaturan role disimpan terpusat lewat endpoint /konfigurasi (nama_setting =
  * "Role_Permission_Matrix") jika baris itu sudah ada di backend. Jika belum ada
@@ -92,13 +127,13 @@ export const useRolePermissionsConfig = () => {
   const matrix = useMemo<RolePermissionMatrix>(() => {
     if (remoteConfig?.nilai_setting) {
       try {
-        return { ...DEFAULT_ROLE_PERMISSIONS, ...JSON.parse(remoteConfig.nilai_setting) };
+        return mergeWithDefaults(JSON.parse(remoteConfig.nilai_setting));
       } catch {
         // ignore malformed remote value, fall through to local/default
       }
     }
     const local = readLocalOverride();
-    if (local) return { ...DEFAULT_ROLE_PERMISSIONS, ...local };
+    if (local) return mergeWithDefaults(local);
     return DEFAULT_ROLE_PERMISSIONS;
   }, [remoteConfig]);
 

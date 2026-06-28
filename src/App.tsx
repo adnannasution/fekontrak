@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/components/auth/AuthProvider";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import ModuleGuard from "@/components/ModuleGuard";
 import Layout from "@/components/Layout";
 import ApprovalDashboard from './pages/ApprovalDashboard';
 
@@ -69,29 +70,29 @@ const App = () => (
                     <Layout>
                       <Routes>
                         <Route path="/" element={<Navigate to="/dashboard" replace />} />
-                        <Route path="/dashboard" element={<Dashboard />} />
-                        <Route path="/kontrak-lumpsum" element={<KontrakLumpsum />} />
-                        <Route path="/kontrak-unit-price" element={<KontrakUnitPrice />} />
-                        <Route path="/kontrak-tsa-ltsa" element={<KontrakTsaLtsa />} />
-                        <Route path="/amandemen" element={<Amandemen />} />
-                        <Route path="/approval" element={<ProtectedRoute><ApprovalDashboard /></ProtectedRoute>} />
+                        <Route path="/dashboard" element={<ModuleGuard moduleKey="dashboard"><Dashboard /></ModuleGuard>} />
+                        <Route path="/kontrak-lumpsum" element={<ModuleGuard moduleKey="kontrak-lumpsum"><KontrakLumpsum /></ModuleGuard>} />
+                        <Route path="/kontrak-unit-price" element={<ModuleGuard moduleKey="kontrak-unit-price"><KontrakUnitPrice /></ModuleGuard>} />
+                        <Route path="/kontrak-tsa-ltsa" element={<ModuleGuard moduleKey="kontrak-tsa-ltsa"><KontrakTsaLtsa /></ModuleGuard>} />
+                        <Route path="/amandemen" element={<ModuleGuard moduleKey="amandemen"><Amandemen /></ModuleGuard>} />
+                        <Route path="/approval" element={<ModuleGuard moduleKey="approval"><ApprovalDashboard /></ModuleGuard>} />
                         <Route path="/contracts" element={<NewContracts />} />
                         <Route path="/contracts/:id" element={<ContractDetail />} />
-                        <Route path="/invoices" element={<InvoiceManagement />} />
-                        <Route path="/invoices/:id" element={<InvoiceDetail />} />
-                        <Route path="/invoice-detail/:id" element={<InvoiceDetail />} />
+                        <Route path="/invoices" element={<ModuleGuard moduleKey="invoices"><InvoiceManagement /></ModuleGuard>} />
+                        <Route path="/invoices/:id" element={<ModuleGuard moduleKey="invoices"><InvoiceDetail /></ModuleGuard>} />
+                        <Route path="/invoice-detail/:id" element={<ModuleGuard moduleKey="invoices"><InvoiceDetail /></ModuleGuard>} />
                         <Route path="/sla-monitoring" element={<Navigate to="/contract-performance" replace />} />
-                        <Route path="/contract-performance" element={<ContractPerformanceMonitoring />} />
+                        <Route path="/contract-performance" element={<ModuleGuard moduleKey="contract-performance"><ContractPerformanceMonitoring /></ModuleGuard>} />
                         <Route path="/admin-settings" element={<AdminSettings />} />
                         <Route path="/role-settings" element={<RoleSettings />} />
                         <Route path="/users" element={<Users />} />
                         <Route path="/vendors" element={<NewVendors />} />
                         <Route path="/master/program-kerja" element={<MasterProgramKerja />} />
                         <Route path="/master/planner" element={<MasterPlanner />} />
-                        <Route path="/user-purchase" element={<UserPurchase />} />
-                        <Route path="/user-purchase/:id" element={<UserPurchaseDetail />} />
+                        <Route path="/user-purchase" element={<ModuleGuard moduleKey="user-purchase"><UserPurchase /></ModuleGuard>} />
+                        <Route path="/user-purchase/:id" element={<ModuleGuard moduleKey="user-purchase"><UserPurchaseDetail /></ModuleGuard>} />
                         <Route path="/data-management" element={<DataManagement />} />
-                        <Route path="/laporan-harian" element={<LaporanHarian />} />
+                        <Route path="/laporan-harian" element={<ModuleGuard moduleKey="laporan-harian"><LaporanHarian /></ModuleGuard>} />
                         <Route path="*" element={<NotFound />} />
                       </Routes>
                     </Layout>

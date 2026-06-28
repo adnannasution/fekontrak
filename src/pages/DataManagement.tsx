@@ -5,8 +5,29 @@ import { Separator } from "@/components/ui/separator";
 import { ExportSection } from "@/components/data-management/ExportSection";
 import { ImportSection } from "@/components/data-management/ImportSection";
 import { Download, Upload } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function DataManagement() {
+  const { userProfile } = useAuth();
+
+  if (userProfile?.role !== "admin") {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <Card>
+          <CardHeader>
+            <CardTitle>Akses Ditolak</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground">
+              Anda tidak memiliki akses untuk mengelola data. Hanya administrator yang dapat
+              mengakses halaman ini.
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div>

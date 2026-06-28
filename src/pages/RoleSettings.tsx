@@ -3,9 +3,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
-import { Shield, Save, RotateCcw, Info } from 'lucide-react';
+import { Shield, Save, RotateCcw, Info, Eye } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import {
+  CONFIGURABLE_MENU_ITEMS,
   DEFAULT_ROLE_PERMISSIONS,
   PERMISSION_LABELS,
   RolePermissionMatrix,
@@ -55,6 +56,16 @@ const RoleSettings = () => {
     }));
   };
 
+  const toggleMenu = (role: keyof RolePermissionMatrix, menuKey: string) => {
+    setDraft((prev) => {
+      const current = prev[role].visibleMenus;
+      const next = current.includes(menuKey)
+        ? current.filter((key) => key !== menuKey)
+        : [...current, menuKey];
+      return { ...prev, [role]: { ...prev[role], visibleMenus: next } };
+    });
+  };
+
   const hasChanges = JSON.stringify(draft) !== JSON.stringify(matrix);
 
   const handleSave = () => save(draft);
@@ -62,6 +73,14 @@ const RoleSettings = () => {
 
   const roles = Object.keys(draft) as Array<keyof RolePermissionMatrix>;
   const permissionKeys = Object.keys(PERMISSION_LABELS) as Array<keyof typeof PERMISSION_LABELS>;
+
+  const menuGroups = CONFIGURABLE_MENU_ITEMS.reduce<Record<string, typeof CONFIGURABLE_MENU_ITEMS>>(
+    (acc, item) => {
+      acc[item.group] = acc[item.group] ? [...acc[item.group], item] : [item];
+      return acc;
+    },
+    {}
+  );
 
   return (
     <div className="space-y-6 p-6 max-w-5xl mx-auto">
@@ -126,6 +145,64 @@ const RoleSettings = () => {
                         </td>
                       ))}
                     </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Eye className="h-5 w-5" />
+            Visibilitas Menu
+          </CardTitle>
+          <p className="text-sm text-gray-500 mt-1">
+            Atur menu mana yang muncul di sidebar untuk masing-masing role. Menu Master Data dan
+            Administration selalu khusus Admin dan tidak dapat diubah di sini.
+          </p>
+        </CardHeader>
+        <CardContent>
+          {isLoading ? (
+            <div className="text-center py-8 text-sm text-gray-500">Memuat pengaturan...</div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b">
+                    <th className="text-left py-2 pr-4 font-semibold">Menu</th>
+                    {roles.map((role) => (
+                      <th key={role} className="text-center py-2 px-4 font-semibold">
+                        {ROLE_LABELS[role]}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {Object.entries(menuGroups).map(([group, items]) => (
+                    <React.Fragment key={group}>
+                      <tr className="bg-gray-50">
+                        <td colSpan={roles.length + 1} className="py-2 pr-4 text-xs font-semibold uppercase text-gray-500 tracking-wider">
+                          {group}
+                        </td>
+                      </tr>
+                      {items.map((item) => (
+                        <tr key={item.key} className="border-b last:border-0">
+                          <td className="py-3 pr-4 text-gray-700">{item.label}</td>
+                          {roles.map((role) => (
+                            <td key={role} className="text-center py-3 px-4">
+                              <Switch
+                                checked={draft[role].visibleMenus.includes(item.key)}
+                                onCheckedChange={() => toggleMenu(role, item.key)}
+                              />
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                    </React.Fragment>
                   ))}
                 </tbody>
               </table>

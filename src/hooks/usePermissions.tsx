@@ -1,5 +1,9 @@
 import { useAuth } from '@/hooks/useAuth';
-import { useRolePermissionsConfig, ConfigurableRole } from '@/hooks/useRolePermissionsConfig';
+import {
+  useRolePermissionsConfig,
+  ConfigurableRole,
+  CONFIGURABLE_MENU_ITEMS,
+} from '@/hooks/useRolePermissionsConfig';
 
 /**
  * Role matrix bawaan (lihat src/hooks/useRolePermissionsConfig.tsx untuk default
@@ -27,6 +31,8 @@ export const usePermissions = () => {
     ? 'viewer'
     : null;
 
+  const allMenuKeys = CONFIGURABLE_MENU_ITEMS.map((m) => m.key);
+
   const flags = isAdmin
     ? {
         canCreate: true,
@@ -36,10 +42,13 @@ export const usePermissions = () => {
         canManageVendors: true,
         canUploadDokumen: true,
         canApprovalDokumen: true,
+        visibleMenus: allMenuKeys,
       }
     : configurableRole
     ? matrix[configurableRole]
     : matrix.viewer;
+
+  const canViewMenu = (menuKey: string) => flags.visibleMenus.includes(menuKey);
 
   return {
     role,
@@ -58,6 +67,10 @@ export const usePermissions = () => {
     canManageVendors : flags.canManageVendors,
     canUploadDokumen : flags.canUploadDokumen,
     canApprovalDokumen: flags.canApprovalDokumen,
+
+    // Menu visibility (lihat halaman /role-settings)
+    visibleMenus: flags.visibleMenus,
+    canViewMenu,
 
     // Vendor-specific
     vendorId: userProfile?.id_vendor ?? null,

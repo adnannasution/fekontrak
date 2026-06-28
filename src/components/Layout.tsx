@@ -66,50 +66,46 @@ const Layout = ({ children }: LayoutProps) => {
   }, [location.pathname]);
   const { signOut, userProfile } = useAuth();
   const { theme, toggleTheme } = useTheme();
-  const { isAdmin, isPic, isViewer, isVendor, canManageUsers, canManageVendors } = usePermissions();
+  const { isAdmin, canViewMenu } = usePermissions();
 
   // useEffect(() => {
   //   localStorage.setItem('sidebar-collapsed', JSON.stringify(sidebarCollapsed));
   // }, [sidebarCollapsed]);
 
-  // Menu visibility rules:
-  // Admin   → semua menu
-  // PIC     → semua KECUALI Vendor CRUD, Pengguna, Manajemen Data, Pengaturan Admin
-  // Viewer  → sama dengan PIC (hanya lihat)
-  // Vendor  → hanya Contract Management & Tagihan
-
-  const showOperations  = !isVendor;
+  // Menu visibility untuk Monitoring & Analytics / Contract Management / Operations
+  // diatur per role lewat halaman /role-settings (lihat usePermissions().canViewMenu).
+  // Master Data & Administration selalu admin-only, tidak configurable.
   const showMasterData  = isAdmin;
   const showAdministration = isAdmin;
 
-  const navigationGroups = [
+  const filterByMenuKey = <T extends { key: string }>(items: T[]) =>
+    items.filter((item) => canViewMenu(item.key));
+
+  const navigationGroupsRaw = [
     {
       title: 'Monitoring & Analytics',
-      show: !isVendor,
-      items: [
-        { name: 'Executive Dashboard', href: '/dashboard', icon: LayoutDashboard },
-        { name: 'Performance Monitoring', href: '/contract-performance', icon: Target },
-      ]
+      items: filterByMenuKey([
+        { key: 'dashboard', name: 'Executive Dashboard', href: '/dashboard', icon: LayoutDashboard },
+        { key: 'contract-performance', name: 'Performance Monitoring', href: '/contract-performance', icon: Target },
+      ])
     },
     {
       title: 'Contract Management',
-      show: true, // semua role bisa lihat kontrak
-items: [
-  { name: 'Kontrak Lumpsum', href: '/kontrak-lumpsum', icon: FileText },
-  { name: 'Kontrak Unit Price', href: '/kontrak-unit-price', icon: ClipboardList },
-  { name: 'Kontrak TSA/LTSA', href: '/kontrak-tsa-ltsa', icon: TrendingUp },
-  ...(!isVendor ? [{ name: 'Amandemen', href: '/amandemen', icon: GitBranch }] : []),
-]
+      items: filterByMenuKey([
+        { key: 'kontrak-lumpsum', name: 'Kontrak Lumpsum', href: '/kontrak-lumpsum', icon: FileText },
+        { key: 'kontrak-unit-price', name: 'Kontrak Unit Price', href: '/kontrak-unit-price', icon: ClipboardList },
+        { key: 'kontrak-tsa-ltsa', name: 'Kontrak TSA/LTSA', href: '/kontrak-tsa-ltsa', icon: TrendingUp },
+        { key: 'amandemen', name: 'Amandemen', href: '/amandemen', icon: GitBranch },
+      ])
     },
     {
       title: 'Operations',
-      show: showOperations,
-      items: [
-        { name: 'Tagihan', href: '/invoices', icon: Coins },
-        { name: 'User Purchase (PADI)', href: '/user-purchase', icon: ShoppingCart },
-        { name: 'Approval Dokumen', href: '/approval', icon: ClipboardList },
-        { name: 'Laporan Harian', href: '/laporan-harian', icon: ClipboardList },
-      ]
+      items: filterByMenuKey([
+        { key: 'invoices', name: 'Tagihan', href: '/invoices', icon: Coins },
+        { key: 'user-purchase', name: 'User Purchase (PADI)', href: '/user-purchase', icon: ShoppingCart },
+        { key: 'approval', name: 'Approval Dokumen', href: '/approval', icon: ClipboardList },
+        { key: 'laporan-harian', name: 'Laporan Harian', href: '/laporan-harian', icon: ClipboardList },
+      ])
     },
     {
       title: 'Master Data',
@@ -129,6 +125,11 @@ items: [
       ]
     }
   ];
+
+  const navigationGroups = navigationGroupsRaw.map((group) => ({
+    ...group,
+    show: group.show ?? group.items.length > 0,
+  }));
 
   const handleSignOut = async () => {
     await signOut();
