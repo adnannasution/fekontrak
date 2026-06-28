@@ -1,0 +1,151 @@
+import React, { useEffect, useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Switch } from '@/components/ui/switch';
+import { Badge } from '@/components/ui/badge';
+import { Shield, Save, RotateCcw, Info } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
+import {
+  DEFAULT_ROLE_PERMISSIONS,
+  PERMISSION_LABELS,
+  RolePermissionMatrix,
+  useRolePermissionsConfig,
+  useUpdateRolePermissions,
+} from '@/hooks/useRolePermissionsConfig';
+
+const ROLE_LABELS: Record<string, string> = {
+  pic: 'PIC',
+  viewer: 'Viewer',
+  vendor: 'Vendor',
+};
+
+const RoleSettings = () => {
+  const { userProfile } = useAuth();
+  const { matrix, isLoading, isSyncedRemotely } = useRolePermissionsConfig();
+  const { save, isPending } = useUpdateRolePermissions();
+
+  const [draft, setDraft] = useState<RolePermissionMatrix>(matrix);
+
+  useEffect(() => {
+    setDraft(matrix);
+  }, [matrix]);
+
+  if (userProfile?.role !== 'admin') {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <Card>
+          <CardHeader>
+            <CardTitle>Akses Ditolak</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground">
+              Anda tidak memiliki akses untuk mengelola pengaturan role. Hanya administrator yang
+              dapat mengakses halaman ini.
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  const toggle = (role: keyof RolePermissionMatrix, permission: string) => {
+    setDraft((prev) => ({
+      ...prev,
+      [role]: { ...prev[role], [permission]: !prev[role][permission as keyof typeof prev[typeof role]] },
+    }));
+  };
+
+  const hasChanges = JSON.stringify(draft) !== JSON.stringify(matrix);
+
+  const handleSave = () => save(draft);
+  const handleReset = () => setDraft(DEFAULT_ROLE_PERMISSIONS);
+
+  const roles = Object.keys(draft) as Array<keyof RolePermissionMatrix>;
+  const permissionKeys = Object.keys(PERMISSION_LABELS) as Array<keyof typeof PERMISSION_LABELS>;
+
+  return (
+    <div className="space-y-6 p-6 max-w-5xl mx-auto">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h1 className="text-3xl font-bold flex items-center gap-2">
+            <Shield className="h-7 w-7 text-blue-600" />
+            Pengaturan Role
+          </h1>
+          <p className="text-gray-600 mt-1">
+            Atur hak akses untuk role PIC, Viewer, dan Vendor. Role Admin selalu memiliki akses
+            penuh dan tidak dapat diubah.
+          </p>
+        </div>
+        <Badge variant={isSyncedRemotely ? 'secondary' : 'outline'} className="flex items-center gap-2 px-3 py-2">
+          <Info className="h-4 w-4" />
+          {isSyncedRemotely ? 'Tersimpan di server' : 'Tersimpan lokal di perangkat ini'}
+        </Badge>
+      </div>
+
+      {!isSyncedRemotely && (
+        <Card className="border-amber-300 bg-amber-50">
+          <CardContent className="p-4 text-sm text-amber-800">
+            Backend belum memiliki baris konfigurasi <code>Role_Permission_Matrix</code>, sehingga
+            perubahan saat ini hanya tersimpan di browser/perangkat ini dan belum berlaku untuk
+            pengguna lain. Untuk berlaku secara global, tim backend perlu menambahkan baris
+            konfigurasi tersebut pada API <code>/konfigurasi</code>.
+          </CardContent>
+        </Card>
+      )}
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Matriks Hak Akses</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {isLoading ? (
+            <div className="text-center py-8 text-sm text-gray-500">Memuat pengaturan...</div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b">
+                    <th className="text-left py-2 pr-4 font-semibold">Hak Akses</th>
+                    {roles.map((role) => (
+                      <th key={role} className="text-center py-2 px-4 font-semibold">
+                        {ROLE_LABELS[role]}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {permissionKeys.map((permission) => (
+                    <tr key={permission} className="border-b last:border-0">
+                      <td className="py-3 pr-4 text-gray-700">{PERMISSION_LABELS[permission]}</td>
+                      {roles.map((role) => (
+                        <td key={role} className="text-center py-3 px-4">
+                          <Switch
+                            checked={Boolean(draft[role][permission])}
+                            onCheckedChange={() => toggle(role, permission)}
+                          />
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          <div className="flex items-center gap-2 mt-6">
+            <Button onClick={handleSave} disabled={!hasChanges || isPending}>
+              <Save className="h-4 w-4 mr-2" />
+              Simpan Perubahan
+            </Button>
+            <Button variant="outline" onClick={handleReset} disabled={isPending}>
+              <RotateCcw className="h-4 w-4 mr-2" />
+              Kembalikan ke Default
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
+export default RoleSettings;

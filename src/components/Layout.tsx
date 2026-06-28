@@ -125,6 +125,7 @@ items: [
       items: [
         { name: 'Manajemen Data', href: '/data-management', icon: Database },
         { name: 'Pengaturan Admin', href: '/admin-settings', icon: Settings },
+        { name: 'Pengaturan Role', href: '/role-settings', icon: Shield },
       ]
     }
   ];

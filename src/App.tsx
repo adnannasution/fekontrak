@@ -22,6 +22,7 @@ import NewContracts from "@/pages/NewContracts";
 import InvoiceManagement from "@/pages/InvoiceManagement";
 import ContractPerformanceMonitoring from "@/pages/ContractPerformanceMonitoring";
 import AdminSettings from "@/pages/AdminSettings";
+import RoleSettings from "@/pages/RoleSettings";
 import ContractDetail from "@/pages/ContractDetail";
 import InvoiceDetail from "@/pages/InvoiceDetail";
 
@@ -82,6 +83,7 @@ const App = () => (
                         <Route path="/sla-monitoring" element={<Navigate to="/contract-performance" replace />} />
                         <Route path="/contract-performance" element={<ContractPerformanceMonitoring />} />
                         <Route path="/admin-settings" element={<AdminSettings />} />
+                        <Route path="/role-settings" element={<RoleSettings />} />
                         <Route path="/users" element={<Users />} />
                         <Route path="/vendors" element={<NewVendors />} />
                         <Route path="/master/program-kerja" element={<MasterProgramKerja />} />
