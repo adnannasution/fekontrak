@@ -77,15 +77,18 @@ export const AddUserDialog = ({ isOpen, onOpenChange, formData, setFormData, onS
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="admin">{roleLabels.admin}</SelectItem>
-                <SelectItem value="pic">{roleLabels.pic}</SelectItem>
-                <SelectItem value="viewer">{roleLabels.viewer}</SelectItem>
-                <SelectItem value="vendor">{roleLabels.vendor}</SelectItem>
+                <SelectItem value="manager">{roleLabels.manager}</SelectItem>
+                <SelectItem value="section_head">{roleLabels.section_head}</SelectItem>
+                <SelectItem value="supervisor">{roleLabels.supervisor}</SelectItem>
+                <SelectItem value="technician">{roleLabels.technician}</SelectItem>
+                <SelectItem value="external">{roleLabels.external}</SelectItem>
+                <SelectItem value="guest">{roleLabels.guest}</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
-          {/* Dropdown vendor — hanya muncul kalau role = vendor */}
-          {formData.role === 'vendor' && (
+          {/* Dropdown vendor — hanya muncul kalau role = external */}
+          {formData.role === 'external' && (
             <div className="grid gap-2">
               <Label>Perusahaan Vendor <span className="text-red-500">*</span></Label>
               <Select

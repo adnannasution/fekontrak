@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 import { UserProfile, UserFormData } from '../types';
+import { resolveConfigurableRole } from '@/hooks/useRolePermissionsConfig';
 
 const API_URL = "https://bekontrak-production.up.railway.app/api";
 
@@ -16,7 +17,7 @@ const mapUser = (u: any): UserProfile => ({
   id: u.id,
   email: u.email,
   full_name: u.fullName ?? u.full_name ?? '',
-  role: (u.role === 'user' ? 'viewer' : u.role) as 'admin' | 'pic' | 'viewer' | 'vendor',
+  role: u.role,
   id_vendor: u.idVendor ?? u.id_vendor ?? undefined,
   is_active: u.isActive ?? u.is_active ?? true,
   created_at: u.createdAt ?? u.created_at,
@@ -30,7 +31,7 @@ export const useUserManagement = () => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<UserProfile | null>(null);
   const [formData, setFormData] = useState<UserFormData>({
-    email: '', full_name: '', role: 'viewer', id_vendor: '',
+    email: '', full_name: '', role: 'guest', id_vendor: '',
   });
   const [deleteConfirm, setDeleteConfirm] = useState<{ open: boolean; user: UserProfile | null }>({
     open: false, user: null
@@ -77,7 +78,8 @@ export const useUserManagement = () => {
       return;
     }
     setSelectedUser(user);
-    setFormData({ email: user.email, full_name: user.full_name, role: user.role, id_vendor: user.id_vendor || '' });
+    const role = user.role === 'admin' ? 'admin' : resolveConfigurableRole(user.role);
+    setFormData({ email: user.email, full_name: user.full_name, role, id_vendor: user.id_vendor || '' });
     setIsEditDialogOpen(true);
   };
 
@@ -91,13 +93,13 @@ export const useUserManagement = () => {
       toast({ title: "Validasi Error", description: "Nama tidak boleh kosong.", variant: "destructive" });
       return;
     }
-    if (formData.role === 'vendor' && !formData.id_vendor) {
-      toast({ title: "Validasi Error", description: "Pilih vendor untuk role Vendor.", variant: "destructive" });
+    if (formData.role === 'external' && !formData.id_vendor) {
+      toast({ title: "Validasi Error", description: "Pilih vendor untuk role External.", variant: "destructive" });
       return;
     }
     try {
-      if (formData.role === 'vendor' && formData.id_vendor) {
-        // Assign vendor → set role=vendor + id_vendor
+      if (formData.role === 'external' && formData.id_vendor) {
+        // Assign vendor → set role=external + id_vendor
         const res = await fetch(`${API_URL}/profile/${selectedUser.id}/assign-vendor`, {
           method: 'PUT', headers: authHeaders(),
           body: JSON.stringify({ idVendor: formData.id_vendor })
@@ -108,13 +110,12 @@ export const useUserManagement = () => {
         // Update nama juga
         await fetch(`${API_URL}/profile/${selectedUser.id}`, {
           method: 'PUT', headers: authHeaders(),
-          body: JSON.stringify({ fullName: formData.full_name.trim(), role: 'vendor' })
+          body: JSON.stringify({ fullName: formData.full_name.trim(), role: 'external' })
         });
       } else {
-        const dbRole = formData.role === 'viewer' ? 'user' : formData.role;
         const res = await fetch(`${API_URL}/profile/${selectedUser.id}`, {
           method: 'PUT', headers: authHeaders(),
-          body: JSON.stringify({ fullName: formData.full_name.trim(), role: dbRole })
+          body: JSON.stringify({ fullName: formData.full_name.trim(), role: formData.role })
         });
         const data = await res.json().catch(() => ({}));
         if (!res.ok) throw new Error(data?.message);
@@ -135,17 +136,15 @@ export const useUserManagement = () => {
       toast({ title: "Validasi Error", description: "Email dan nama wajib diisi.", variant: "destructive" });
       return;
     }
-    if (formData.role === 'vendor' && !formData.id_vendor) {
-      toast({ title: "Validasi Error", description: "Pilih vendor untuk role Vendor.", variant: "destructive" });
+    if (formData.role === 'external' && !formData.id_vendor) {
+      toast({ title: "Validasi Error", description: "Pilih vendor untuk role External.", variant: "destructive" });
       return;
     }
     try {
-      const dbRole = formData.role === 'viewer' ? 'user' : formData.role;
-
       // Pakai admin-register agar role bisa diset apapun
       const res = await fetch(`${API_URL}/auth/admin-register`, {
         method: 'POST', headers: authHeaders(),
-        body: JSON.stringify({ email: cleanEmail, fullName: cleanName, role: dbRole, password: 'Password123!' })
+        body: JSON.stringify({ email: cleanEmail, fullName: cleanName, role: formData.role, password: 'Password123!' })
       });
       const data = await res.json().catch(() => ({}));
       if (res.status === 400 && data?.message?.toLowerCase().includes('terdaftar')) {
@@ -154,8 +153,8 @@ export const useUserManagement = () => {
       }
       if (!res.ok) throw new Error(data?.message);
 
-      // Assign vendor kalau role vendor
-      if (formData.role === 'vendor' && formData.id_vendor && data.id) {
+      // Assign vendor kalau role external
+      if (formData.role === 'external' && formData.id_vendor && data.id) {
         await fetch(`${API_URL}/profile/${data.id}/assign-vendor`, {
           method: 'PUT', headers: authHeaders(),
           body: JSON.stringify({ idVendor: formData.id_vendor })
@@ -164,7 +163,7 @@ export const useUserManagement = () => {
 
       toast({ title: "Berhasil", description: "User baru ditambahkan. Password default: Password123!" });
       setIsAddDialogOpen(false);
-      setFormData({ email: '', full_name: '', role: 'viewer', id_vendor: '' });
+      setFormData({ email: '', full_name: '', role: 'guest', id_vendor: '' });
       fetchUsers();
     } catch {
       toast({ title: "Error", description: "Gagal menambah user baru.", variant: "destructive" });

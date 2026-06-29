@@ -7,9 +7,10 @@ import { useToast } from '@/hooks/use-toast';
 import AuthHeader from '@/components/auth/AuthHeader';
 import SignInForm from '@/components/auth/SignInForm';
 import SignUpForm from '@/components/auth/SignUpForm';
+import { isVendorRole } from '@/hooks/useRolePermissionsConfig';
 
 const getRedirectPath = (role?: string) =>
-  role === 'vendor' ? '/kontrak-lumpsum' : '/dashboard';
+  isVendorRole(role) ? '/kontrak-lumpsum' : '/dashboard';
 
 const Auth = () => {
   const [email, setEmail] = useState('');

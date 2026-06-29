@@ -5,6 +5,7 @@ import { Switch } from '@/components/ui/switch';
 import { Edit, Trash2, UserCheck, UserX } from 'lucide-react';
 import { UserProfile } from '../types';
 import { usePermissions } from '@/hooks/usePermissions';
+import { resolveConfigurableRole } from '@/hooks/useRolePermissionsConfig';
 
 interface UserTableRowProps {
   user: UserProfile;
@@ -29,15 +30,20 @@ export const UserTableRow = ({
 
   const getRoleBadge = (role: string) => {
     const colors: Record<string, string> = {
-      'admin':  'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
-      'pic':    'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
-      'viewer': 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200',
-      'vendor': 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200',
+      'admin':        'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
+      'manager':      'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
+      'section_head': 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200',
+      'supervisor':   'bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-200',
+      'technician':   'bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-200',
+      'external':     'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200',
+      'guest':        'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200',
     };
 
+    const resolvedRole = role === 'admin' ? 'admin' : resolveConfigurableRole(role);
+
     return (
-      <Badge className={colors[role] || 'bg-gray-100 text-gray-800'}>
-        {roleLabels[role as keyof typeof roleLabels] || role}
+      <Badge className={colors[resolvedRole] || 'bg-gray-100 text-gray-800'}>
+        {roleLabels[resolvedRole as keyof typeof roleLabels] || role}
       </Badge>
     );
   };

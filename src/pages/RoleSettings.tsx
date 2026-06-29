@@ -104,8 +104,8 @@ const RoleSettings = () => {
             Pengaturan Role
           </h1>
           <p className="text-gray-600 mt-1">
-            Atur hak akses untuk role PIC, Viewer, dan Vendor. Role Admin selalu memiliki akses
-            penuh dan tidak dapat diubah.
+            Atur hak akses untuk role Manager, Section Head, Supervisor, Technician, External, dan
+            Guest. Role Admin selalu memiliki akses penuh dan tidak dapat diubah.
           </p>
         </div>
         <Badge variant={isSyncedRemotely ? 'secondary' : 'outline'} className="flex items-center gap-2 px-3 py-2">
@@ -132,13 +132,14 @@ const RoleSettings = () => {
             Nama Jenis Akun
           </CardTitle>
           <p className="text-sm text-gray-500 mt-1">
-            Ganti nama tampilan role PIC, Viewer, dan Vendor sesuai jabatan di organisasi Anda.
-            Nama ini akan muncul di seluruh aplikasi (badge role, daftar pengguna, dll), tapi hak
-            aksesnya tetap mengikuti pengaturan di bawah — mengganti nama tidak mengubah hak akses.
+            Ganti nama tampilan role Manager, Section Head, Supervisor, Technician, External, dan
+            Guest sesuai jabatan di organisasi Anda. Nama ini akan muncul di seluruh aplikasi
+            (badge role, daftar pengguna, dll), tapi hak aksesnya tetap mengikuti pengaturan di
+            bawah — mengganti nama tidak mengubah hak akses.
           </p>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-4 sm:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {roles.map((role) => (
               <div key={role} className="grid gap-2">
                 <Label htmlFor={`label-${role}`}>{DEFAULT_ROLE_LABELS[role]}</Label>

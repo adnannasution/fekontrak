@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 import { useContracts, useVendors, useCreateKontrak, useUpdateKontrak } from '@/hooks/useNewDatabase';
 import { useAuth } from '@/hooks/useAuth';
+import { isStaffOrAdminRole } from '@/hooks/useRolePermissionsConfig';
 import { format, parseISO } from 'date-fns';
 import { id } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
@@ -43,7 +44,7 @@ const NewContracts = () => {
   const createKontrak = useCreateKontrak();
   const updateKontrak = useUpdateKontrak();
 
-  const isAdminOrPIC = userProfile?.role === 'admin' || userProfile?.role === 'pic';
+  const isAdminOrPIC = isStaffOrAdminRole(userProfile?.role);
 
   // Filter contracts
   const filteredKontraks = kontraks.filter(kontrak => {

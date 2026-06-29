@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useContracts } from '@/hooks/useContracts';
 import { useAuth } from '@/hooks/useAuth';
+import { isStaffOrAdminRole } from '@/hooks/useRolePermissionsConfig';
 import { useToast } from '@/hooks/use-toast';
 import { usePagination } from '@/hooks/usePagination';
 import { Kontrak } from '@/types/database';
@@ -20,7 +21,7 @@ export const useKontrakLumpsumLogic = () => {
   const { userProfile } = useAuth();
   const { toast } = useToast();
 
-  const isAdmin = userProfile?.role === 'admin' || userProfile?.role === 'pic';
+  const isAdmin = isStaffOrAdminRole(userProfile?.role);
 
   // Filter hanya kontrak Lumpsum
   const lumpsumContracts = (contracts ?? []).filter(contract => contract.tipe_kontrak === 'Lumpsum');

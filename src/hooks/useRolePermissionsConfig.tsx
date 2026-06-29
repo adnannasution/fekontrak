@@ -3,15 +3,54 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useKonfigurasiSistem, useUpdateKonfigurasi } from '@/hooks/useKonfigurasiSistem';
 import { useToast } from '@/hooks/use-toast';
 
-export type ConfigurableRole = 'pic' | 'viewer' | 'vendor';
+export type ConfigurableRole =
+  | 'manager'
+  | 'section_head'
+  | 'supervisor'
+  | 'technician'
+  | 'external'
+  | 'guest';
 
 export type RoleLabels = Record<ConfigurableRole, string>;
 
 export const DEFAULT_ROLE_LABELS: RoleLabels = {
-  pic: 'PIC',
-  viewer: 'Viewer',
-  vendor: 'Vendor',
+  manager: 'Manager',
+  section_head: 'Section Head',
+  supervisor: 'Supervisor',
+  technician: 'Technician',
+  external: 'External',
+  guest: 'Guest',
 };
+
+export const CONFIGURABLE_ROLES = Object.keys(DEFAULT_ROLE_LABELS) as ConfigurableRole[];
+
+/**
+ * Role lama sebelum daftar role diperluas jadi 7 (Admin, Manager, Section Head,
+ * Supervisor, Technician, External, Guest). User yang sudah ada dan belum
+ * di-reassign admin tetap dipetakan ke role baru yang setara secara hak akses.
+ */
+const LEGACY_ROLE_ALIASES: Record<string, ConfigurableRole> = {
+  pic: 'manager',
+  vendor: 'external',
+  viewer: 'guest',
+  user: 'guest',
+};
+
+export const resolveConfigurableRole = (role?: string | null): ConfigurableRole => {
+  if (role && (CONFIGURABLE_ROLES as string[]).includes(role)) return role as ConfigurableRole;
+  return LEGACY_ROLE_ALIASES[role ?? ''] ?? 'guest';
+};
+
+const STAFF_ROLES: ConfigurableRole[] = ['manager', 'section_head', 'supervisor', 'technician'];
+
+/** Dipakai di beberapa hook/halaman lama yang cek role kontrak CRUD langsung dari userProfile,
+ * tanpa lewat usePermissions/matriks hak akses. */
+export const isStaffOrAdminRole = (role?: string | null): boolean =>
+  role === 'admin' || STAFF_ROLES.includes(resolveConfigurableRole(role));
+
+/** True untuk role External (baru) maupun Vendor (lama, belum di-reassign). */
+export const isVendorRole = (role?: string | null): boolean =>
+  resolveConfigurableRole(role) === 'external';
 
 export interface RolePermissionFlags {
   canCreate: boolean;
@@ -58,18 +97,26 @@ export const CONFIGURABLE_MENU_ITEMS: { key: string; label: string; group: strin
   { key: 'laporan-harian', label: 'Laporan Harian', group: 'Operations' },
 ];
 
+const STAFF_DEFAULT_FLAGS: RolePermissionFlags = {
+  canCreate: true,
+  canEdit: true,
+  canDelete: false,
+  canManageUsers: false,
+  canManageVendors: false,
+  canUploadDokumen: true,
+  canApprovalDokumen: true,
+  visibleMenus: CONFIGURABLE_MENU_ITEMS.map((m) => m.key),
+};
+
 export const DEFAULT_ROLE_PERMISSIONS: RolePermissionMatrix = {
-  pic: {
-    canCreate: true,
-    canEdit: true,
-    canDelete: false,
-    canManageUsers: false,
-    canManageVendors: false,
-    canUploadDokumen: true,
-    canApprovalDokumen: true,
-    visibleMenus: CONFIGURABLE_MENU_ITEMS.map((m) => m.key),
-  },
-  viewer: {
+  // Manager, Section Head, Supervisor, Technician dimulai dengan hak akses yang
+  // sama (setara role lama "PIC"); admin bisa membedakan masing-masing lewat
+  // halaman Pengaturan Role.
+  manager: { ...STAFF_DEFAULT_FLAGS },
+  section_head: { ...STAFF_DEFAULT_FLAGS },
+  supervisor: { ...STAFF_DEFAULT_FLAGS },
+  technician: { ...STAFF_DEFAULT_FLAGS },
+  guest: {
     canCreate: false,
     canEdit: false,
     canDelete: false,
@@ -79,7 +126,7 @@ export const DEFAULT_ROLE_PERMISSIONS: RolePermissionMatrix = {
     canApprovalDokumen: false,
     visibleMenus: CONFIGURABLE_MENU_ITEMS.map((m) => m.key),
   },
-  vendor: {
+  external: {
     canCreate: false,
     canEdit: false,
     canDelete: false,
