@@ -19,6 +19,9 @@ import {
   useUpdateRolePermissions,
 } from '@/hooks/useRolePermissionsConfig';
 
+// Sembunyikan sementara — admin belum perlu ganti nama tampilan role saat ini.
+const SHOW_NAMA_JENIS_AKUN = false;
+
 const RoleSettings = () => {
   const { userProfile } = useAuth();
   const { matrix, labels, isLoading, isSyncedRemotely } = useRolePermissionsConfig();
@@ -125,35 +128,37 @@ const RoleSettings = () => {
         </Card>
       )}
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Tag className="h-5 w-5" />
-            Nama Jenis Akun
-          </CardTitle>
-          <p className="text-sm text-gray-500 mt-1">
-            Ganti nama tampilan role Manager, Section Head, Supervisor, Technician, External, dan
-            Guest sesuai jabatan di organisasi Anda. Nama ini akan muncul di seluruh aplikasi
-            (badge role, daftar pengguna, dll), tapi hak aksesnya tetap mengikuti pengaturan di
-            bawah — mengganti nama tidak mengubah hak akses.
-          </p>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {roles.map((role) => (
-              <div key={role} className="grid gap-2">
-                <Label htmlFor={`label-${role}`}>{DEFAULT_ROLE_LABELS[role]}</Label>
-                <Input
-                  id={`label-${role}`}
-                  value={draftLabels[role]}
-                  onChange={(e) => setLabel(role, e.target.value)}
-                  placeholder={DEFAULT_ROLE_LABELS[role]}
-                />
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+      {SHOW_NAMA_JENIS_AKUN && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Tag className="h-5 w-5" />
+              Nama Jenis Akun
+            </CardTitle>
+            <p className="text-sm text-gray-500 mt-1">
+              Ganti nama tampilan role Manager, Section Head, Supervisor, Technician, External, dan
+              Guest sesuai jabatan di organisasi Anda. Nama ini akan muncul di seluruh aplikasi
+              (badge role, daftar pengguna, dll), tapi hak aksesnya tetap mengikuti pengaturan di
+              bawah — mengganti nama tidak mengubah hak akses.
+            </p>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {roles.map((role) => (
+                <div key={role} className="grid gap-2">
+                  <Label htmlFor={`label-${role}`}>{DEFAULT_ROLE_LABELS[role]}</Label>
+                  <Input
+                    id={`label-${role}`}
+                    value={draftLabels[role]}
+                    onChange={(e) => setLabel(role, e.target.value)}
+                    placeholder={DEFAULT_ROLE_LABELS[role]}
+                  />
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       <Card>
         <CardHeader>
