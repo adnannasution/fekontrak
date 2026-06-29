@@ -121,32 +121,32 @@ const AmendmentMonitoringTab: React.FC = () => {
     <div className="space-y-6">
       {/* Header with Statistics */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
+        <Card className="border-0 text-white bg-gradient-to-r from-red-500 to-red-600">
           <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-red-600">{statistics.critical}</div>
-            <div className="text-sm text-muted-foreground">Critical</div>
-            <div className="text-xs text-red-600 mt-1">Perlu tindakan segera</div>
+            <div className="text-2xl font-bold text-white">{statistics.critical}</div>
+            <div className="text-sm text-white/90">Critical</div>
+            <div className="text-xs text-white/75 mt-1">Perlu tindakan segera</div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-0 text-white bg-gradient-to-r from-amber-500 to-amber-600">
           <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-yellow-600">{statistics.warning}</div>
-            <div className="text-sm text-muted-foreground">Warning</div>
-            <div className="text-xs text-yellow-600 mt-1">Perhatian khusus</div>
+            <div className="text-2xl font-bold text-white">{statistics.warning}</div>
+            <div className="text-sm text-white/90">Warning</div>
+            <div className="text-xs text-white/75 mt-1">Perhatian khusus</div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-0 text-white bg-gradient-to-r from-blue-500 to-blue-600">
           <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-blue-600">{statistics.info}</div>
-            <div className="text-sm text-muted-foreground">Info</div>
-            <div className="text-xs text-blue-600 mt-1">Monitoring rutin</div>
+            <div className="text-2xl font-bold text-white">{statistics.info}</div>
+            <div className="text-sm text-white/90">Info</div>
+            <div className="text-xs text-white/75 mt-1">Monitoring rutin</div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-0 text-white bg-gradient-to-r from-slate-500 to-slate-600">
           <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-gray-600">{statistics.total}</div>
-            <div className="text-sm text-muted-foreground">Total</div>
-            <div className="text-xs text-gray-600 mt-1">Kontrak perlu amandemen</div>
+            <div className="text-2xl font-bold text-white">{statistics.total}</div>
+            <div className="text-sm text-white/90">Total</div>
+            <div className="text-xs text-white/75 mt-1">Kontrak perlu amandemen</div>
           </CardContent>
         </Card>
       </div>

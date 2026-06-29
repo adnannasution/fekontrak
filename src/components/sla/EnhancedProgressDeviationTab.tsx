@@ -121,54 +121,54 @@ export const EnhancedProgressDeviationTab = () => {
     <div className="space-y-6">
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
+        <Card className="border-0 text-white bg-gradient-to-r from-slate-500 to-slate-600">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Total Contracts</p>
-                <p className="text-2xl font-bold">{progressDeviations.length}</p>
+                <p className="text-sm font-medium text-white/90">Total Contracts</p>
+                <p className="text-2xl font-bold text-white">{progressDeviations.length}</p>
               </div>
-              <BarChart3 className="h-8 w-8 text-muted-foreground" />
+              <BarChart3 className="h-8 w-8 text-white/80" />
             </div>
           </CardContent>
         </Card>
-        
-        <Card>
+
+        <Card className="border-0 text-white bg-gradient-to-r from-red-500 to-red-600">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Behind Schedule</p>
-                <p className="text-2xl font-bold text-destructive">
+                <p className="text-sm font-medium text-white/90">Behind Schedule</p>
+                <p className="text-2xl font-bold text-white">
                   {progressDeviations.filter(d => d.status === 'Behind').length}
                 </p>
               </div>
-              <TrendingDown className="h-8 w-8 text-destructive" />
+              <TrendingDown className="h-8 w-8 text-white/80" />
             </div>
           </CardContent>
         </Card>
-        
-        <Card>
+
+        <Card className="border-0 text-white bg-gradient-to-r from-blue-500 to-blue-600">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Ahead Schedule</p>
-                <p className="text-2xl font-bold text-blue-600">
+                <p className="text-sm font-medium text-white/90">Ahead Schedule</p>
+                <p className="text-2xl font-bold text-white">
                   {progressDeviations.filter(d => d.status === 'Ahead').length}
                 </p>
               </div>
-              <TrendingUp className="h-8 w-8 text-blue-600" />
+              <TrendingUp className="h-8 w-8 text-white/80" />
             </div>
           </CardContent>
         </Card>
-        
-        <Card>
+
+        <Card className="border-0 text-white bg-gradient-to-r from-orange-500 to-orange-600">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Critical Warnings</p>
-                <p className="text-2xl font-bold text-destructive">{totalWarnings}</p>
+                <p className="text-sm font-medium text-white/90">Critical Warnings</p>
+                <p className="text-2xl font-bold text-white">{totalWarnings}</p>
               </div>
-              <AlertTriangle className="h-8 w-8 text-destructive" />
+              <AlertTriangle className="h-8 w-8 text-white/80" />
             </div>
           </CardContent>
         </Card>
