@@ -117,17 +117,6 @@ const RoleSettings = () => {
         </Badge>
       </div>
 
-      {!isSyncedRemotely && (
-        <Card className="border-amber-300 bg-amber-50">
-          <CardContent className="p-4 text-sm text-amber-800">
-            Backend belum memiliki baris konfigurasi <code>Role_Permission_Matrix</code>, sehingga
-            perubahan saat ini hanya tersimpan di browser/perangkat ini dan belum berlaku untuk
-            pengguna lain. Untuk berlaku secara global, tim backend perlu menambahkan baris
-            konfigurasi tersebut pada API <code>/konfigurasi</code>.
-          </CardContent>
-        </Card>
-      )}
-
       {SHOW_NAMA_JENIS_AKUN && (
         <Card>
           <CardHeader>
