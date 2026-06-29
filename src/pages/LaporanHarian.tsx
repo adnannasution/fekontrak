@@ -8,6 +8,14 @@ import { ClipboardList, Filter, RefreshCw, Search, ChevronLeft, ChevronRight } f
 import { useDailyReport } from '@/hooks/useDailyReport';
 
 const DISIPLIN_OPTIONS = ['Electrical', 'Instrument', 'Rotating', 'Stationary', 'Alat Berat', 'Tools'];
+const DISIPLIN_GRADIENTS: Record<string, string> = {
+  Electrical: 'from-blue-500 to-blue-600',
+  Instrument: 'from-green-500 to-green-600',
+  Rotating: 'from-purple-500 to-purple-600',
+  Stationary: 'from-orange-500 to-orange-600',
+  'Alat Berat': 'from-teal-500 to-teal-600',
+  Tools: 'from-rose-500 to-rose-600',
+};
 const KATEGORI_OPTIONS = ['Corrective Maintenance', 'Preventive Maintenance', 'Plant Patrol', 'Progress', 'Challenge Session'];
 const STATUS_OPTIONS   = ['Done', 'In Progress', 'Waiting Material', 'Pending'];
 const PAGE_SIZE_OPTIONS = [10, 25, 50, 100];
@@ -110,11 +118,12 @@ const LaporanHarian = () => {
       {Object.keys(summary).length > 0 && (
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
           {DISIPLIN_OPTIONS.map(d => (
-            <Card key={d} className="cursor-pointer hover:shadow-md transition-shadow"
+            <Card key={d}
+              className={`cursor-pointer hover:shadow-lg transition-shadow border-0 text-white bg-gradient-to-r ${DISIPLIN_GRADIENTS[d] ?? 'from-gray-500 to-gray-600'} ${filters.disiplin === d ? 'ring-2 ring-offset-2 ring-gray-700' : ''}`}
               onClick={() => handleFilterChange('disiplin', filters.disiplin === d ? 'all' : d)}>
               <CardContent className="p-4 text-center">
-                <p className="text-2xl font-bold text-blue-600">{summary[d] || 0}</p>
-                <p className="text-xs text-gray-600 mt-1">{d}</p>
+                <p className="text-2xl font-bold text-white">{summary[d] || 0}</p>
+                <p className="text-xs text-white/90 mt-1">{d}</p>
               </CardContent>
             </Card>
           ))}
@@ -130,7 +139,7 @@ const LaporanHarian = () => {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-3">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
               <Input
@@ -176,11 +185,19 @@ const LaporanHarian = () => {
               </SelectContent>
             </Select>
 
-            <Input type="date" value={filters.tanggal_dari}
-              onChange={e => { setFilters(f => ({ ...f, tanggal_dari: e.target.value })); setPage(1); }} />
+          </div>
 
-            <Input type="date" value={filters.tanggal_sampai}
-              onChange={e => { setFilters(f => ({ ...f, tanggal_sampai: e.target.value })); setPage(1); }} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
+            <div>
+              <label className="text-xs font-medium text-gray-600 mb-1 block">Dari tanggal</label>
+              <Input type="date" value={filters.tanggal_dari}
+                onChange={e => { setFilters(f => ({ ...f, tanggal_dari: e.target.value })); setPage(1); }} />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-gray-600 mb-1 block">Sampai tanggal</label>
+              <Input type="date" value={filters.tanggal_sampai}
+                onChange={e => { setFilters(f => ({ ...f, tanggal_sampai: e.target.value })); setPage(1); }} />
+            </div>
           </div>
 
           <div className="flex items-center justify-between mt-3">
