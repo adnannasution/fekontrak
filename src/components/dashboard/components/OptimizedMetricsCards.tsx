@@ -39,6 +39,7 @@ export const OptimizedMetricsCards = memo(({
       value: metrics.totalContracts.toString(),
       icon: BarChart3,
       color: 'blue',
+      gradient: 'from-blue-500 to-blue-600',
       onClick: () => onCardClick('total'),
     },
     {
@@ -46,6 +47,7 @@ export const OptimizedMetricsCards = memo(({
       value: metrics.preKomContracts.toString(),
       icon: Clock,
       color: 'yellow',
+      gradient: 'from-amber-500 to-amber-600',
       onClick: () => onCardClick('pre-kom'),
     },
     {
@@ -53,6 +55,7 @@ export const OptimizedMetricsCards = memo(({
       value: metrics.activeContracts.toString(),
       icon: TrendingUp,
       color: 'green',
+      gradient: 'from-green-500 to-green-600',
       onClick: () => onCardClick('active'),
     },
     {
@@ -60,6 +63,7 @@ export const OptimizedMetricsCards = memo(({
       value: metrics.completedContracts.toString(),
       icon: BarChart3,
       color: 'blue',
+      gradient: 'from-indigo-500 to-indigo-600',
       onClick: () => onCardClick('completed'),
     },
     {
@@ -67,6 +71,7 @@ export const OptimizedMetricsCards = memo(({
       value: `${metrics.budgetUtilizationRate.toFixed(1)}%`,
       icon: Target,
       color: 'dynamic',
+      gradient: 'from-purple-500 to-purple-600',
       colorClass: getUtilizationColor(metrics.budgetUtilizationRate),
       progress: Math.min(metrics.budgetUtilizationRate, 100),
       progressColor: metrics.budgetUtilizationRate >= 80 ? 'bg-red-500' : metrics.budgetUtilizationRate >= 60 ? 'bg-yellow-500' : 'bg-green-500',
@@ -77,6 +82,7 @@ export const OptimizedMetricsCards = memo(({
       value: `${metrics.avgPerformanceIndex.toFixed(1)}%`,
       icon: Percent,
       color: 'dynamic',
+      gradient: 'from-pink-500 to-pink-600',
       colorClass: getPerformanceColor(metrics.avgPerformanceIndex),
       progress: Math.min(metrics.avgPerformanceIndex, 100),
       progressColor: metrics.avgPerformanceIndex >= 100 ? 'bg-green-500' : metrics.avgPerformanceIndex >= 80 ? 'bg-yellow-500' : 'bg-red-500',
@@ -91,6 +97,7 @@ export const OptimizedMetricsCards = memo(({
       value: metrics.contractsNearingEnd.toString(),
       icon: AlertTriangle,
       color: 'red',
+      gradient: 'from-red-500 to-red-600',
       onClick: () => onCardClick('nearing-end'),
     });
   }
@@ -120,28 +127,26 @@ export const OptimizedMetricsCards = memo(({
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           {cards.slice(0, 4).map((card, index) => {
             const IconComponent = card.icon;
-            const colorClasses = getColorClasses(card.color, card.colorClass);
-            const [textColor, bgColor] = colorClasses.split(' ');
 
             return (
-              <Card 
+              <Card
                 key={index}
-                className="cursor-pointer hover:shadow-lg transition-all duration-200 hover:scale-[1.02] border border-border/50" 
+                className={`cursor-pointer hover:shadow-lg transition-all duration-200 hover:scale-[1.02] border-0 text-white bg-gradient-to-r ${card.gradient ?? 'from-gray-500 to-gray-600'}`}
                 onClick={card.onClick}
               >
                 <CardContent className="p-4">
                   <div className="flex flex-col space-y-3">
                     <div className="flex items-center justify-between">
-                      <div className={`p-2 rounded-lg ${bgColor}`}>
-                        <IconComponent className={`h-5 w-5 ${textColor}`} />
+                      <div className="p-2 rounded-lg bg-white/20">
+                        <IconComponent className="h-5 w-5 text-white" />
                       </div>
-                      <p className={`text-2xl font-bold ${textColor}`}>
+                      <p className="text-2xl font-bold text-white">
                         {card.value}
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-muted-foreground">{card.title}</p>
-                      <p className="text-xs text-muted-foreground/70">Jumlah kontrak</p>
+                      <p className="text-sm font-medium text-white/90">{card.title}</p>
+                      <p className="text-xs text-white/75">Jumlah kontrak</p>
                     </div>
                   </div>
                 </CardContent>
