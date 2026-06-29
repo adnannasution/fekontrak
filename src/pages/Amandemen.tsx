@@ -157,7 +157,7 @@ const { data: allAmendments = [], isLoading: isLoadingAmendments } = useQuery({
   }
 
   return (
-   <div className="space-y-6 max-w-[1000px] mx-auto">
+   <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-foreground">Amandemen Kontrak</h1>
         <p className="text-muted-foreground">Daftar seluruh amandemen dari semua kontrak</p>
