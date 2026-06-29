@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus } from 'lucide-react';
 import { UserFormData } from '../types';
 import { usePermissions } from '@/hooks/usePermissions';
 
@@ -38,12 +37,6 @@ export const AddUserDialog = ({ isOpen, onOpenChange, formData, setFormData, onS
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogTrigger asChild>
-        <Button className="btn-ripple hover:scale-105 transition-all duration-200">
-          <Plus className="mr-2 h-4 w-4" />
-          Tambah User
-        </Button>
-      </DialogTrigger>
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>Tambah User Baru</DialogTitle>
