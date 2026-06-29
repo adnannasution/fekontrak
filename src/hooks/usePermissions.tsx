@@ -5,6 +5,9 @@ import {
   CONFIGURABLE_MENU_ITEMS,
 } from '@/hooks/useRolePermissionsConfig';
 
+/** Label "Admin" tetap dan tidak bisa diubah lewat /role-settings. */
+const ADMIN_LABEL = 'Admin';
+
 /**
  * Role matrix bawaan (lihat src/hooks/useRolePermissionsConfig.tsx untuk default
  * dan halaman /role-settings untuk mengubahnya):
@@ -15,7 +18,7 @@ import {
  */
 export const usePermissions = () => {
   const { userProfile } = useAuth();
-  const { matrix } = useRolePermissionsConfig();
+  const { matrix, labels } = useRolePermissionsConfig();
   const role = userProfile?.role ?? 'viewer';
 
   const isAdmin  = role === 'admin';
@@ -50,12 +53,18 @@ export const usePermissions = () => {
 
   const canViewMenu = (menuKey: string) => flags.visibleMenus.includes(menuKey);
 
+  // Nama jenis akun yang bisa diubah Admin lewat /role-settings (lihat CONFIGURABLE_MENU_ITEMS).
+  const roleLabels = { admin: ADMIN_LABEL, ...labels };
+  const roleLabel = isAdmin ? ADMIN_LABEL : configurableRole ? labels[configurableRole] : labels.viewer;
+
   return {
     role,
     isAdmin,
     isPic,
     isViewer,
     isVendor,
+    roleLabel,
+    roleLabels,
 
     // Data operations
     canCreate : flags.canCreate,

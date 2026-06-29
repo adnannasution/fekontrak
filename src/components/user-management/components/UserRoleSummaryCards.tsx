@@ -2,17 +2,20 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { User, UserX } from 'lucide-react';
 import { UserProfile } from '../types';
+import { usePermissions } from '@/hooks/usePermissions';
 
 interface UserRoleSummaryCardsProps {
   users: UserProfile[];
 }
 
 export const UserRoleSummaryCards = ({ users }: UserRoleSummaryCardsProps) => {
+  const { roleLabels } = usePermissions();
+
   return (
     <div className="grid gap-4 md:grid-cols-4 animate-fade-in-scale" style={{ animationDelay: '0.2s' }}>
       <Card className="card-hover">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Admin</CardTitle>
+          <CardTitle className="text-sm font-medium">{roleLabels.admin}</CardTitle>
           <User className="h-4 w-4 text-red-500" />
         </CardHeader>
         <CardContent>
@@ -23,7 +26,7 @@ export const UserRoleSummaryCards = ({ users }: UserRoleSummaryCardsProps) => {
       </Card>
       <Card className="card-hover">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">PIC</CardTitle>
+          <CardTitle className="text-sm font-medium">{roleLabels.pic}</CardTitle>
           <User className="h-4 w-4 text-blue-500" />
         </CardHeader>
         <CardContent>
@@ -34,7 +37,7 @@ export const UserRoleSummaryCards = ({ users }: UserRoleSummaryCardsProps) => {
       </Card>
       <Card className="card-hover">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Viewer</CardTitle>
+          <CardTitle className="text-sm font-medium">{roleLabels.viewer}</CardTitle>
           <User className="h-4 w-4 text-purple-500" />
         </CardHeader>
         <CardContent>

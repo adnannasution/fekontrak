@@ -5,6 +5,14 @@ import { useToast } from '@/hooks/use-toast';
 
 export type ConfigurableRole = 'pic' | 'viewer' | 'vendor';
 
+export type RoleLabels = Record<ConfigurableRole, string>;
+
+export const DEFAULT_ROLE_LABELS: RoleLabels = {
+  pic: 'PIC',
+  viewer: 'Viewer',
+  vendor: 'Vendor',
+};
+
 export interface RolePermissionFlags {
   canCreate: boolean;
   canEdit: boolean;
@@ -94,10 +102,28 @@ interface KonfigurasiItem {
   updated_at?: string;
 }
 
-const readLocalOverride = (): RolePermissionMatrix | null => {
+interface PersistedRoleConfig {
+  matrix: Partial<RolePermissionMatrix>;
+  labels: Partial<RoleLabels>;
+}
+
+/**
+ * Sebelum fitur nama jenis akun ditambahkan, nilai yang disimpan adalah
+ * RolePermissionMatrix secara langsung (tanpa pembungkus { matrix, labels }).
+ * Deteksi bentuk lama itu supaya data yang sudah tersimpan tidak hilang.
+ */
+const normalizePersisted = (parsed: unknown): PersistedRoleConfig => {
+  if (parsed && typeof parsed === 'object' && 'matrix' in (parsed as Record<string, unknown>)) {
+    const obj = parsed as { matrix?: Partial<RolePermissionMatrix>; labels?: Partial<RoleLabels> };
+    return { matrix: obj.matrix ?? {}, labels: obj.labels ?? {} };
+  }
+  return { matrix: (parsed as Partial<RolePermissionMatrix>) ?? {}, labels: {} };
+};
+
+const readLocalOverride = (): PersistedRoleConfig | null => {
   try {
     const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
-    return raw ? JSON.parse(raw) : null;
+    return raw ? normalizePersisted(JSON.parse(raw)) : null;
   } catch {
     return null;
   }
@@ -112,6 +138,11 @@ const mergeWithDefaults = (saved: Partial<RolePermissionMatrix>): RolePermission
   }, {} as RolePermissionMatrix);
 };
 
+const mergeLabelsWithDefaults = (saved: Partial<RoleLabels>): RoleLabels => ({
+  ...DEFAULT_ROLE_LABELS,
+  ...saved,
+});
+
 /**
  * Pengaturan role disimpan terpusat lewat endpoint /konfigurasi (nama_setting =
  * "Role_Permission_Matrix") jika baris itu sudah ada di backend. Jika belum ada
@@ -124,21 +155,30 @@ export const useRolePermissionsConfig = () => {
     (c) => c.nama_setting === CONFIG_SETTING_NAME
   );
 
-  const matrix = useMemo<RolePermissionMatrix>(() => {
+  const persisted = useMemo<PersistedRoleConfig | null>(() => {
     if (remoteConfig?.nilai_setting) {
       try {
-        return mergeWithDefaults(JSON.parse(remoteConfig.nilai_setting));
+        return normalizePersisted(JSON.parse(remoteConfig.nilai_setting));
       } catch {
         // ignore malformed remote value, fall through to local/default
       }
     }
-    const local = readLocalOverride();
-    if (local) return mergeWithDefaults(local);
-    return DEFAULT_ROLE_PERMISSIONS;
+    return readLocalOverride();
   }, [remoteConfig]);
+
+  const matrix = useMemo<RolePermissionMatrix>(
+    () => mergeWithDefaults(persisted?.matrix ?? {}),
+    [persisted]
+  );
+
+  const labels = useMemo<RoleLabels>(
+    () => mergeLabelsWithDefaults(persisted?.labels ?? {}),
+    [persisted]
+  );
 
   return {
     matrix,
+    labels,
     isLoading,
     isSyncedRemotely: Boolean(remoteConfig),
   };
@@ -154,8 +194,8 @@ export const useUpdateRolePermissions = () => {
     (c) => c.nama_setting === CONFIG_SETTING_NAME
   );
 
-  const save = async (matrix: RolePermissionMatrix) => {
-    const value = JSON.stringify(matrix);
+  const save = async (matrix: RolePermissionMatrix, labels: RoleLabels) => {
+    const value = JSON.stringify({ matrix, labels } satisfies PersistedRoleConfig);
 
     if (remoteConfig) {
       await updateKonfigurasi.mutateAsync({ id: remoteConfig.id_setting, nilai_setting: value });

@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Search, Users, UserPlus } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import { usePermissions } from '@/hooks/usePermissions';
 import { useUserManagement } from './user-management/hooks/useUserManagement';
 import { UserRoleSummaryCards } from './user-management/components/UserRoleSummaryCards';
 import { UserSearch } from './user-management/components/UserSearch';
@@ -17,7 +18,8 @@ import { Button } from '@/components/ui/button';
 const UserManagement = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const { userProfile } = useAuth();
-  
+  const { roleLabel } = usePermissions();
+
   const {
     users,
     loading,
@@ -91,7 +93,7 @@ const UserManagement = () => {
               <span className="font-semibold text-blue-700 dark:text-blue-300">
                 {userProfile?.full_name}
               </span>
-              <span className="text-muted-foreground">({userProfile?.role})</span>
+              <span className="text-muted-foreground">({roleLabel})</span>
             </div>
           </CardContent>
         </Card>

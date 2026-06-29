@@ -3,33 +3,37 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
-import { Shield, Save, RotateCcw, Info, Eye } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Shield, Save, RotateCcw, Info, Eye, Tag } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import {
   CONFIGURABLE_MENU_ITEMS,
+  ConfigurableRole,
+  DEFAULT_ROLE_LABELS,
   DEFAULT_ROLE_PERMISSIONS,
   PERMISSION_LABELS,
+  RoleLabels,
   RolePermissionMatrix,
   useRolePermissionsConfig,
   useUpdateRolePermissions,
 } from '@/hooks/useRolePermissionsConfig';
 
-const ROLE_LABELS: Record<string, string> = {
-  pic: 'PIC',
-  viewer: 'Viewer',
-  vendor: 'Vendor',
-};
-
 const RoleSettings = () => {
   const { userProfile } = useAuth();
-  const { matrix, isLoading, isSyncedRemotely } = useRolePermissionsConfig();
+  const { matrix, labels, isLoading, isSyncedRemotely } = useRolePermissionsConfig();
   const { save, isPending } = useUpdateRolePermissions();
 
   const [draft, setDraft] = useState<RolePermissionMatrix>(matrix);
+  const [draftLabels, setDraftLabels] = useState<RoleLabels>(labels);
 
   useEffect(() => {
     setDraft(matrix);
   }, [matrix]);
+
+  useEffect(() => {
+    setDraftLabels(labels);
+  }, [labels]);
 
   if (userProfile?.role !== 'admin') {
     return (
@@ -66,10 +70,19 @@ const RoleSettings = () => {
     });
   };
 
-  const hasChanges = JSON.stringify(draft) !== JSON.stringify(matrix);
+  const setLabel = (role: ConfigurableRole, value: string) => {
+    setDraftLabels((prev) => ({ ...prev, [role]: value }));
+  };
 
-  const handleSave = () => save(draft);
-  const handleReset = () => setDraft(DEFAULT_ROLE_PERMISSIONS);
+  const hasChanges =
+    JSON.stringify(draft) !== JSON.stringify(matrix) ||
+    JSON.stringify(draftLabels) !== JSON.stringify(labels);
+
+  const handleSave = () => save(draft, draftLabels);
+  const handleReset = () => {
+    setDraft(DEFAULT_ROLE_PERMISSIONS);
+    setDraftLabels(DEFAULT_ROLE_LABELS);
+  };
 
   const roles = Object.keys(draft) as Array<keyof RolePermissionMatrix>;
   const permissionKeys = Object.keys(PERMISSION_LABELS) as Array<keyof typeof PERMISSION_LABELS>;
@@ -114,6 +127,35 @@ const RoleSettings = () => {
 
       <Card>
         <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Tag className="h-5 w-5" />
+            Nama Jenis Akun
+          </CardTitle>
+          <p className="text-sm text-gray-500 mt-1">
+            Ganti nama tampilan role PIC, Viewer, dan Vendor sesuai jabatan di organisasi Anda.
+            Nama ini akan muncul di seluruh aplikasi (badge role, daftar pengguna, dll), tapi hak
+            aksesnya tetap mengikuti pengaturan di bawah — mengganti nama tidak mengubah hak akses.
+          </p>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-4 sm:grid-cols-3">
+            {roles.map((role) => (
+              <div key={role} className="grid gap-2">
+                <Label htmlFor={`label-${role}`}>{DEFAULT_ROLE_LABELS[role]}</Label>
+                <Input
+                  id={`label-${role}`}
+                  value={draftLabels[role]}
+                  onChange={(e) => setLabel(role, e.target.value)}
+                  placeholder={DEFAULT_ROLE_LABELS[role]}
+                />
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
           <CardTitle>Matriks Hak Akses</CardTitle>
         </CardHeader>
         <CardContent>
@@ -127,7 +169,7 @@ const RoleSettings = () => {
                     <th className="text-left py-2 pr-4 font-semibold">Hak Akses</th>
                     {roles.map((role) => (
                       <th key={role} className="text-center py-2 px-4 font-semibold">
-                        {ROLE_LABELS[role]}
+                        {draftLabels[role]}
                       </th>
                     ))}
                   </tr>
@@ -176,7 +218,7 @@ const RoleSettings = () => {
                     <th className="text-left py-2 pr-4 font-semibold">Menu</th>
                     {roles.map((role) => (
                       <th key={role} className="text-center py-2 px-4 font-semibold">
-                        {ROLE_LABELS[role]}
+                        {draftLabels[role]}
                       </th>
                     ))}
                   </tr>

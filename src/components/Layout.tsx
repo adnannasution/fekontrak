@@ -66,7 +66,7 @@ const Layout = ({ children }: LayoutProps) => {
   }, [location.pathname]);
   const { signOut, userProfile } = useAuth();
   const { theme, toggleTheme } = useTheme();
-  const { isAdmin, canViewMenu } = usePermissions();
+  const { isAdmin, canViewMenu, roleLabel } = usePermissions();
 
   // useEffect(() => {
   //   localStorage.setItem('sidebar-collapsed', JSON.stringify(sidebarCollapsed));
@@ -268,7 +268,7 @@ const Layout = ({ children }: LayoutProps) => {
                   {userProfile?.full_name || userProfile?.email}
                 </p>
                 <Badge variant="secondary" className="text-xs">
-                  {userProfile?.role}
+                  {roleLabel}
                 </Badge>
               </div>
             )}
