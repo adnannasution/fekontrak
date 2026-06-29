@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { UserFormData } from '../types';
+import { usePermissions } from '@/hooks/usePermissions';
 
 const API_URL = "https://bekontrak-production.up.railway.app/api";
 
@@ -18,6 +19,7 @@ interface EditUserDialogProps {
 
 export const EditUserDialog = ({ isOpen, onOpenChange, formData, setFormData, onSubmit }: EditUserDialogProps) => {
   const [vendors, setVendors] = useState<{ idVendor: string; namaVendor: string }[]>([]);
+  const { roleLabels } = usePermissions();
 
   useEffect(() => {
     const fetchVendors = async () => {
@@ -61,10 +63,10 @@ export const EditUserDialog = ({ isOpen, onOpenChange, formData, setFormData, on
             >
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="admin">Admin</SelectItem>
-                <SelectItem value="pic">PIC</SelectItem>
-                <SelectItem value="viewer">Viewer</SelectItem>
-                <SelectItem value="vendor">Vendor</SelectItem>
+                <SelectItem value="admin">{roleLabels.admin}</SelectItem>
+                <SelectItem value="pic">{roleLabels.pic}</SelectItem>
+                <SelectItem value="viewer">{roleLabels.viewer}</SelectItem>
+                <SelectItem value="vendor">{roleLabels.vendor}</SelectItem>
               </SelectContent>
             </Select>
           </div>

@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Edit, Trash2, UserCheck, UserX } from 'lucide-react';
 import { UserProfile } from '../types';
+import { usePermissions } from '@/hooks/usePermissions';
 
 interface UserTableRowProps {
   user: UserProfile;
@@ -24,6 +25,8 @@ export const UserTableRow = ({
   onEdit,
   onDelete
 }: UserTableRowProps) => {
+  const { roleLabels } = usePermissions();
+
   const getRoleBadge = (role: string) => {
     const colors: Record<string, string> = {
       'admin':  'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
@@ -32,16 +35,9 @@ export const UserTableRow = ({
       'vendor': 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200',
     };
 
-    const labels: Record<string, string> = {
-      'admin':  'Admin',
-      'pic':    'PIC',
-      'viewer': 'Viewer',
-      'vendor': 'Vendor',
-    };
-
     return (
       <Badge className={colors[role] || 'bg-gray-100 text-gray-800'}>
-        {labels[role] || role}
+        {roleLabels[role as keyof typeof roleLabels] || role}
       </Badge>
     );
   };
