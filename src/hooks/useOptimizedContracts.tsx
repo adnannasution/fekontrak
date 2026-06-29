@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useContracts } from '@/hooks/useContracts';
 import { useAuth } from '@/hooks/useAuth';
+import { isStaffOrAdminRole } from '@/hooks/useRolePermissionsConfig';
 
 interface UseOptimizedContractsOptions {
   contractType?: string;
@@ -20,7 +21,7 @@ export const useOptimizedContracts = (options: UseOptimizedContractsOptions = {}
 
   const { userProfile } = useAuth();
 
-  const canCRUD = userProfile?.role === 'admin' || userProfile?.role === 'pic';
+  const canCRUD = isStaffOrAdminRole(userProfile?.role);
 
   // 🔥 filter by type (optional)
   const filteredContracts = useMemo(() => {

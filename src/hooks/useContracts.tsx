@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
+import { isStaffOrAdminRole } from '@/hooks/useRolePermissionsConfig';
 
 const API_URL = "https://bekontrak-production.up.railway.app/api";
 
@@ -55,7 +56,7 @@ export const useContracts = () => {
   const queryClient = useQueryClient();
   const { userProfile } = useAuth();
 
-  const canCRUD = userProfile?.role === 'admin' || userProfile?.role === 'pic';
+  const canCRUD = isStaffOrAdminRole(userProfile?.role);
 
   const { data: contracts = [], isLoading, error } = useQuery({
     queryKey: ['contracts'],

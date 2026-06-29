@@ -1,8 +1,8 @@
 import { useAuth } from '@/hooks/useAuth';
 import {
   useRolePermissionsConfig,
-  ConfigurableRole,
   CONFIGURABLE_MENU_ITEMS,
+  resolveConfigurableRole,
 } from '@/hooks/useRolePermissionsConfig';
 
 /** Label "Admin" tetap dan tidak bisa diubah lewat /role-settings. */
@@ -11,28 +11,19 @@ const ADMIN_LABEL = 'Admin';
 /**
  * Role matrix bawaan (lihat src/hooks/useRolePermissionsConfig.tsx untuk default
  * dan halaman /role-settings untuk mengubahnya):
- * Admin  → canCreate, canEdit, canDelete, semua menu (tidak bisa diubah)
- * PIC    → canCreate, canEdit, NO delete, NO user management, NO vendor CRUD
- * Viewer → hanya lihat, tidak bisa apa-apa
- * Vendor → hanya lihat kontrak milik sendiri
+ * Admin                                    → akses penuh, tidak bisa diubah
+ * Manager/Section Head/Supervisor/Technician → canCreate, canEdit, NO delete, NO user/vendor management (bisa dibedakan lewat Pengaturan Role)
+ * Guest                                    → hanya lihat, tidak bisa apa-apa
+ * External                                 → hanya lihat kontrak milik sendiri
  */
 export const usePermissions = () => {
   const { userProfile } = useAuth();
   const { matrix, labels } = useRolePermissionsConfig();
-  const role = userProfile?.role ?? 'viewer';
+  const role = userProfile?.role ?? 'guest';
 
-  const isAdmin  = role === 'admin';
-  const isPic    = role === 'pic';
-  const isViewer = role === 'viewer' || role === 'user';
-  const isVendor = role === 'vendor';
-
-  const configurableRole: ConfigurableRole | null = isPic
-    ? 'pic'
-    : isVendor
-    ? 'vendor'
-    : isViewer
-    ? 'viewer'
-    : null;
+  const isAdmin = role === 'admin';
+  const configurableRole = resolveConfigurableRole(role);
+  const isVendor = !isAdmin && configurableRole === 'external';
 
   const allMenuKeys = CONFIGURABLE_MENU_ITEMS.map((m) => m.key);
 
@@ -47,21 +38,17 @@ export const usePermissions = () => {
         canApprovalDokumen: true,
         visibleMenus: allMenuKeys,
       }
-    : configurableRole
-    ? matrix[configurableRole]
-    : matrix.viewer;
+    : matrix[configurableRole];
 
   const canViewMenu = (menuKey: string) => flags.visibleMenus.includes(menuKey);
 
   // Nama jenis akun yang bisa diubah Admin lewat /role-settings (lihat CONFIGURABLE_MENU_ITEMS).
   const roleLabels = { admin: ADMIN_LABEL, ...labels };
-  const roleLabel = isAdmin ? ADMIN_LABEL : configurableRole ? labels[configurableRole] : labels.viewer;
+  const roleLabel = isAdmin ? ADMIN_LABEL : labels[configurableRole];
 
   return {
     role,
     isAdmin,
-    isPic,
-    isViewer,
     isVendor,
     roleLabel,
     roleLabels,

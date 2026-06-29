@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useAuth } from '@/hooks/useAuth';
+import { isStaffOrAdminRole } from '@/hooks/useRolePermissionsConfig';
 import { useToast } from '@/hooks/use-toast';
 import { useContracts } from '@/hooks/useContracts';
 import { Kontrak } from '@/types/database';
@@ -32,7 +33,7 @@ export const useOptimizedUnitPriceLogic = () => {
     deleteContract: deleteContractMutation
   } = useContracts();
 
-  const isAdmin = userProfile?.role === 'admin' || userProfile?.role === 'pic';
+  const isAdmin = isStaffOrAdminRole(userProfile?.role);
 
   // 🔥 FILTER UNIT PRICE
   const allContracts = useMemo(() => {

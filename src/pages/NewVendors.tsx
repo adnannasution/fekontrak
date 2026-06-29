@@ -10,6 +10,7 @@ import { VendorFormDialog } from "@/components/vendors/VendorFormDialog";
 import { ConfirmDeleteDialog } from "@/components/shared/ConfirmDeleteDialog";
 import { useVendors } from "@/hooks/useVendors";
 import { useAuth } from "@/hooks/useAuth";
+import { isStaffOrAdminRole } from "@/hooks/useRolePermissionsConfig";
 import { Vendor } from "@/types/database";
 
 const summaryCards = [
@@ -62,7 +63,7 @@ const NewVendors = () => {
     localStorage.setItem('vendor-view-mode', viewMode);
   }, [viewMode]);
 
-  const isAdminOrPIC = userProfile?.role === 'admin' || userProfile?.role === 'pic';
+  const isAdminOrPIC = isStaffOrAdminRole(userProfile?.role);
 
   // Search/filter logic
   const filteredVendors = vendors.filter((v) =>

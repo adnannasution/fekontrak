@@ -1,8 +1,10 @@
+import { ConfigurableRole } from '@/hooks/useRolePermissionsConfig';
+
 export interface UserProfile {
   id: string;
   email: string;
   full_name: string;
-  role: 'admin' | 'pic' | 'viewer' | 'vendor';
+  role: string;
   id_vendor?: string;
   created_at: string;
   updated_at?: string;
@@ -12,6 +14,6 @@ export interface UserProfile {
 export interface UserFormData {
   email: string;
   full_name: string;
-  role: 'admin' | 'pic' | 'viewer' | 'vendor';
+  role: 'admin' | ConfigurableRole;
   id_vendor?: string;
 }
