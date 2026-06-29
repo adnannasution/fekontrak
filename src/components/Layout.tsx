@@ -297,7 +297,7 @@ const Layout = ({ children }: LayoutProps) => {
               <X className="h-6 w-6" />
             </Button>
           </div>
-          <SidebarContent isMobile={true} />
+          {SidebarContent({ isMobile: true })}
         </div>
       </div>
 
@@ -306,7 +306,7 @@ const Layout = ({ children }: LayoutProps) => {
         sidebarCollapsed ? 'w-16' : 'w-64'
       }`}>
         <div className="flex flex-col w-full bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden">
-          <SidebarContent />
+          {SidebarContent({})}
         </div>
       </div>
 
