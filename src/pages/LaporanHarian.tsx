@@ -116,14 +116,14 @@ const LaporanHarian = () => {
 
       {/* Summary Cards */}
       {Object.keys(summary).length > 0 && (
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+        <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
           {DISIPLIN_OPTIONS.map(d => (
             <Card key={d}
               className={`cursor-pointer hover:shadow-lg transition-shadow border-0 text-white bg-gradient-to-r ${DISIPLIN_GRADIENTS[d] ?? 'from-gray-500 to-gray-600'} ${filters.disiplin === d ? 'ring-2 ring-offset-2 ring-gray-700' : ''}`}
               onClick={() => handleFilterChange('disiplin', filters.disiplin === d ? 'all' : d)}>
-              <CardContent className="p-4 text-center">
-                <p className="text-2xl font-bold text-white">{summary[d] || 0}</p>
-                <p className="text-xs text-white/90 mt-1">{d}</p>
+              <CardContent className="p-3 text-center">
+                <p className="text-xl font-bold text-white">{summary[d] || 0}</p>
+                <p className="text-[11px] text-white/90 mt-0.5 leading-tight">{d}</p>
               </CardContent>
             </Card>
           ))}
