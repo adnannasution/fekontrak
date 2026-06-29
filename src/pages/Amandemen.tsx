@@ -165,49 +165,49 @@ const { data: allAmendments = [], isLoading: isLoadingAmendments } = useQuery({
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card>
+        <Card className="bg-gradient-to-r from-blue-500 to-blue-600 text-white border-0">
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-primary/10">
-                <FileText className="h-5 w-5 text-primary" />
+              <div className="p-2 rounded-lg bg-white/20">
+                <FileText className="h-5 w-5 text-white" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Total Amandemen</p>
+                <p className="text-sm text-white/90">Total Amandemen</p>
                 <p className="text-2xl font-bold">{filteredAmendments.length}</p>
-                <p className="text-xs text-muted-foreground">dari {uniqueContracts} kontrak</p>
+                <p className="text-xs text-white/75">dari {uniqueContracts} kontrak</p>
               </div>
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="bg-gradient-to-r from-green-500 to-green-600 text-white border-0">
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-accent">
-                <Coins className="h-5 w-5 text-accent-foreground" />
+              <div className="p-2 rounded-lg bg-white/20">
+                <Coins className="h-5 w-5 text-white" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Total Nilai Baru</p>
+                <p className="text-sm text-white/90">Total Nilai Baru</p>
                 <p className="text-lg font-bold">{formatCurrency(totalNilaiBaru)}</p>
               </div>
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="bg-gradient-to-r from-purple-500 to-purple-600 text-white border-0">
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-accent">
-                <ArrowUpDown className="h-5 w-5 text-accent-foreground" />
+              <div className="p-2 rounded-lg bg-white/20">
+                <ArrowUpDown className="h-5 w-5 text-white" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Jenis Amandemen</p>
+                <p className="text-sm text-white/90">Jenis Amandemen</p>
                 <div className="flex gap-1 mt-1">
-                  <Badge variant="outline" className="text-xs">
+                  <Badge variant="outline" className="text-xs bg-white/20 text-white border-white/30">
                     Nilai: {filteredAmendments.filter(a => a.jenis_amandemen === 'Nilai').length}
                   </Badge>
-                  <Badge variant="outline" className="text-xs">
+                  <Badge variant="outline" className="text-xs bg-white/20 text-white border-white/30">
                     Waktu: {filteredAmendments.filter(a => a.jenis_amandemen === 'Waktu').length}
                   </Badge>
-                  <Badge variant="outline" className="text-xs">
+                  <Badge variant="outline" className="text-xs bg-white/20 text-white border-white/30">
                     N&W: {filteredAmendments.filter(a => a.jenis_amandemen === 'Nilai dan Waktu').length}
                   </Badge>
                 </div>

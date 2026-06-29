@@ -108,7 +108,7 @@ const LaporanHarian = () => {
 
       {/* Summary Cards */}
       {Object.keys(summary).length > 0 && (
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
           {DISIPLIN_OPTIONS.map(d => (
             <Card key={d} className="cursor-pointer hover:shadow-md transition-shadow"
               onClick={() => handleFilterChange('disiplin', filters.disiplin === d ? 'all' : d)}>
