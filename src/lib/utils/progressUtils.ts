@@ -1,4 +1,5 @@
 import { Kontrak } from '@/types/database';
+import { getEffectiveTanggalSelesai } from '@/utils/contractDateUtils';
 
 export interface ProgressStatusConfig {
   behindThreshold: number;
@@ -190,7 +191,7 @@ const monthsUntil = (dateString?: string | null): number | null => {
  * < 8 bulan: Warning, < 6 bulan: Alert, sudah lewat: Danger (Habis).
  */
 export const calculateTimeAlertLevel = (contract: Kontrak): ContractAlertLevel => {
-  const remainingMonths = monthsUntil(contract.tanggal_selesai);
+  const remainingMonths = monthsUntil(getEffectiveTanggalSelesai(contract));
   if (remainingMonths === null) return 'Good';
   if (remainingMonths <= 0) return 'Danger';
   if (remainingMonths < 6) return 'Alert';
