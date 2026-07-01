@@ -178,6 +178,10 @@ const ALERT_CLASS: Record<ContractAlertLevel, string> = {
   Danger: 'bg-red-100 text-red-800',
 };
 
+// Kontrak yang waktunya sudah habis bersifat netral (berakhir), bukan alarm
+// mendesak, jadi badge "Habis" pakai abu-abu, bukan merah.
+const EXPIRED_CLASS = 'bg-gray-100 text-gray-800';
+
 /**
  * Teks badge sesuai penyebab (waktu vs progress) dan tingkat keparahan,
  * supaya tidak lagi menulis "Habis" untuk masalah yang sebenarnya progress.
@@ -276,7 +280,9 @@ export const calculateContractAlertStatus = (contract: Kontrak): ContractAlertSt
   const reason: ContractAlertStatus['reason'] = level === 'Good' ? 'aman' : cause;
 
   const text = level === 'Good' ? 'Good' : ALERT_TEXT[cause][level];
-  return { level, reason, text, className: ALERT_CLASS[level] };
+  const isExpired = level === 'Danger' && cause === 'waktu';
+  const className = isExpired ? EXPIRED_CLASS : ALERT_CLASS[level];
+  return { level, reason, text, className };
 };
 
 /**
