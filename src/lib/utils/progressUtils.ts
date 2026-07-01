@@ -171,23 +171,46 @@ const ALERT_RANK: Record<ContractAlertLevel, number> = {
   Danger: 3,
 };
 
-const ALERT_STYLE: Record<ContractAlertLevel, { text: string; className: string }> = {
-  Good: { text: 'Good', className: 'bg-green-100 text-green-800' },
-  Warning: { text: 'Warning', className: 'bg-yellow-100 text-yellow-800' },
-  Alert: { text: 'Alert', className: 'bg-orange-100 text-orange-800' },
-  Danger: { text: 'Habis/Danger', className: 'bg-red-100 text-red-800' },
-};
-
-const monthsUntil = (dateString?: string | null): number | null => {
-  if (!dateString) return null;
-  const target = new Date(dateString);
-  if (isNaN(target.getTime())) return null;
-  const diffMs = target.getTime() - Date.now();
-  return diffMs / (1000 * 60 * 60 * 24 * 30);
+const ALERT_CLASS: Record<ContractAlertLevel, string> = {
+  Good: 'bg-green-100 text-green-800',
+  Warning: 'bg-yellow-100 text-yellow-800',
+  Alert: 'bg-orange-100 text-orange-800',
+  Danger: 'bg-red-100 text-red-800',
 };
 
 /**
- * Status waktu berdasarkan sisa bulan sampai tanggal_selesai kontrak.
+ * Teks badge sesuai penyebab (waktu vs progress) dan tingkat keparahan,
+ * supaya tidak lagi menulis "Habis" untuk masalah yang sebenarnya progress.
+ */
+const ALERT_TEXT: Record<'waktu' | 'progress', Record<ContractAlertLevel, string>> = {
+  waktu: {
+    Good: 'Good',
+    Warning: 'Waktu Menipis',
+    Alert: 'Waktu Kritis',
+    Danger: 'Habis',
+  },
+  progress: {
+    Good: 'Good',
+    Warning: 'Progress Lambat',
+    Alert: 'Progress Tertinggal',
+    Danger: 'Progress Kritis',
+  },
+};
+
+const parseTime = (dateString?: string | null): number | null => {
+  if (!dateString) return null;
+  const t = new Date(dateString).getTime();
+  return isNaN(t) ? null : t;
+};
+
+const monthsUntil = (dateString?: string | null): number | null => {
+  const t = parseTime(dateString);
+  if (t === null) return null;
+  return (t - Date.now()) / (1000 * 60 * 60 * 24 * 30);
+};
+
+/**
+ * Status waktu berdasarkan sisa bulan sampai tanggal_selesai efektif kontrak.
  * < 8 bulan: Warning, < 6 bulan: Alert, sudah lewat: Danger (Habis).
  */
 export const calculateTimeAlertLevel = (contract: Kontrak): ContractAlertLevel => {
@@ -200,31 +223,60 @@ export const calculateTimeAlertLevel = (contract: Kontrak): ContractAlertLevel =
 };
 
 /**
- * Status progress berdasarkan progress_actual.
- * < 50%: Warning, < 20%: Alert, < 5%: Danger.
+ * Progress yang seharusnya sudah dicapai saat ini.
+ * Pakai progress_plan bila tersedia (> 0); jika tidak, perkirakan dari
+ * porsi durasi yang sudah berjalan (tanggal_mulai s/d tanggal_selesai efektif).
+ */
+const expectedProgress = (contract: Kontrak): number | null => {
+  const plan = Number(contract.progress_plan);
+  if (Number.isFinite(plan) && plan > 0) return plan;
+
+  const start = parseTime(contract.tanggal_mulai);
+  const end = parseTime(getEffectiveTanggalSelesai(contract));
+  if (start === null || end === null) return null;
+  const total = end - start;
+  if (total <= 0) return null;
+  const fraction = (Date.now() - start) / total;
+  return Math.min(100, Math.max(0, fraction * 100));
+};
+
+/**
+ * Status progress berdasarkan DEVIASI (seharusnya - actual), bukan angka mutlak.
+ * Jadi kontrak yang baru mulai (0% tapi durasi baru berjalan) tidak dicap merah,
+ * sedangkan kontrak yang durasinya sudah jauh berjalan tapi progress tetap kecil
+ * akan tertandai tertinggal.
+ * tertinggal >= 40%: Danger, >= 20%: Alert, >= 10%: Warning.
  */
 export const calculateProgressAlertLevel = (contract: Kontrak): ContractAlertLevel => {
   const actual = Number(contract.progress_actual) || 0;
-  if (actual < 5) return 'Danger';
-  if (actual < 20) return 'Alert';
-  if (actual < 50) return 'Warning';
+  if (actual >= 100) return 'Good';
+
+  const expected = expectedProgress(contract);
+  if (expected === null) return 'Good';
+
+  const deviation = expected - actual; // positif = tertinggal dari rencana
+  if (deviation >= 40) return 'Danger';
+  if (deviation >= 20) return 'Alert';
+  if (deviation >= 10) return 'Warning';
   return 'Good';
 };
 
 /**
  * Status gabungan waktu & progress kontrak. Mengambil level paling parah
- * dari kedua kriteria (sesuai aturan: kalau salah satu kriteria buruk,
- * statusnya ikut buruk; hanya Good kalau waktu > 6 bulan & progress > 50%).
+ * dari kedua kriteria; teks badge mengikuti penyebab (waktu vs progress)
+ * supaya jelas apakah kontrak habis waktu atau tertinggal progress.
  */
 export const calculateContractAlertStatus = (contract: Kontrak): ContractAlertStatus => {
   const timeLevel = calculateTimeAlertLevel(contract);
   const progressLevel = calculateProgressAlertLevel(contract);
 
-  const level = ALERT_RANK[timeLevel] >= ALERT_RANK[progressLevel] ? timeLevel : progressLevel;
-  const reason: ContractAlertStatus['reason'] =
-    level === 'Good' ? 'aman' : ALERT_RANK[timeLevel] >= ALERT_RANK[progressLevel] ? 'waktu' : 'progress';
+  const timeIsWorst = ALERT_RANK[timeLevel] >= ALERT_RANK[progressLevel];
+  const level = timeIsWorst ? timeLevel : progressLevel;
+  const cause: 'waktu' | 'progress' = timeIsWorst ? 'waktu' : 'progress';
+  const reason: ContractAlertStatus['reason'] = level === 'Good' ? 'aman' : cause;
 
-  return { level, reason, ...ALERT_STYLE[level] };
+  const text = level === 'Good' ? 'Good' : ALERT_TEXT[cause][level];
+  return { level, reason, text, className: ALERT_CLASS[level] };
 };
 
 /**
