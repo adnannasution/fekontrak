@@ -65,7 +65,7 @@ const ContractDocumentsCard = ({ contractDocuments = [], amendmentDocuments = []
               return (
                 <div key={doc.id || idx} className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3 flex-1">
+                    <div className="flex items-center gap-3 flex-1 min-w-0">
                       {getFileIcon(filename)}
                       <div className="flex-1 min-w-0">
                         <p className="text-gray-800 font-medium truncate">
@@ -81,7 +81,7 @@ const ContractDocumentsCard = ({ contractDocuments = [], amendmentDocuments = []
                       </div>
                     </div>
                     
-                    <div className="flex gap-2 ml-4">
+                    <div className="flex gap-2 ml-4 flex-shrink-0">
                       {doc.url && (
                         <>
                           <Button
