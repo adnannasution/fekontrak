@@ -87,20 +87,22 @@ const ContractDocumentsCard = ({ contractDocuments = [], amendmentDocuments = []
                           <Button
                             variant="outline"
                             size="sm"
-                            className="text-blue-600 border-blue-200 hover:bg-blue-50 hover:border-blue-300 transition-colors duration-200"
+                            className="text-blue-600 border-blue-200 hover:bg-blue-50 hover:border-blue-300 transition-colors duration-200 flex items-center gap-1.5"
                             onClick={() => window.open(doc.url, '_blank')}
+                            title="Lihat"
                           >
-                            <ExternalLink className="h-4 w-4 mr-2" />
-                            Lihat
+                            <ExternalLink className="h-4 w-4 flex-shrink-0" />
+                            <span className="hidden lg:inline">Lihat</span>
                           </Button>
                           <Button
                             variant="outline"
                             size="sm"
-                            className="text-green-600 border-green-200 hover:bg-green-50 hover:border-green-300 transition-colors duration-200"
+                            className="text-green-600 border-green-200 hover:bg-green-50 hover:border-green-300 transition-colors duration-200 flex items-center gap-1.5"
                             onClick={() => downloadFile(doc.url, filename)}
+                            title="Download"
                           >
-                            <Download className="h-4 w-4 mr-2" />
-                            Download
+                            <Download className="h-4 w-4 flex-shrink-0" />
+                            <span className="hidden lg:inline">Download</span>
                           </Button>
                         </>
                       )}
