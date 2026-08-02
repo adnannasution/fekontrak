@@ -55,11 +55,12 @@ const NewContracts = () => {
 
   // Filter contracts
   const filteredKontraks = kontraks.filter(kontrak => {
-    const matchesSearch = kontrak.judul_kontrak.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         kontrak.vendor?.nama_vendor?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = !searchTerm ||
+      (kontrak.judul_kontrak || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (kontrak.vendor?.nama_vendor || '').toLowerCase().includes(searchTerm.toLowerCase());
     const matchesType = filterType === 'all' || kontrak.tipe_kontrak === filterType;
     const matchesStatus = filterStatus === 'all' || kontrak.status_kontrak === filterStatus;
-    
+
     return matchesSearch && matchesType && matchesStatus;
   });
 
