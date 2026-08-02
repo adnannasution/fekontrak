@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -31,12 +32,18 @@ import { cn } from '@/lib/utils';
 import { Kontrak, Vendor } from '@/types/database';
 
 const NewContracts = () => {
+  const [searchParams] = useSearchParams();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState<string>('all');
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [selectedKontrak, setSelectedKontrak] = useState<Kontrak | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+
+  useEffect(() => {
+    const status = searchParams.get('status');
+    if (status) setFilterStatus(status);
+  }, [searchParams]);
 
   const { contracts: kontraks = [], isLoading } = useContracts();
   const { vendors } = useVendors();
@@ -48,11 +55,12 @@ const NewContracts = () => {
 
   // Filter contracts
   const filteredKontraks = kontraks.filter(kontrak => {
-    const matchesSearch = kontrak.judul_kontrak.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         kontrak.vendor?.nama_vendor?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = !searchTerm ||
+      (kontrak.judul_kontrak || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (kontrak.vendor?.nama_vendor || '').toLowerCase().includes(searchTerm.toLowerCase());
     const matchesType = filterType === 'all' || kontrak.tipe_kontrak === filterType;
     const matchesStatus = filterStatus === 'all' || kontrak.status_kontrak === filterStatus;
-    
+
     return matchesSearch && matchesType && matchesStatus;
   });
 
@@ -345,11 +353,15 @@ const NewContracts = () => {
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
                     <div>
                       <span className="text-gray-500">SPB Diterima:</span>
-                      <p className="font-medium">{format(parseISO(kontrak.tanggal_spb_diterima), 'dd MMM yyyy', { locale: id })}</p>
+                      <p className="font-medium">
+                        {kontrak.tanggal_spb_diterima ? format(parseISO(kontrak.tanggal_spb_diterima), 'dd MMM yyyy', { locale: id }) : '-'}
+                      </p>
                     </div>
                     <div>
                       <span className="text-gray-500">Estimasi KOM:</span>
-                      <p className="font-medium">{format(parseISO(kontrak.estimasi_tanggal_kom), 'dd MMM yyyy', { locale: id })}</p>
+                      <p className="font-medium">
+                        {kontrak.estimasi_tanggal_kom ? format(parseISO(kontrak.estimasi_tanggal_kom), 'dd MMM yyyy', { locale: id }) : '-'}
+                      </p>
                     </div>
                     {kontrak.tanggal_kom && (
                       <div>

@@ -1,5 +1,6 @@
 
 import React, { useState, Suspense, lazy, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BarChart3, Coins, TrendingUp, AlertTriangle, Clock } from 'lucide-react';
 import { OptimizedMetricsCards } from './components/OptimizedMetricsCards';
@@ -24,6 +25,7 @@ export const OptimizedInteractiveDashboard = ({
   filteredContracts: externalContracts,
 }: OptimizedInteractiveDashboardProps) => {
   const [activeTab, setActiveTab] = useState('ringkasan');
+  const navigate = useNavigate();
   const { metrics: rawMetrics, contractDetails, isLoading } = useSuperOptimizedDashboard();
 
   // Use externally filtered contracts if provided, otherwise use all
@@ -81,6 +83,28 @@ export const OptimizedInteractiveDashboard = ({
     }
   };
 
+  const handleCardClick = (type: string) => {
+    switch (type) {
+      case 'total':
+        navigate('/contracts');
+        break;
+      case 'pre-kom':
+        navigate('/contracts?status=Pre-KOM');
+        break;
+      case 'active':
+        navigate('/contracts?status=Aktif');
+        break;
+      case 'completed':
+        navigate('/contracts?status=Selesai');
+        break;
+      case 'nearing-end':
+        navigate('/contracts?status=Aktif');
+        break;
+      default:
+        break;
+    }
+  };
+
   if (isLoading) {
     return <div className="space-y-6"><OptimizedContractListSkeleton count={6} /></div>;
   }
@@ -108,7 +132,7 @@ export const OptimizedInteractiveDashboard = ({
         </div>
       </div>
 
-      <OptimizedMetricsCards metrics={metrics} onCardClick={handleChartClick} />
+      <OptimizedMetricsCards metrics={metrics} onCardClick={handleCardClick} />
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-5">
