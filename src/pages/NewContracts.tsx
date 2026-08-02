@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -31,12 +32,18 @@ import { cn } from '@/lib/utils';
 import { Kontrak, Vendor } from '@/types/database';
 
 const NewContracts = () => {
+  const [searchParams] = useSearchParams();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState<string>('all');
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [selectedKontrak, setSelectedKontrak] = useState<Kontrak | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+
+  useEffect(() => {
+    const status = searchParams.get('status');
+    if (status) setFilterStatus(status);
+  }, [searchParams]);
 
   const { contracts: kontraks = [], isLoading } = useContracts();
   const { vendors } = useVendors();
