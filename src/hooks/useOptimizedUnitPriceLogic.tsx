@@ -84,13 +84,44 @@ export const useOptimizedUnitPriceLogic = () => {
     return getUniqueWorkDirections(allContracts);
   }, [allContracts]);
 
+  // Filtered by everything EXCEPT status — used for badge counts so they follow search/other filters
+  const preStatusFiltered = useMemo(() => {
+    return allContracts.filter(contract => {
+      const matchesSearch =
+        !searchTerm ||
+        contract.judul_kontrak.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (contract.no_dokumen_kontrak || '').toLowerCase().includes(searchTerm.toLowerCase());
+
+      const matchesAmendment =
+        amendmentFilter === 'all' ||
+        (amendmentFilter === 'with-amendment' && contract.has_amendment) ||
+        (amendmentFilter === 'without-amendment' && !contract.has_amendment);
+
+      const normalizedDir = normalizeWorkDirection(contract.direksi_pekerjaan || '');
+      const matchesWorkDirection =
+        workDirectionFilter === 'all' || normalizedDir === workDirectionFilter;
+
+      const matchesProgramKerja =
+        programKerjaFilter === 'all' || contract.id_program_kerja === programKerjaFilter;
+
+      const matchesPlanner =
+        plannerFilter === 'all' || contract.id_planner === plannerFilter;
+
+      const matchesDisiplin =
+        disiplinFilter === 'all' || contract.disiplin === disiplinFilter;
+
+      return matchesSearch && matchesAmendment && matchesWorkDirection
+        && matchesProgramKerja && matchesPlanner && matchesDisiplin;
+    });
+  }, [allContracts, searchTerm, amendmentFilter, workDirectionFilter, programKerjaFilter, plannerFilter, disiplinFilter]);
+
   const summary = useMemo(() => ({
-    total: allContracts.length,
-    active: allContracts.filter(c => c.status_kontrak === 'Aktif').length,
-    pending: allContracts.filter(c => c.status_kontrak === 'Pre-KOM').length,
-    completed: allContracts.filter(c => c.status_kontrak === 'Selesai').length,
-    withAmendments: allContracts.filter(c => c.has_amendment).length,
-  }), [allContracts]);
+    total: preStatusFiltered.length,
+    active: preStatusFiltered.filter(c => c.status_kontrak === 'Aktif').length,
+    pending: preStatusFiltered.filter(c => c.status_kontrak === 'Pre-KOM').length,
+    completed: preStatusFiltered.filter(c => c.status_kontrak === 'Selesai').length,
+    withAmendments: preStatusFiltered.filter(c => c.has_amendment).length,
+  }), [preStatusFiltered]);
 
   // ================= ACTION =================
 
@@ -168,6 +199,7 @@ export const useOptimizedUnitPriceLogic = () => {
     setDeleteContract,
 
     filteredContracts: pagination.paginatedData,
+    totalCount: filteredContracts.length,
     workDirectionOptions,
     summary,
     isLoading,
