@@ -24,7 +24,7 @@ const KontrakUnitPrice = () => {
     viewMode, setViewMode,
     isFormDialogOpen, setIsFormDialogOpen,
     deleteContract, setDeleteContract,
-    filteredContracts, workDirectionOptions, summary,
+    filteredContracts, totalCount, workDirectionOptions, summary,
     isLoading, error,
     pagination,
     handleAddContract, handleEditContract, handleFormSubmit,
@@ -33,7 +33,6 @@ const KontrakUnitPrice = () => {
   } = useOptimizedUnitPriceLogic();
 
   const contracts = (filteredContracts ?? []) as any;
-  const totalCount = contracts.length;
 
   if (isLoading) {
     return (
