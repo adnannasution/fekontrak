@@ -99,13 +99,9 @@ const Auth = () => {
 
         {/* ── Top: Logo ── */}
         <div className="relative z-10 px-10 pt-8">
-          <div className={`flex items-center gap-3 transition-all duration-600 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-3'}`}>
-            <div className="bg-white rounded-xl p-2 shadow-lg">
-              <img src="/logo.png" alt="Pertamina Patra Niaga" className="h-10 w-auto object-contain" />
-            </div>
-            <div className="leading-none">
-              <div className="text-white font-black text-lg tracking-tight">PERTAMINA</div>
-              <div className="text-red-400 font-bold text-xs tracking-[0.2em] mt-0.5">PATRA NIAGA</div>
+          <div className={`transition-all duration-600 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-3'}`}>
+            <div className="bg-white rounded-xl p-2 shadow-lg inline-block">
+              <img src="/logo.png" alt="Pertamina Patra Niaga" className="h-12 w-auto object-contain" />
             </div>
           </div>
         </div>
@@ -161,12 +157,8 @@ const Auth = () => {
 
           {/* Logo compact — visible on mobile too */}
           <div className="flex justify-center mb-5">
-            <div className="flex items-center gap-3 bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-2xl px-4 py-2.5">
-              <img src="/logo.png" alt="Pertamina Patra Niaga" className="h-8 w-auto object-contain" />
-              <div className="text-left leading-none">
-                <div className="text-gray-800 dark:text-gray-200 font-bold text-sm">PERTAMINA</div>
-                <div className="text-red-600 font-semibold text-[11px] tracking-wider mt-0.5">PATRA NIAGA</div>
-              </div>
+            <div className="bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-2xl px-4 py-2.5">
+              <img src="/logo.png" alt="Pertamina Patra Niaga" className="h-10 w-auto object-contain" />
             </div>
           </div>
 
