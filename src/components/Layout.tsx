@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { 
-  LayoutDashboard, 
-  FileText, 
-  Coins, 
+import {
+  LayoutDashboard,
+  FileText,
+  Coins,
   Target,
   Settings,
   Users,
@@ -23,7 +23,8 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   ShoppingCart,
-  GitBranch
+  GitBranch,
+  BookOpen
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
@@ -252,6 +253,33 @@ const Layout = ({ children }: LayoutProps) => {
                 )}
               </div>
             ))}
+        </div>
+
+        {/* Manual Book Download */}
+        <div className="border-t border-gray-200 dark:border-gray-700 px-2 py-2 flex-shrink-0">
+          {sidebarCollapsed && !isMobile ? (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <a
+                  href="/docs/Manual_Book_Fekontrak.pdf"
+                  download
+                  className="flex items-center justify-center px-3 py-2.5 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white transition-all duration-200"
+                >
+                  <BookOpen className="h-5 w-5 flex-shrink-0" />
+                </a>
+              </TooltipTrigger>
+              <TooltipContent side="right"><p>Manual Book</p></TooltipContent>
+            </Tooltip>
+          ) : (
+            <a
+              href="/docs/Manual_Book_Fekontrak.pdf"
+              download
+              className="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white transition-all duration-200 w-full"
+            >
+              <BookOpen className="h-5 w-5 flex-shrink-0 mr-3" />
+              <span className="truncate">Manual Book</span>
+            </a>
+          )}
         </div>
 
         {/* User Profile */}
