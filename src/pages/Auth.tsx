@@ -37,6 +37,7 @@ const Auth = () => {
   const [registerSuccess, setRegisterSuccess] = useState(false);
   const [pwTouched, setPwTouched] = useState(false);
   const [signupPassword, setSignupPassword] = useState('');
+  const [pwFocused, setPwFocused] = useState(false);
 
   const pwPassed = useMemo(() => pwRules.map(r => r.test(signupPassword)), [signupPassword]);
   const pwScore = pwPassed.filter(Boolean).length;
@@ -360,34 +361,59 @@ const Auth = () => {
                       </Label>
                       <div className="relative">
                         <Input id="r-pass" type={showSignUpPassword ? 'text' : 'password'} placeholder="Buat password yang kuat"
-                          value={signupPassword} onChange={e => { setSignupPassword(e.target.value); setPwTouched(true); }}
+                          value={signupPassword}
+                          onChange={e => { setSignupPassword(e.target.value); setPwTouched(true); }}
+                          onFocus={() => setPwFocused(true)}
+                          onBlur={() => setPwFocused(false)}
                           required disabled={loading}
                           className="h-10 rounded-xl border-gray-200 dark:border-gray-700 focus:border-red-500 focus:ring-2 focus:ring-red-500/15 pr-10 text-sm" />
                         <button type="button" tabIndex={-1} onClick={() => setShowSignUpPassword(p => !p)}
                           className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
                           {showSignUpPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                         </button>
-                      </div>
 
-                      {/* Strength bar */}
-                      {signupPassword.length > 0 && pwCfg && (
-                        <div className="space-y-1.5 pt-1">
-                          <div className="flex gap-1 h-1.5">
-                            {pwRules.map((_, i) => (
-                              <div key={i} className={`flex-1 rounded-full transition-all duration-300 ${i < pwScore ? pwCfg.bar : 'bg-gray-200 dark:bg-gray-700'}`} />
-                            ))}
+                        {/* Password tooltip */}
+                        {pwFocused && (
+                          <div className="absolute left-0 top-[calc(100%+10px)] w-full z-50 rounded-2xl shadow-2xl overflow-visible"
+                            style={{ background: 'rgba(10,14,35,0.96)', border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(20px)' }}>
+                            {/* Arrow */}
+                            <div className="absolute -top-[6px] left-5 w-3 h-3 rotate-45"
+                              style={{ background: 'rgba(10,14,35,0.96)', borderTop: '1px solid rgba(255,255,255,0.1)', borderLeft: '1px solid rgba(255,255,255,0.1)' }} />
+
+                            <div className="p-3.5">
+                              {/* Strength bar + label */}
+                              <div className="mb-3">
+                                <div className="flex gap-1 h-1.5 mb-1.5">
+                                  {pwRules.map((_, i) => (
+                                    <div key={i} className={`flex-1 rounded-full transition-all duration-300 ${signupPassword.length > 0 && pwCfg && i < pwScore ? pwCfg.bar : 'bg-white/10'}`} />
+                                  ))}
+                                </div>
+                                <p className={`text-[11px] font-semibold ${pwCfg ? pwCfg.text : 'text-gray-500'}`}>
+                                  {pwCfg ? pwCfg.label : 'Ketik password untuk melihat kekuatan'}
+                                </p>
+                              </div>
+
+                              <div className="w-full h-px bg-white/8 mb-2.5" />
+
+                              {/* Rules */}
+                              <div className="grid grid-cols-1 gap-1.5">
+                                {pwRules.map((rule, i) => {
+                                  const ok = pwPassed[i];
+                                  const active = signupPassword.length > 0 || pwTouched;
+                                  return (
+                                    <div key={rule.key} className={`flex items-center gap-2 text-xs transition-all duration-200 ${ok ? 'text-emerald-400' : active ? 'text-red-400' : 'text-gray-500'}`}>
+                                      <div className={`w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0 transition-colors duration-200 ${ok ? 'bg-emerald-500/20' : active ? 'bg-red-500/15' : 'bg-white/8'}`}>
+                                        {ok ? <Check className="w-2.5 h-2.5" /> : <X className="w-2.5 h-2.5" />}
+                                      </div>
+                                      {rule.label}
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </div>
                           </div>
-                          <p className={`text-xs font-semibold ${pwCfg.text}`}>{pwCfg.label}</p>
-                          <ul className="space-y-0.5">
-                            {pwRules.map((rule, i) => (
-                              <li key={rule.key} className={`flex items-center gap-1.5 text-xs transition-colors duration-200 ${pwPassed[i] ? 'text-green-600 dark:text-green-400' : pwTouched ? 'text-red-500' : 'text-gray-400'}`}>
-                                {pwPassed[i] ? <Check className="w-3 h-3 shrink-0" /> : <X className="w-3 h-3 shrink-0" />}
-                                {rule.label}
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
+                        )}
+                      </div>
                     </div>
 
                     <Button type="submit" disabled={loading} className="w-full h-10 rounded-xl font-semibold text-sm text-white border-0 transition-all duration-200 shadow-md hover:shadow-lg active:scale-[0.98]"
