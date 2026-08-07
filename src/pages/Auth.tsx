@@ -119,19 +119,15 @@ const Auth = () => {
           ))}
         </svg>
 
-        {/* ── Top-left: Logo (frosted glass card) ── */}
-        <div className={`absolute top-5 left-6 z-20 transition-all duration-600 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-3'}`}>
-          <div style={{
-            background: 'rgba(255,255,255,0.12)',
-            backdropFilter: 'blur(12px)',
-            WebkitBackdropFilter: 'blur(12px)',
-            border: '1px solid rgba(255,255,255,0.22)',
-            borderRadius: '12px',
-            padding: '8px 14px',
-            boxShadow: '0 4px 24px rgba(0,0,0,0.18)',
-          }}>
-            <img src="/logo.png" alt="Pertamina Patra Niaga" className="h-9 w-auto object-contain" />
+        {/* ── Top: Logo — white wave header ── */}
+        <div className={`relative z-10 flex-shrink-0 transition-all duration-600 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-3'}`}>
+          <div className="bg-white px-8 pt-5 pb-4">
+            <img src="/logo.png" alt="Pertamina Patra Niaga" className="h-11 w-auto object-contain" />
           </div>
+          {/* Artistic wave edge: white melts into blue */}
+          <svg viewBox="0 0 600 36" preserveAspectRatio="none" className="w-full block" style={{ display: 'block', height: '36px', marginTop: '-1px' }}>
+            <path d="M0,0 L600,0 L600,4 C500,36 400,14 300,22 C200,30 100,6 0,28 Z" fill="white" />
+          </svg>
         </div>
 
         {/* ── Center: App branding ── */}
