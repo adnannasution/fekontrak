@@ -96,81 +96,102 @@ const Auth = () => {
     <div className="h-screen w-screen flex overflow-hidden" style={{ fontFamily: 'Inter, sans-serif' }}>
 
       {/* ══ LEFT BRAND PANEL ══════════════════════════════════════ */}
-      <div
-        className="hidden lg:flex lg:w-[55%] h-full flex-col justify-between relative overflow-hidden"
-        style={{
-          background: 'linear-gradient(145deg, #001B4E 0%, #003375 35%, #0055A5 65%, #003D7A 100%)',
-        }}
-      >
-        {/* Subtle glow layers */}
-        <div className="absolute inset-0 pointer-events-none" style={{
-          backgroundImage:
-            'radial-gradient(ellipse at 15% 50%, rgba(255,255,255,0.04) 0%, transparent 55%),' +
-            'radial-gradient(ellipse at 85% 15%, rgba(227,30,36,0.10) 0%, transparent 45%)',
-        }} />
+      <div className="hidden lg:flex lg:w-[55%] h-full relative overflow-hidden"
+        style={{ background: 'linear-gradient(160deg, #001433 0%, #002D6E 40%, #004FA0 70%, #002D6E 100%)' }}>
 
-        {/* Grid lines */}
-        <svg className="absolute inset-0 w-full h-full opacity-[0.04] pointer-events-none" viewBox="0 0 600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-          {[0,1,2,3,4,5].map(i => (
-            <line key={i} x1="0" y1={150*i} x2="600" y2={150*i-60} stroke="white" strokeWidth="1"/>
-          ))}
-          {[100,250,400,550].map(x => (
-            <line key={x} x1={x} y1="0" x2={x} y2="900" stroke="white" strokeWidth="1"/>
-          ))}
+        {/* Red orb top-right */}
+        <div className="absolute -top-32 -right-24 w-[420px] h-[420px] rounded-full pointer-events-none"
+          style={{ background: 'radial-gradient(circle, rgba(227,30,36,0.28) 0%, transparent 65%)' }} />
+        {/* Blue orb bottom-left */}
+        <div className="absolute -bottom-40 -left-24 w-[380px] h-[380px] rounded-full pointer-events-none"
+          style={{ background: 'radial-gradient(circle, rgba(0,130,255,0.22) 0%, transparent 65%)' }} />
+        {/* Center glow */}
+        <div className="absolute inset-0 pointer-events-none"
+          style={{ background: 'radial-gradient(ellipse at 50% 55%, rgba(255,255,255,0.03) 0%, transparent 60%)' }} />
+
+        {/* Dot grid */}
+        <svg className="absolute inset-0 w-full h-full opacity-[0.07] pointer-events-none">
+          <defs>
+            <pattern id="dot-grid" x="0" y="0" width="28" height="28" patternUnits="userSpaceOnUse">
+              <circle cx="1.5" cy="1.5" r="1.5" fill="white"/>
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#dot-grid)"/>
         </svg>
 
-        {/* ── Top: Logo — white wave header ── */}
-        <div className={`relative z-10 flex-shrink-0 transition-all duration-600 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-3'}`}>
-          <div className="bg-white px-8 pt-5 pb-4">
-            <img src="/logo.png" alt="Pertamina Patra Niaga" className="h-11 w-auto object-contain" />
-          </div>
-          {/* Artistic wave edge: white melts into blue */}
-          <svg viewBox="0 0 600 36" preserveAspectRatio="none" className="w-full block" style={{ display: 'block', height: '36px', marginTop: '-1px' }}>
-            <path d="M0,0 L600,0 L600,4 C500,36 400,14 300,22 C200,30 100,6 0,28 Z" fill="white" />
-          </svg>
-        </div>
+        {/* Decorative rings */}
+        <div className="absolute top-16 right-10 w-36 h-36 rounded-full border border-white/8 pointer-events-none" />
+        <div className="absolute top-6 right-0 w-56 h-56 rounded-full border border-white/5 pointer-events-none" />
+        <div className="absolute bottom-20 left-6 w-28 h-28 rounded-full border border-red-500/15 pointer-events-none" />
+        <div className="absolute bottom-10 left-0 w-48 h-48 rounded-full border border-white/5 pointer-events-none" />
 
-        {/* ── Center: App branding ── */}
-        <div className={`relative z-10 px-10 transition-all duration-700 delay-150 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
-          <div className="inline-flex items-center bg-white/10 border border-white/20 rounded-full px-3 py-1 mb-4">
+        {/* Diagonal light slash */}
+        <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-[0.035]" viewBox="0 0 600 900" preserveAspectRatio="xMidYMid slice">
+          <line x1="-50" y1="850" x2="650" y2="50" stroke="white" strokeWidth="90"/>
+        </svg>
+
+        {/* ── Main content ── */}
+        <div className={`relative z-10 flex flex-col justify-center h-full px-12 py-10 transition-all duration-700 ${mounted ? 'opacity-100' : 'opacity-0'}`}>
+
+          {/* Badge */}
+          <div className={`inline-flex items-center self-start rounded-full px-3 py-1 mb-5 transition-all duration-600 ${mounted ? 'translate-y-0 opacity-100' : '-translate-y-3 opacity-0'}`}
+            style={{ background: 'rgba(227,30,36,0.18)', border: '1px solid rgba(227,30,36,0.35)' }}>
+            <div className="w-1.5 h-1.5 bg-red-400 rounded-full mr-2 animate-pulse" />
             <span className="text-red-300 text-[10px] font-semibold tracking-[0.15em] uppercase">
               Maintenance Management System
             </span>
           </div>
 
-          <h1 className="text-6xl font-black text-white tracking-tighter leading-none mb-2">
+          {/* Heading */}
+          <h1 className={`text-7xl font-black text-white tracking-tighter leading-none mb-2 transition-all duration-700 delay-100 ${mounted ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
             MAESTRO
           </h1>
-          <div className="w-12 h-1 bg-red-500 rounded-full mb-4" />
-          <p className="text-blue-200 text-base leading-snug">
+          <div className="w-16 h-1.5 rounded-full mb-4" style={{ background: 'linear-gradient(90deg, #E31E24, #FF7070)' }} />
+          <p className={`text-blue-200 text-base leading-snug mb-8 transition-all duration-700 delay-150 ${mounted ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
             Maintenance Contract<br />
-            <span className="text-white font-semibold">Supervisory &amp; Control Tools</span>
+            <span className="text-white font-semibold text-lg">Supervisory &amp; Control Tools</span>
           </p>
 
-          <div className="mt-6 space-y-2.5">
+          {/* Features — 2×2 glass cards */}
+          <div className="grid grid-cols-2 gap-2.5 mb-5">
             {features.map((f, i) => (
-              <div
-                key={i}
-                className={`flex items-center gap-3 transition-all duration-500 ${mounted ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'}`}
-                style={{ transitionDelay: `${300 + i * 80}ms` }}
-              >
-                <div className="w-8 h-8 bg-white/10 border border-white/15 rounded-lg flex items-center justify-center text-sm flex-shrink-0">
-                  {f.icon}
-                </div>
-                <span className="text-blue-100 text-sm">{f.label}</span>
+              <div key={i}
+                className={`flex items-center gap-3 rounded-xl p-3 transition-all duration-500 ${mounted ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'}`}
+                style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)', transitionDelay: `${220 + i * 75}ms` }}>
+                <span className="text-xl flex-shrink-0">{f.icon}</span>
+                <span className="text-blue-100 text-xs leading-snug">{f.label}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Divider */}
+          <div className="w-full h-px mb-5" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent)' }} />
+
+          {/* Quick-feature pills */}
+          <div className="grid grid-cols-3 gap-2.5">
+            {[
+              { icon: '🔐', label: 'Multi-role\nAccess' },
+              { icon: '📡', label: 'Monitoring\nReal-time' },
+              { icon: '📊', label: 'Laporan\nOtomatis' },
+            ].map((s, i) => (
+              <div key={i}
+                className={`rounded-xl p-3 text-center transition-all duration-500 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+                style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.09)', transitionDelay: `${460 + i * 80}ms` }}>
+                <div className="text-2xl mb-1">{s.icon}</div>
+                <div className="text-blue-200 text-[10px] whitespace-pre-line leading-tight">{s.label}</div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* ── Bottom: tagline ── */}
-        <div className="relative z-10 px-10 pb-6 flex items-end justify-between">
-          <p className="text-blue-300/60 text-xs italic">Energizing Indonesia</p>
-          <p className="text-blue-300/40 text-xs">© 2025 Pertamina Patra Niaga</p>
+        {/* Footer */}
+        <div className="absolute bottom-5 left-12 right-12 flex justify-between z-10">
+          <p className="text-blue-300/40 text-xs italic">Energizing Indonesia</p>
+          <p className="text-blue-300/30 text-xs">© 2025 Pertamina Patra Niaga</p>
         </div>
 
-        {/* Bottom wave deco */}
-        <svg className="absolute bottom-0 left-0 w-full opacity-[0.06] pointer-events-none" viewBox="0 0 600 60" preserveAspectRatio="none" aria-hidden="true">
+        {/* Bottom wave */}
+        <svg className="absolute bottom-0 left-0 w-full opacity-[0.05] pointer-events-none" viewBox="0 0 600 60" preserveAspectRatio="none">
           <path d="M0,30 C120,0 240,60 360,30 C480,0 540,50 600,30 L600,60 L0,60 Z" fill="white"/>
         </svg>
       </div>
@@ -178,6 +199,11 @@ const Auth = () => {
       {/* ══ RIGHT FORM PANEL ══════════════════════════════════════ */}
       <div className="w-full lg:w-[45%] h-full flex items-center justify-center bg-white dark:bg-gray-950 overflow-hidden px-6">
         <div className={`w-full max-w-[390px] transition-all duration-700 delay-200 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
+
+          {/* Logo */}
+          <div className={`flex justify-center mb-5 transition-all duration-500 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'}`}>
+            <img src="/logo.png" alt="Pertamina Patra Niaga" className="h-14 w-auto object-contain" />
+          </div>
 
           {/* Heading */}
           <div className="text-center mb-5">
