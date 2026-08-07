@@ -41,6 +41,7 @@ interface LayoutProps {
 const Layout = ({ children }: LayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -126,6 +127,7 @@ const Layout = ({ children }: LayoutProps) => {
   }));
 
   const handleSignOut = async () => {
+    setShowLogoutModal(false);
     await signOut();
     navigate('/login');
   };
@@ -353,7 +355,7 @@ const Layout = ({ children }: LayoutProps) => {
                 {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
               </Button>
               <RealTimeNotifications showConnectionStatus={false} />
-              <Button variant="ghost" size="sm" onClick={handleSignOut} className="flex items-center space-x-2 p-2">
+              <Button variant="ghost" size="sm" onClick={() => setShowLogoutModal(true)} className="flex items-center space-x-2 p-2">
                 <LogOut className="h-5 w-5" />
                 <span className="hidden md:block">Keluar</span>
               </Button>
@@ -366,6 +368,75 @@ const Layout = ({ children }: LayoutProps) => {
         </main>
       </div>
 
+      {/* Logout Confirmation Modal */}
+      {showLogoutModal && (
+        <div className="fixed inset-0 z-[999] flex items-center justify-center p-4" style={{ animation: 'fadeIn 0.18s ease' }}>
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            onClick={() => setShowLogoutModal(false)}
+          />
+
+          {/* Modal card */}
+          <div
+            className="relative w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden"
+            style={{ background: 'linear-gradient(145deg, #0f1629 0%, #1a2340 100%)', border: '1px solid rgba(255,255,255,0.1)', animation: 'scaleIn 0.2s cubic-bezier(0.34,1.56,0.64,1)' }}
+          >
+            {/* Top accent bar */}
+            <div className="h-1 w-full" style={{ background: 'linear-gradient(90deg, #E31E24, #ff6b6b, #E31E24)' }} />
+
+            {/* Decorative orb */}
+            <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full pointer-events-none"
+              style={{ background: 'radial-gradient(circle, rgba(227,30,36,0.15) 0%, transparent 70%)' }} />
+
+            <div className="p-7">
+              {/* Icon */}
+              <div className="flex justify-center mb-5">
+                <div className="relative">
+                  <div className="w-16 h-16 rounded-full flex items-center justify-center"
+                    style={{ background: 'rgba(227,30,36,0.12)', border: '1px solid rgba(227,30,36,0.25)' }}>
+                    <LogOut className="w-7 h-7 text-red-400" />
+                  </div>
+                  <div className="absolute inset-0 rounded-full animate-ping"
+                    style={{ background: 'rgba(227,30,36,0.08)', animationDuration: '2s' }} />
+                </div>
+              </div>
+
+              {/* Text */}
+              <div className="text-center mb-6">
+                <h3 className="text-lg font-bold text-white mb-1.5">Keluar dari Sistem?</h3>
+                <p className="text-sm text-gray-400 leading-relaxed">
+                  Sesi aktif Anda akan diakhiri. Pastikan semua pekerjaan telah tersimpan sebelum keluar.
+                </p>
+              </div>
+
+              {/* Buttons */}
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowLogoutModal(false)}
+                  className="flex-1 h-10 rounded-xl text-sm font-semibold transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+                  style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)', color: 'rgba(255,255,255,0.8)' }}
+                >
+                  Batal
+                </button>
+                <button
+                  onClick={handleSignOut}
+                  className="flex-1 h-10 rounded-xl text-sm font-bold text-white transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 shadow-lg"
+                  style={{ background: 'linear-gradient(135deg, #E31E24 0%, #c0151a 100%)', boxShadow: '0 4px 15px rgba(227,30,36,0.35)' }}
+                >
+                  <LogOut className="w-4 h-4" />
+                  Ya, Keluar
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <style>{`
+            @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
+            @keyframes scaleIn { from { opacity: 0; transform: scale(0.88) translateY(12px) } to { opacity: 1; transform: scale(1) translateY(0) } }
+          `}</style>
+        </div>
+      )}
     </div>
   );
 };
