@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { User, Mail, Shield, BookOpen, KeyRound, Eye, EyeOff, Download } from 'lucide-react';
+import { useState, useMemo } from 'react';
+import { User, Mail, Shield, BookOpen, KeyRound, Eye, EyeOff, Download, Check, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -11,6 +11,21 @@ import { usePermissions } from '@/hooks/usePermissions';
 import { useToast } from '@/hooks/use-toast';
 
 const API_URL = "https://bekontrak-production.up.railway.app/api";
+
+const pwRules = [
+  { key: 'length', label: 'Min. 8 karakter',  test: (p: string) => p.length >= 8 },
+  { key: 'upper',  label: 'Huruf besar (A-Z)', test: (p: string) => /[A-Z]/.test(p) },
+  { key: 'lower',  label: 'Huruf kecil (a-z)', test: (p: string) => /[a-z]/.test(p) },
+  { key: 'digit',  label: 'Angka (0-9)',        test: (p: string) => /[0-9]/.test(p) },
+  { key: 'sym',    label: 'Simbol (!@#$...)',   test: (p: string) => /[^A-Za-z0-9]/.test(p) },
+];
+const pwStrength = [
+  { label: 'Sangat Lemah', bar: 'bg-red-500',    text: 'text-red-500'    },
+  { label: 'Lemah',        bar: 'bg-orange-500', text: 'text-orange-500' },
+  { label: 'Cukup',        bar: 'bg-yellow-500', text: 'text-yellow-500' },
+  { label: 'Kuat',         bar: 'bg-blue-500',   text: 'text-blue-500'   },
+  { label: 'Sangat Kuat',  bar: 'bg-green-500',  text: 'text-green-500'  },
+];
 
 const Profile = () => {
   const { userProfile } = useAuth();
@@ -24,6 +39,12 @@ const Profile = () => {
   const [showOld, setShowOld] = useState(false);
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [cpNewFocused, setCpNewFocused] = useState(false);
+
+  const pwPassed = useMemo(() => pwRules.map(r => r.test(cpNew)), [cpNew]);
+  const pwScore  = pwPassed.filter(Boolean).length;
+  const pwAllOk  = pwScore === pwRules.length;
+  const pwCfg    = cpNew.length > 0 ? pwStrength[pwScore] : null;
 
   const initials = userProfile?.full_name
     ? userProfile.full_name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2)
@@ -38,8 +59,8 @@ const Profile = () => {
       toast({ title: 'Error', description: 'Konfirmasi password tidak cocok', variant: 'destructive' });
       return;
     }
-    if (cpNew.length < 8) {
-      toast({ title: 'Error', description: 'Password baru minimal 8 karakter', variant: 'destructive' });
+    if (!pwAllOk) {
+      toast({ title: 'Error', description: 'Password baru belum memenuhi semua syarat keamanan', variant: 'destructive' });
       return;
     }
     setCpLoading(true);
@@ -165,15 +186,53 @@ const Profile = () => {
               <Input
                 id="cp-new"
                 type={showNew ? 'text' : 'password'}
-                placeholder="Min. 8 karakter, huruf besar, angka, simbol"
+                placeholder="Buat password yang kuat"
                 value={cpNew}
                 onChange={e => setCpNew(e.target.value)}
+                onFocus={() => setCpNewFocused(true)}
+                onBlur={() => setCpNewFocused(false)}
                 className="pr-10"
               />
               <button type="button" onClick={() => setShowNew(!showNew)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
                 {showNew ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
+
+              {/* Password tooltip */}
+              {cpNewFocused && (
+                <div className="absolute left-0 top-[calc(100%+10px)] w-full z-50 rounded-2xl shadow-2xl"
+                  style={{ background: 'rgba(10,14,35,0.96)', border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(20px)' }}>
+                  <div className="absolute -top-[6px] left-5 w-3 h-3 rotate-45"
+                    style={{ background: 'rgba(10,14,35,0.96)', borderTop: '1px solid rgba(255,255,255,0.1)', borderLeft: '1px solid rgba(255,255,255,0.1)' }} />
+                  <div className="p-3.5">
+                    <div className="mb-3">
+                      <div className="flex gap-1 h-1.5 mb-1.5">
+                        {pwRules.map((_, i) => (
+                          <div key={i} className={`flex-1 rounded-full transition-all duration-300 ${cpNew.length > 0 && pwCfg && i < pwScore ? pwCfg.bar : 'bg-white/10'}`} />
+                        ))}
+                      </div>
+                      <p className={`text-[11px] font-semibold ${pwCfg ? pwCfg.text : 'text-gray-500'}`}>
+                        {pwCfg ? pwCfg.label : 'Ketik password untuk melihat kekuatan'}
+                      </p>
+                    </div>
+                    <div className="w-full h-px bg-white/8 mb-2.5" />
+                    <div className="grid grid-cols-1 gap-1.5">
+                      {pwRules.map((rule, i) => {
+                        const ok = pwPassed[i];
+                        const active = cpNew.length > 0;
+                        return (
+                          <div key={rule.key} className={`flex items-center gap-2 text-xs transition-all duration-200 ${ok ? 'text-emerald-400' : active ? 'text-red-400' : 'text-gray-500'}`}>
+                            <div className={`w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0 transition-colors duration-200 ${ok ? 'bg-emerald-500/20' : active ? 'bg-red-500/15' : 'bg-white/8'}`}>
+                              {ok ? <Check className="w-2.5 h-2.5" /> : <X className="w-2.5 h-2.5" />}
+                            </div>
+                            {rule.label}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
