@@ -240,11 +240,6 @@ const Auth = () => {
             <img src="/logo.png" alt="Pertamina Patra Niaga" className="h-14 w-auto object-contain" />
           </div>
 
-          {/* Heading */}
-          <div className="text-center mb-5">
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white">Selamat Datang</h2>
-            <p className="text-gray-400 text-sm mt-0.5">Masuk ke sistem MAESTRO</p>
-          </div>
 
           {/* ── Form ── */}
           {registerSuccess ? (
