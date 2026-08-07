@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+
 import { Mail, Lock, Eye, EyeOff, User, CheckCircle, Check, X } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { isVendorRole } from '@/hooks/useRolePermissionsConfig';
@@ -260,25 +260,7 @@ const Auth = () => {
             </div>
           ) : (
             <>
-              <Tabs defaultValue="signin" className="space-y-4">
-                <TabsList className="grid w-full grid-cols-2 bg-gray-100 dark:bg-gray-800 p-1 rounded-xl h-auto">
-                  <TabsTrigger
-                    value="signin"
-                    className="rounded-lg py-1.5 text-sm font-medium data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700 data-[state=active]:shadow-sm data-[state=active]:text-red-600 dark:data-[state=active]:text-red-400 transition-all"
-                  >
-                    Masuk
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="signup"
-                    className="rounded-lg py-1.5 text-sm font-medium data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700 data-[state=active]:shadow-sm data-[state=active]:text-red-600 dark:data-[state=active]:text-red-400 transition-all"
-                  >
-                    Daftar
-                  </TabsTrigger>
-                </TabsList>
-
-                {/* ── Masuk ── */}
-                <TabsContent value="signin" className="mt-0">
-                  <form onSubmit={handleSignIn} className="space-y-3.5">
+              <form onSubmit={handleSignIn} className="space-y-3.5">
                     <div className="space-y-1">
                       <Label htmlFor="s-email" className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-1.5">
                         <Mail className="h-3.5 w-3.5 text-gray-400" /> Email
@@ -312,7 +294,7 @@ const Auth = () => {
                         />
                         <button type="button" tabIndex={-1} onClick={() => setShowPassword(p => !p)}
                           className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
-                          {showPassword ? <Eye className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                          {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                         </button>
                       </div>
                     </div>
@@ -327,11 +309,9 @@ const Auth = () => {
                       ) : 'Masuk'}
                     </Button>
                   </form>
-                </TabsContent>
 
-                {/* ── Daftar ── */}
-                <TabsContent value="signup" className="mt-0">
-                  <form onSubmit={handleSignUp} className="space-y-3.5">
+              {/* hidden signup form - kept for future use */}
+              {false && <form onSubmit={handleSignUp} className="space-y-3.5">
                     <div className="space-y-1">
                       <Label htmlFor="r-name" className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-1.5">
                         <User className="h-3.5 w-3.5 text-gray-400" /> Nama Lengkap
@@ -421,8 +401,7 @@ const Auth = () => {
                       ) : 'Daftar'}
                     </Button>
                   </form>
-                </TabsContent>
-              </Tabs>
+              }
 
               {/* Info box */}
               <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-950/40 rounded-xl border border-blue-100 dark:border-blue-900/50">
