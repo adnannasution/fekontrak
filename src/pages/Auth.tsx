@@ -119,11 +119,45 @@ const Auth = () => {
           <rect width="100%" height="100%" fill="url(#dot-grid)"/>
         </svg>
 
-        {/* Decorative rings */}
-        <div className="absolute top-16 right-10 w-36 h-36 rounded-full border border-white/8 pointer-events-none" />
-        <div className="absolute top-6 right-0 w-56 h-56 rounded-full border border-white/5 pointer-events-none" />
-        <div className="absolute bottom-20 left-6 w-28 h-28 rounded-full border border-red-500/15 pointer-events-none" />
-        <div className="absolute bottom-10 left-0 w-48 h-48 rounded-full border border-white/5 pointer-events-none" />
+        {/* Radar HUD — top right */}
+        <svg className="absolute -top-10 -right-10 w-72 h-72 pointer-events-none opacity-[0.18]" viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="120" cy="120" r="108" stroke="white" strokeWidth="0.6" strokeDasharray="5 4"/>
+          <circle cx="120" cy="120" r="80"  stroke="white" strokeWidth="0.8"/>
+          <circle cx="120" cy="120" r="52"  stroke="white" strokeWidth="0.8"/>
+          <circle cx="120" cy="120" r="26"  stroke="white" strokeWidth="1"/>
+          <line x1="12" y1="120" x2="228" y2="120" stroke="white" strokeWidth="0.5"/>
+          <line x1="120" y1="12" x2="120" y2="228" stroke="white" strokeWidth="0.5"/>
+          <line x1="44"  y1="44"  x2="196" y2="196" stroke="white" strokeWidth="0.35"/>
+          <line x1="196" y1="44"  x2="44"  y2="196" stroke="white" strokeWidth="0.35"/>
+          <circle cx="120" cy="12"  r="2.5" fill="white"/>
+          <circle cx="228" cy="120" r="2.5" fill="white"/>
+          <circle cx="120" cy="228" r="2.5" fill="white"/>
+          <circle cx="12"  cy="120" r="2.5" fill="white"/>
+          <circle cx="196" cy="44"  r="2"   fill="white" opacity="0.6"/>
+          <circle cx="44"  cy="196" r="2"   fill="white" opacity="0.6"/>
+          <circle cx="120" cy="120" r="4"   fill="white" opacity="0.5"/>
+          <circle cx="120" cy="40"  r="1.5" fill="white" opacity="0.4"/>
+          <circle cx="200" cy="120" r="1.5" fill="white" opacity="0.4"/>
+          <circle cx="120" cy="200" r="1.5" fill="white" opacity="0.4"/>
+          <circle cx="40"  cy="120" r="1.5" fill="white" opacity="0.4"/>
+        </svg>
+
+        {/* Radar HUD — bottom left (smaller, red tint) */}
+        <svg className="absolute -bottom-12 -left-12 w-56 h-56 pointer-events-none opacity-[0.14]" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="100" cy="100" r="90"  stroke="#FF6B6B" strokeWidth="0.6" strokeDasharray="4 3"/>
+          <circle cx="100" cy="100" r="65"  stroke="white"   strokeWidth="0.7"/>
+          <circle cx="100" cy="100" r="40"  stroke="white"   strokeWidth="0.8"/>
+          <circle cx="100" cy="100" r="18"  stroke="white"   strokeWidth="1"/>
+          <line x1="10" y1="100" x2="190" y2="100" stroke="white" strokeWidth="0.5"/>
+          <line x1="100" y1="10" x2="100" y2="190" stroke="white" strokeWidth="0.5"/>
+          <line x1="37" y1="37"  x2="163" y2="163" stroke="white" strokeWidth="0.3"/>
+          <line x1="163" y1="37" x2="37"  y2="163" stroke="white" strokeWidth="0.3"/>
+          <circle cx="100" cy="10"  r="2.5" fill="#FF6B6B"/>
+          <circle cx="190" cy="100" r="2.5" fill="white"/>
+          <circle cx="100" cy="190" r="2.5" fill="white"/>
+          <circle cx="10"  cy="100" r="2.5" fill="white"/>
+          <circle cx="100" cy="100" r="3.5" fill="white" opacity="0.6"/>
+        </svg>
 
         {/* Diagonal light slash */}
         <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-[0.035]" viewBox="0 0 600 900" preserveAspectRatio="xMidYMid slice">
