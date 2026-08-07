@@ -32,6 +32,7 @@ export interface Kontrak {
   judul_kontrak: string;
   no_dokumen_kontrak?: string;
   no_po_pr?: string;
+  no_irkap?: string;
   direksi_pekerjaan?: string;
   id_program_kerja?: string;
   program_kerja_detail?: ProgramKerja;
