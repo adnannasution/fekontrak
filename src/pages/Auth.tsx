@@ -119,17 +119,21 @@ const Auth = () => {
           ))}
         </svg>
 
-        {/* Top red accent */}
-        <div className="absolute top-0 left-0 right-0 h-[3px]" style={{ background: 'linear-gradient(90deg, #E31E24 0%, #FF5E40 50%, #E31E24 100%)' }} />
-
-        {/* ── Top: Logo ── */}
-        <div className="relative z-10 px-10 pt-8">
-          <div className={`transition-all duration-600 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-3'}`}>
-            <div className="bg-white rounded-xl p-2 shadow-lg inline-block">
-              <img src="/logo.png" alt="Pertamina Patra Niaga" className="h-12 w-auto object-contain" />
-            </div>
-          </div>
+        {/* ── Top: Logo strip ── */}
+        <div className={`absolute top-0 left-0 right-0 z-20 flex items-center transition-all duration-600 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-3'}`}
+          style={{
+            background: 'linear-gradient(90deg, #ffffff 0%, #f4f8ff 50%, rgba(255,255,255,0.12) 80%, transparent 100%)',
+            paddingTop: '12px',
+            paddingBottom: '12px',
+            paddingLeft: '32px',
+            borderBottom: '3px solid',
+            borderImage: 'linear-gradient(90deg, #E31E24 0%, #FF5E40 40%, rgba(227,30,36,0.15) 75%, transparent 100%) 1',
+          }}
+        >
+          <img src="/logo.png" alt="Pertamina Patra Niaga" className="h-11 w-auto object-contain drop-shadow-sm" />
         </div>
+        {/* spacer so content doesn't overlap strip */}
+        <div className="h-[64px]" />
 
         {/* ── Center: App branding ── */}
         <div className={`relative z-10 px-10 transition-all duration-700 delay-150 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
